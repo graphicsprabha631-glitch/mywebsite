@@ -1,0 +1,836 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Prabha Graphics - Contact Us" />
+  <title>Prabha Graphics — Contact Us</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="logo.png" type="image/png">
+
+  <!-- Fonts & Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    :root{
+      /* Brand */
+      --primary:#D10007;
+      --primary-red:#D10007;
+      --dark-red:#A00006;
+      --white:#ffffff;
+      --black:#000000;
+
+      /* Greys */
+      --gray-50:#f9fafb;
+      --gray-100:#f3f4f6;
+      --gray-200:#e5e7eb;
+      --gray-600:#4b5563;
+      --gray-800:#1f2937;
+      --gray-900:#111827;
+
+      /* Layout tokens */
+      --dark:#0f172a;
+      --muted:#6b7280;
+      --bg:#fbfbfd;
+      --card:0 10px 30px rgba(2,6,23,0.06);
+      --max:1200px;
+      --gap:16px;
+      --radius:12px;
+      --nav-height:80px;
+    }
+
+    html{
+      scroll-behavior:smooth;
+      height:100%;
+    }
+    body{
+      font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+      background-color:var(--white);
+      color:var(--gray-800);
+      overflow-x:hidden;
+      min-height:100%;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      -webkit-tap-highlight-color:transparent;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar{width:10px}
+    ::-webkit-scrollbar-track{background:var(--gray-100)}
+    ::-webkit-scrollbar-thumb{background:var(--primary-red);border-radius:10px}
+    ::-webkit-scrollbar-thumb:hover{background:var(--dark-red)}
+
+    .container{
+      max-width:1280px;
+      margin:0 auto;
+      padding:0 20px;
+    }
+
+    /* ==================== NAVBAR (SAME AS PRODUCTS PAGE) ==================== */
+    .navbar{
+      position:fixed;
+      top:0;left:0;right:0;
+      z-index:1000;
+      background-color:var(--white);
+      transition:all 0.3s ease;
+    }
+    .navbar.scrolled{
+      box-shadow:0 10px 25px rgba(0,0,0,0.1);
+    }
+    .nav-container{
+      max-width:1280px;
+      margin:0 auto;
+      padding:16px 20px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+    .nav-logo{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      cursor:pointer;
+      transition:transform 0.3s ease;
+    }
+    .nav-logo:hover{transform:scale(1.05)}
+    .logo-img{
+      width:44px;
+      height:44px;
+      border-radius:999px;
+      object-fit:contain;
+    }
+    .logo-text{
+      font-weight:700;
+      font-size:20px;
+      color:var(--gray-800);
+    }
+    .nav-links{
+      display:flex;
+      gap:24px;
+      list-style:none;
+      align-items:center;
+    }
+    .nav-link{
+      color:var(--gray-800);
+      text-decoration:none;
+      font-weight:500;
+      position:relative;
+      transition:color 0.3s ease;
+      padding-bottom:3px;
+    }
+    .nav-link::after{
+      content:'';
+      position:absolute;
+      bottom:-4px;left:0;
+      width:0;height:2px;
+      background-color:var(--primary-red);
+      transition:width 0.3s ease;
+    }
+    .nav-link:hover::after{width:100%}
+
+    .cta-btn{
+      background-color:var(--primary-red);
+      color:var(--white);
+      border:none;
+      padding:10px 24px;
+      border-radius:8px;
+      font-weight:600;
+      cursor:pointer;
+      transition:all 0.3s ease;
+      font-family:'Poppins',sans-serif;
+      white-space:nowrap;
+    }
+    .cta-btn:hover{
+      background-color:var(--dark-red);
+      transform:scale(1.05);
+    }
+
+    .hamburger{
+      display:none;
+      flex-direction:column;
+      cursor:pointer;
+      margin-left:8px;
+    }
+    .hamburger span{
+      width:24px;
+      height:3px;
+      background-color:var(--gray-800);
+      margin:4px 0;
+      transition:all 0.3s ease;
+      border-radius:2px;
+    }
+    .hamburger.active span:nth-child(1){
+      transform:rotate(-45deg) translate(-6px,6px);
+    }
+    .hamburger.active span:nth-child(2){
+      opacity:0;
+    }
+    .hamburger.active span:nth-child(3){
+      transform:rotate(45deg) translate(-6px,-6px);
+    }
+
+    /* ==================== HERO ==================== */
+    .hero{
+      min-height:220px;
+      background:linear-gradient(90deg,#fff7f7,#fff);
+      display:flex;
+      align-items:center;
+      margin-top:var(--nav-height);
+      padding:28px 0;
+    }
+    .hero-grid{
+      display:flex;
+      gap:24px;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .hero h1{
+      font-size:26px;
+      margin:0 0 8px 0;
+    }
+    .hero p{
+      color:var(--muted);
+      margin:0;
+      max-width:58ch;
+    }
+    .hero-figure{
+      width:260px;
+      border-radius:12px;
+      overflow:hidden;
+      flex-shrink:0;
+      box-shadow:0 16px 38px rgba(15,23,42,0.15);
+    }
+    .hero-figure img{
+      width:100%;height:100%;display:block;object-fit:cover;
+    }
+
+    /* ==================== CONTACT LAYOUT ==================== */
+    .contact-section{
+      padding:24px 0 10px;
+    }
+    .contact-grid{
+      display:grid;
+      grid-template-columns:minmax(0,1.1fr) minmax(0,0.9fr);
+      gap:24px;
+      margin-top:10px;
+    }
+
+    .card{
+      background:#fff;
+      border-radius:var(--radius);
+      box-shadow:var(--card);
+      padding:18px 16px 18px;
+    }
+
+    .card h2{
+      font-size:18px;
+      margin-bottom:6px;
+    }
+    .card p.sub{
+      font-size:13px;
+      color:var(--muted);
+      margin-bottom:10px;
+    }
+
+    label{
+      display:block;
+      font-size:13px;
+      color:var(--gray-700,#374151);
+      margin-top:10px;
+    }
+    input,textarea{
+      width:100%;
+      padding:10px;
+      border-radius:8px;
+      border:1px solid #e6e7eb;
+      font-size:14px;
+      font-family:'Poppins',sans-serif;
+      margin-top:4px;
+    }
+    textarea{min-height:120px;resize:vertical}
+
+    .submit-row{
+      margin-top:14px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    .submit-btn{
+      background:var(--primary);
+      color:#fff;
+      padding:10px 14px;
+      border-radius:10px;
+      border:0;
+      cursor:pointer;
+      font-weight:700;
+      font-family:'Poppins',sans-serif;
+      transition:all 0.2s ease;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+    }
+    .submit-btn:hover{
+      background:var(--dark-red);
+      transform:translateY(-1px);
+    }
+    .status-msg{
+      font-size:13px;
+      min-height:18px;
+    }
+
+    .info-list{
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      margin-top:4px;
+    }
+    .info-item{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+    }
+    .info-icon{
+      width:40px;
+      height:40px;
+      border-radius:12px;
+      background:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:var(--primary-red);
+      box-shadow:var(--card);
+      flex-shrink:0;
+    }
+    .info-text-title{
+      font-size:14px;
+      font-weight:600;
+      margin-bottom:3px;
+    }
+    .info-text-body{
+      font-size:13px;
+      color:var(--muted);
+    }
+
+    .map-wrap{
+      margin-top:14px;
+      border-radius:12px;
+      overflow:hidden;
+      box-shadow:var(--card);
+    }
+    .map-wrap iframe{
+      width:100%;
+      height:220px;
+      border:0;
+    }
+
+    .wa-btn{
+      margin-top:10px;
+      background:#25D366;
+      color:#fff;
+      border:none;
+      padding:9px 12px;
+      border-radius:999px;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-size:13px;
+      cursor:pointer;
+      font-weight:600;
+    }
+
+    /* FOOTER (SAME AS PRODUCTS PAGE) */
+    .footer{
+      background-color:var(--gray-900);
+      color:var(--white);
+      padding:64px 0 32px;
+      margin-top:28px;
+    }
+    .footer-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+      gap:40px;
+      margin-bottom:40px;
+    }
+    .footer-col{
+      opacity:0;
+      animation:slideUp 0.8s ease forwards;
+    }
+    .footer-col:nth-child(2){animation-delay:0.1s}
+    .footer-col:nth-child(3){animation-delay:0.2s}
+    .footer-col:nth-child(4){animation-delay:0.3s}
+    @keyframes slideUp{
+      from{opacity:0;transform:translateY(20px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+    .footer-logo{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:16px;
+    }
+    .footer-logo-img{
+      width:40px;
+      height:40px;
+      border-radius:999px;
+      object-fit:contain;
+    }
+    .footer-col p{
+      color:#d1d5db;
+      line-height:1.6;
+      margin-bottom:16px;
+      font-size:14px;
+    }
+    .footer-col h3{
+      font-size:18px;
+      font-weight:600;
+      margin-bottom:16px;
+    }
+    .footer-col ul{list-style:none;padding:0;margin:0}
+    .footer-col li{margin-bottom:12px}
+    .footer-link{
+      color:#d1d5db;
+      text-decoration:none;
+      transition:all 0.3s ease;
+      font-size:14px;
+    }
+    .footer-link:hover{
+      color:var(--primary-red);
+      transform:translateX(5px);
+    }
+    .contact-info{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+    .contact-info p{
+      display:flex;
+      align-items:flex-start;
+      gap:8px;
+      color:#d1d5db;
+      font-size:14px;
+    }
+    .contact-info i{
+      color:var(--primary-red);
+      margin-top:2px;
+    }
+    .social-links{
+      display:flex;
+      gap:16px;
+      margin-top:16px;
+    }
+    .social-icon{
+      width:40px;
+      height:40px;
+      background-color:rgba(255,255,255,0.1);
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:var(--primary-red);
+      text-decoration:none;
+      transition:all 0.3s ease;
+    }
+    .social-icon:hover{
+      background-color:var(--primary-red);
+      color:var(--white);
+      transform:scale(1.2) rotate(10deg);
+    }
+    .footer-divider{
+      height:1px;
+      background:linear-gradient(to right,transparent,rgba(209,0,7,0.3),transparent);
+      margin-bottom:24px;
+    }
+    .footer-bottom{
+      text-align:center;
+      color:#9ca3af;
+      font-size:14px;
+    }
+
+    /* Scroll to top button */
+    #scrollToTop{
+      position:fixed;
+      bottom:20px;
+      right:20px;
+      width:50px;
+      height:50px;
+      background-color:var(--primary-red);
+      color:var(--white);
+      border:none;
+      border-radius:50%;
+      cursor:pointer;
+      display:none;
+      z-index:999;
+      font-size:20px;
+      transition:all 0.3s ease;
+      align-items:center;
+      justify-content:center;
+    }
+    #scrollToTop:hover{
+      transform:scale(1.1);
+      background-color:var(--dark-red);
+    }
+
+    /* Responsive tweaks */
+    @media(max-width:900px){
+      .hero-grid{flex-direction:column;align-items:flex-start}
+      .hero-figure{width:100%;max-width:360px}
+      .contact-grid{grid-template-columns:1fr}
+    }
+    @media (max-width:768px){
+      .nav-links{
+        display:none;
+      }
+      .nav-links.active{
+        display:flex;
+        position:fixed;
+        top:var(--nav-height);
+        left:0;
+        width:100%;
+        flex-direction:column;
+        background-color:var(--white);
+        gap:0;
+        padding:16px 0;
+        max-height:calc(100vh - var(--nav-height));
+        overflow-y:auto;
+        box-shadow:0 10px 30px rgba(0,0,0,0.12);
+      }
+      .nav-links.active li{
+        padding:12px 20px;
+        border-bottom:1px solid var(--gray-100);
+      }
+      .hamburger{display:flex}
+      .logo-text{font-size:18px}
+      .hero{
+        min-height:200px;
+        padding:18px 0;
+      }
+      .map-wrap iframe{height:200px;}
+    }
+    @media (max-width:480px){
+      .container{padding:0 16px}
+      .nav-container{padding:12px 16px}
+      .hero h1{font-size:22px}
+      .hero p{font-size:13px}
+      #scrollToTop{
+        width:40px;
+        height:40px;
+        font-size:16px;
+      }
+    }
+
+    :focus{outline:3px solid rgba(209,0,7,0.18);outline-offset:2px}
+  </style>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <div class="nav-logo" onclick="location.href='index.html'" role="button" tabindex="0">
+        <img src="logo.png" alt="Prabha Graphics" class="logo-img">
+        <span class="logo-text">Prabha Graphics</span>
+      </div>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="about.html" class="nav-link">About Us</a></li>
+        <li><a href="products.html#corporate" class="nav-link">Corporate Gifts</a></li>
+        <li><a href="products.html#personalized" class="nav-link">Personalized Gifts</a></li>
+        <li><a href="contact-us.html" class="nav-link">Contact Us</a></li>
+      </ul>
+
+      <button class="cta-btn" onclick="location.href='get-a-quote.html'">Get a Quote</button>
+
+      <div class="hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main id="main">
+    <!-- HERO -->
+    <section class="hero" aria-labelledby="heroTitle">
+      <div class="container hero-grid">
+        <div class="left">
+          <h1 id="heroTitle">Contact Us</h1>
+          <p>Have a question about T-shirts, mugs, gifts or bulk corporate orders? Share your details and we’ll get back within a few working hours.</p>
+        </div>
+        <figure class="hero-figure" aria-hidden="true">
+          <img loading="lazy" decoding="async" src="banner1.png" alt="Contact Prabha Graphics"/>
+        </figure>
+      </div>
+    </section>
+
+    <!-- CONTACT SECTION -->
+    <section class="contact-section">
+      <div class="container contact-grid">
+        <!-- Form -->
+        <div class="card">
+          <h2>Send us a message</h2>
+          <p class="sub">Fill this form and our team will call or WhatsApp you back.</p>
+
+          <label for="cName">Full name *</label>
+          <input id="cName" placeholder="Your full name" />
+
+          <label for="cPhone">Phone / WhatsApp *</label>
+          <input id="cPhone" type="tel" placeholder="Phone number (WhatsApp preferred)" />
+
+          <label for="cEmail">Email</label>
+          <input id="cEmail" type="email" placeholder="Your email (optional)" />
+
+          <label for="cSubject">Subject</label>
+          <input id="cSubject" placeholder="e.g. Bulk T-shirt printing, Gift hampers" />
+
+          <label for="cMessage">Message *</label>
+          <textarea id="cMessage" placeholder="Share your requirement, quantity, delivery date, etc."></textarea>
+
+          <label style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13px;color:var(--muted);">
+            <input type="checkbox" id="cWhatsapp" />
+            <span>Also reply to me on WhatsApp</span>
+          </label>
+
+          <div class="submit-row">
+            <button class="submit-btn" id="sendBtn" type="button">
+              <i class="fa fa-paper-plane"></i>
+              <span>Send Message</span>
+            </button>
+            <div id="statusMsg" class="status-msg" aria-live="polite"></div>
+          </div>
+        </div>
+
+        <!-- Info + map -->
+        <div class="card">
+          <h2>Visit or Call Us</h2>
+          <p class="sub">We are based in Gomti Nagar, Lucknow and deliver across India.</p>
+
+          <div class="info-list">
+            <div class="info-item">
+              <div class="info-icon"><i class="fas fa-phone"></i></div>
+              <div>
+                <div class="info-text-title">Phone / WhatsApp</div>
+                <div class="info-text-body">074579 94888</div>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <div class="info-icon"><i class="fas fa-envelope"></i></div>
+              <div>
+                <div class="info-text-title">Email</div>
+                <div class="info-text-body">prabhagraphics@gmail.com</div>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <div class="info-icon"><i class="fas fa-location-dot"></i></div>
+              <div>
+                <div class="info-text-title">Store Address</div>
+                <div class="info-text-body">
+                  Shop No. 4/74, Adarsh Market, Gomti Nagar Railway Sta Rd,<br/>
+                  near TC Eye Centre Road, Vinay Khand 4, Gomti Nagar,<br/>
+                  Lucknow, Uttar Pradesh 226010
+                </div>
+              </div>
+            </div>
+
+            <button class="wa-btn" type="button" onclick="window.open('https://wa.me/917457994888?text='+encodeURIComponent('Hi, I have a query about printing / gifts.'),'_blank')">
+              <i class="fab fa-whatsapp"></i>
+              Chat on WhatsApp
+            </button>
+          </div>
+
+          <div class="map-wrap">
+            <iframe
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3558.970796629774!2d81.01506997537188!3d26.871702562157347!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x399be2a218dc2c13%3A0x25c70cf36c6b6ad0!2sVinay%20Khand%204%2C%20Gomti%20Nagar%2C%20Lucknow%2C%20Uttar%20Pradesh%20226010!5e0!3m2!1sen!2sin!4v1700000000000">
+            </iframe>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" id="contact">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-col">
+            <div class="footer-logo">
+              <img src="logo.png" alt="Prabha Graphics" class="footer-logo-img">
+              <span>Prabha Graphics</span>
+            </div>
+            <p>Your trusted partner in Lucknow for all corporate and personalized printing and gifting needs.</p>
+          </div>
+
+          <div class="footer-col">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="products.html#corporate" class="footer-link">Corporate Gifts</a></li>
+              <li><a href="products.html#personalized" class="footer-link">Personalized Gifts</a></li>
+              <li><a href="products.html#other" class="footer-link">Other Products</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h3>Company</h3>
+            <ul>
+              <li><a href="about.html" class="footer-link">About Us</a></li>
+              <li><a href="contact-us.html#main" class="footer-link">Contact Us</a></li>
+              <li><a href="get-a-quote.html" class="footer-link">View Full Catalog</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h3>Contact Us</h3>
+            <div class="contact-info">
+              <p><i class="fas fa-phone"></i> 074579 94888</p>
+              <p><i class="fas fa-map-marker-alt"></i> Shop No. 4/74, Adarsh Market, Gomti Nagar Railway Sta Rd, near TC Eye Centre Road, Vinay Khand 4, Gomti Nagar, Lucknow, Uttar Pradesh 226010</p>
+              <p><i class="fas fa-globe"></i> www.prabhagraphics.in</p>
+            </div>
+            <div class="social-links">
+              <a href="https://www.instagram.com/prabhagraphics/" target="_blank" rel="noopener" class="social-icon" aria-label="Instagram">
+                <i class="fab fa-instagram"></i>
+              </a>
+              <a href="#" class="social-icon" aria-label="YouTube">
+                <i class="fab fa-youtube"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-divider"></div>
+        <div class="footer-bottom">
+          <p>&copy; 2025 Prabha Graphics. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <button id="scrollToTop"><i class="fas fa-arrow-up"></i></button>
+
+  <!-- Firebase Contact Form Logic -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
+
+   const firebaseConfig = {
+    apiKey: "AIzaSyCADm7aarTkJ4Hohsb2xz1EkqrkLWjSQxg",
+    authDomain: "my-project-b3537.firebaseapp.com",
+    projectId: "my-project-b3537",
+    storageBucket: "my-project-b3537.firebasestorage.app",
+    messagingSenderId: "652581310060",
+    appId: "1:652581310060:web:c00691e1c625e1a78ad249",
+    measurementId: "G-CG17J3F6YW"
+  };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const sendBtn = document.getElementById('sendBtn');
+    const statusMsg = document.getElementById('statusMsg');
+    const cName = document.getElementById('cName');
+    const cPhone = document.getElementById('cPhone');
+    const cEmail = document.getElementById('cEmail');
+    const cSubject = document.getElementById('cSubject');
+    const cMessage = document.getElementById('cMessage');
+    const cWhatsapp = document.getElementById('cWhatsapp');
+
+    sendBtn.addEventListener('click', async () => {
+      statusMsg.textContent = '';
+      statusMsg.style.color = '#b91c1c';
+
+      const name = cName.value.trim();
+      const phone = cPhone.value.trim();
+      const email = cEmail.value.trim();
+      const subject = cSubject.value.trim();
+      const message = cMessage.value.trim();
+      const wantsWhatsapp = cWhatsapp.checked ? true : false;
+
+      if (!name || !phone || !message) {
+        statusMsg.textContent = 'Please fill your name, phone and message.';
+        return;
+      }
+
+      try {
+        await addDoc(collection(db, 'contactMessages'), {
+          name,
+          phone,
+          email,
+          subject,
+          message,
+          wantsWhatsapp,
+          createdAt: serverTimestamp()
+        });
+
+        statusMsg.style.color = '#047857';
+        statusMsg.textContent = 'Thank you! Your message has been sent.';
+
+        cName.value = '';
+        cPhone.value = '';
+        cEmail.value = '';
+        cSubject.value = '';
+        cMessage.value = '';
+        cWhatsapp.checked = false;
+      } catch (err) {
+        console.error('contact submit error', err);
+        statusMsg.style.color = '#b91c1c';
+        statusMsg.textContent = 'Could not send message: ' + err.message;
+      }
+    });
+  </script>
+
+  <!-- Header / navbar JS (same behavior as products.html) -->
+  <script>
+    const navbarEl = document.getElementById('navbar');
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('navLinks');
+    const scrollToTopBtn = document.getElementById('scrollToTop');
+
+    // Navbar scroll effect + scroll-to-top visibility
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        navbarEl.classList.add('scrolled');
+      } else {
+        navbarEl.classList.remove('scrolled');
+      }
+
+      scrollToTopBtn.style.display = window.scrollY > 300 ? 'flex' : 'none';
+    });
+
+    // Hamburger menu
+    if (hamburger) {
+      hamburger.addEventListener('click', () => {
+        const isActive = hamburger.classList.toggle('active');
+        navLinks.classList.toggle('active');
+        hamburger.setAttribute('aria-expanded', isActive ? 'true' : 'false');
+      });
+    }
+
+    // Close menu when any nav link clicked
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('active');
+        navLinks.classList.remove('active');
+        hamburger.setAttribute('aria-expanded','false');
+      });
+    });
+
+    // Scroll to top
+    scrollToTopBtn.addEventListener('click', () => {
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+
+    // Keyboard support (Esc closes mobile nav)
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        hamburger.classList.remove('active');
+        navLinks.classList.remove('active');
+        hamburger.setAttribute('aria-expanded','false');
+      }
+    });
+  </script>
+</body>
+</html>
