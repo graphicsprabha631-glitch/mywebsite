@@ -1,0 +1,997 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Prabha Graphics - Corporate gifts, personalized gifts & printing in Lucknow" />
+  <title>Prabha Graphics — Custom Corporate & Personalized Gifts</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="logo.png" type="image/png">
+
+  <!-- Fonts & Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    :root{
+      /* Brand */
+      --primary:#D10007;
+      --primary-red:#D10007;
+      --dark-red:#A00006;
+      --white:#ffffff;
+
+      /* Greys */
+      --gray-50:#f9fafb;
+      --gray-100:#f3f4f6;
+      --gray-200:#e5e7eb;
+      --gray-600:#4b5563;
+      --gray-800:#1f2937;
+      --gray-900:#111827;
+
+      /* Layout tokens */
+      --dark:#0f172a;
+      --muted:#6b7280;
+      --bg:#fbfbfd;
+      --card:0 10px 30px rgba(2,6,23,0.06);
+      --max:1280px;
+      --gap:16px;
+      --radius:12px;
+      --nav-height:80px;
+    }
+
+    html{
+      scroll-behavior:smooth;
+      height:100%;
+    }
+    body{
+      font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+      background-color:var(--white);
+      color:var(--gray-800);
+      overflow-x:hidden;
+      min-height:100%;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      -webkit-tap-highlight-color:transparent;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar{width:10px}
+    ::-webkit-scrollbar-track{background:var(--gray-100)}
+    ::-webkit-scrollbar-thumb{background:var(--primary-red);border-radius:10px}
+    ::-webkit-scrollbar-thumb:hover{background:var(--dark-red)}
+
+    .container{
+      max-width:1280px;
+      margin:0 auto;
+      padding:0 20px;
+    }
+
+    /* Skip link */
+    .skip-link{
+      position:fixed;left:8px;top:8px;background:#000;color:#fff;padding:8px 12px;
+      border-radius:8px;z-index:9999;transform:translateY(-120%);transition:transform .18s;
+    }
+    .skip-link:focus{transform:translateY(0)}
+
+    /* ==================== NAVBAR (SAME AS PRODUCTS PAGE) ==================== */
+    .navbar{
+      position:fixed;
+      top:0;left:0;right:0;
+      z-index:1000;
+      background-color:var(--white);
+      transition:all 0.3s ease;
+    }
+    .navbar.scrolled{
+      box-shadow:0 10px 25px rgba(0,0,0,0.1);
+    }
+    .nav-container{
+      max-width:1280px;
+      margin:0 auto;
+      padding:16px 20px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+    .nav-logo{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      cursor:pointer;
+      transition:transform 0.3s ease;
+    }
+    .nav-logo:hover{transform:scale(1.05)}
+    .logo-img{
+      width:44px;
+      height:44px;
+      border-radius:999px;
+      object-fit:contain;
+    }
+    .logo-text{
+      font-weight:700;
+      font-size:20px;
+      color:var(--gray-800);
+    }
+    .nav-links{
+      display:flex;
+      gap:24px;
+      list-style:none;
+      align-items:center;
+    }
+    .nav-link{
+      color:var(--gray-800);
+      text-decoration:none;
+      font-weight:500;
+      position:relative;
+      transition:color 0.3s ease;
+      padding-bottom:3px;
+    }
+    .nav-link::after{
+      content:'';
+      position:absolute;
+      bottom:-4px;left:0;
+      width:0;height:2px;
+      background-color:var(--primary-red);
+      transition:width 0.3s ease;
+    }
+    .nav-link:hover::after{width:100%}
+
+    .cta-btn{
+      background-color:var(--primary-red);
+      color:var(--white);
+      border:none;
+      padding:10px 24px;
+      border-radius:8px;
+      font-weight:600;
+      cursor:pointer;
+      transition:all 0.3s ease;
+      font-family:'Poppins',sans-serif;
+      white-space:nowrap;
+    }
+    .cta-btn:hover{
+      background-color:var(--dark-red);
+      transform:scale(1.05);
+    }
+
+    .hamburger{
+      display:none;
+      flex-direction:column;
+      cursor:pointer;
+      margin-left:8px;
+    }
+    .hamburger span{
+      width:24px;
+      height:3px;
+      background-color:var(--gray-800);
+      margin:4px 0;
+      transition:all 0.3s ease;
+      border-radius:2px;
+    }
+    .hamburger.active span:nth-child(1){
+      transform:rotate(-45deg) translate(-6px,6px);
+    }
+    .hamburger.active span:nth-child(2){
+      opacity:0;
+    }
+    .hamburger.active span:nth-child(3){
+      transform:rotate(45deg) translate(-6px,-6px);
+    }
+
+    /* ==================== HERO ==================== */
+    .hero{
+      min-height:260px;
+      background:linear-gradient(100deg,#fff5f5,#ffffff);
+      display:flex;
+      align-items:center;
+      margin-top:var(--nav-height);
+      padding:40px 0 32px;
+    }
+    .hero-grid{
+      display:flex;
+      gap:32px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .hero h1{
+      font-size:30px;
+      font-weight:800;
+      margin:0 0 10px 0;
+      max-width:20ch;
+    }
+    .hero p{
+      color:var(--muted);
+      margin:0 0 18px 0;
+      max-width:44ch;
+    }
+    .hero-buttons{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+    }
+    .btn{
+      padding:11px 20px;
+      border-radius:10px;
+      border:none;
+      font-weight:600;
+      font-size:14px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      font-family:'Poppins',sans-serif;
+      transition:all 0.2s ease;
+    }
+    .btn-primary{
+      background:var(--primary);
+      color:#fff;
+    }
+    .btn-primary:hover{
+      background:var(--dark-red);
+      transform:translateY(-1px);
+    }
+    .btn-outline{
+      background:#fff;
+      color:var(--primary);
+      border:1.5px solid var(--primary);
+    }
+    .btn-outline:hover{
+      background:var(--primary);
+      color:#fff;
+      transform:translateY(-1px);
+    }
+    .hero-figure{
+      width:320px;
+      border-radius:18px;
+      overflow:hidden;
+      flex-shrink:0;
+      box-shadow:0 16px 38px rgba(15,23,42,0.16);
+    }
+    .hero-figure img{
+      width:100%;height:100%;display:block;object-fit:cover;
+    }
+
+    /* ==================== HOME CATEGORIES ==================== */
+    .home-categories{
+      padding:32px 0 24px;
+    }
+    .section-title{
+      text-align:center;
+      font-size:22px;
+      font-weight:700;
+      margin-bottom:10px;
+    }
+    .section-sub{
+      text-align:center;
+      color:var(--muted);
+      font-size:14px;
+      margin-bottom:22px;
+    }
+    .home-cat-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+      gap:18px;
+    }
+    .home-cat-card{
+      position:relative;
+      border-radius:18px;
+      overflow:hidden;
+      background:#fff;
+      box-shadow:var(--card);
+      cursor:pointer;
+      transition:transform .2s, box-shadow .2s;
+    }
+    .home-cat-card:hover{
+      transform:translateY(-6px);
+      box-shadow:0 18px 40px rgba(2,6,23,0.08);
+    }
+    .home-cat-card img{
+      width:100%;
+      height:170px;
+      object-fit:cover;
+      display:block;
+      transition:transform .3s ease;
+    }
+    .home-cat-card:hover img{
+      transform:scale(1.05);
+    }
+    .home-cat-info{
+      padding:14px 14px 15px;
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+    .home-cat-info h3{
+      font-size:16px;
+      margin:0;
+    }
+    .home-cat-info p{
+      margin:0;
+      font-size:13px;
+      color:var(--muted);
+    }
+    .home-cat-info .view-btn{
+      margin-top:8px;
+      align-self:flex-start;
+      padding:7px 12px;
+      border-radius:999px;
+      border:none;
+      background:#fee2e2;
+      color:var(--primary);
+      font-size:12px;
+      font-weight:600;
+      cursor:pointer;
+      display:inline-flex;
+      gap:6px;
+      align-items:center;
+    }
+
+    /* ==================== MINI ABOUT SECTION ==================== */
+    .mini-about{
+      padding:30px 0 28px;
+      background:var(--gray-50);
+    }
+    .about-grid{
+      display:flex;
+      gap:22px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .about-text{
+      flex:1 1 260px;
+    }
+    .about-text h2{
+      font-size:20px;
+      margin-bottom:8px;
+    }
+    .about-text p{
+      font-size:14px;
+      color:var(--muted);
+      margin-bottom:6px;
+    }
+    .about-points{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:8px;
+    }
+    .pill{
+      padding:6px 10px;
+      border-radius:999px;
+      background:#fff;
+      box-shadow:0 5px 18px rgba(15,23,42,0.08);
+      font-size:12px;
+      color:#111827;
+    }
+    .about-images{
+      flex:0 0 auto;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .about-images img{
+      width:120px;
+      height:120px;
+      object-fit:cover;
+      border-radius:14px;
+      box-shadow:0 8px 20px rgba(15,23,42,0.12);
+    }
+
+    /* ==================== NEWLY ADDED PRODUCTS ==================== */
+    .home-new{
+      padding:32px 0 26px;
+    }
+    .new-grid-wrap{
+      overflow-x:auto;
+      padding-bottom:6px;
+    }
+    .new-grid{
+      display:flex;
+      gap:14px;
+      min-height:120px;
+    }
+    .np-card{
+      min-width:210px;
+      max-width:210px;
+      background:#fff;
+      border-radius:14px;
+      box-shadow:0 8px 22px rgba(15,23,42,0.12);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      cursor:pointer;
+    }
+    .np-card img{
+      width:100%;
+      height:140px;
+      object-fit:cover;
+      display:block;
+    }
+    .np-body{
+      padding:10px 11px 11px;
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+    .np-title{
+      font-size:14px;
+      font-weight:600;
+    }
+    .np-meta{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-top:3px;
+    }
+    .np-price{
+      font-weight:700;
+      color:var(--primary);
+      font-size:13px;
+    }
+    .np-badge{
+      padding:4px 8px;
+      font-size:11px;
+      border-radius:999px;
+      background:#fee2e2;
+      color:var(--primary);
+      font-weight:600;
+    }
+    .new-empty{
+      font-size:13px;
+      color:var(--muted);
+      padding:12px 0;
+      text-align:center;
+    }
+
+    /* ==================== CTA (LIGHT RED HERO) ==================== */
+    .home-cta{
+      background:#ffe5e5;
+      padding:34px 0 40px;
+    }
+    .home-cta-inner{
+      max-width:900px;
+      margin:0 auto;
+      text-align:center;
+    }
+    .home-cta-inner h2{
+      font-size:22px;
+      margin-bottom:6px;
+    }
+    .home-cta-inner p{
+      font-size:14px;
+      color:var(--muted);
+      margin-bottom:14px;
+    }
+
+    /* ==================== FOOTER (EXACT LIKE PRODUCTS PAGE) ==================== */
+    .footer{
+      background-color:var(--gray-900);
+      color:var(--white);
+      padding:64px 0 32px;
+      margin-top:28px;
+    }
+    .footer-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+      gap:40px;
+      margin-bottom:40px;
+    }
+    .footer-col{
+      opacity:0;
+      animation:slideUp 0.8s ease forwards;
+    }
+    .footer-col:nth-child(2){animation-delay:0.1s}
+    .footer-col:nth-child(3){animation-delay:0.2s}
+    .footer-col:nth-child(4){animation-delay:0.3s}
+    @keyframes slideUp{
+      from{opacity:0;transform:translateY(20px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+    .footer-logo{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:16px;
+    }
+    .footer-logo-img{
+      width:40px;
+      height:40px;
+      border-radius:999px;
+      object-fit:contain;
+    }
+    .footer-col p{
+      color:#d1d5db;
+      line-height:1.6;
+      margin-bottom:16px;
+      font-size:14px;
+    }
+    .footer-col h3{
+      font-size:18px;
+      font-weight:600;
+      margin-bottom:16px;
+    }
+    .footer-col ul{list-style:none;padding:0;margin:0}
+    .footer-col li{margin-bottom:12px}
+    .footer-link{
+      color:#d1d5db;
+      text-decoration:none;
+      transition:all 0.3s ease;
+      font-size:14px;
+    }
+    .footer-link:hover{
+      color:var(--primary-red);
+      transform:translateX(5px);
+    }
+    .contact-info{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+    .contact-info p{
+      display:flex;
+      align-items:flex-start;
+      gap:8px;
+      color:#d1d5db;
+      font-size:14px;
+    }
+    .contact-info i{
+      color:var(--primary-red);
+      margin-top:2px;
+    }
+    .social-links{
+      display:flex;
+      gap:16px;
+      margin-top:16px;
+    }
+    .social-icon{
+      width:40px;
+      height:40px;
+      background-color:rgba(255,255,255,0.1);
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:var(--primary-red);
+      text-decoration:none;
+      transition:all 0.3s ease;
+    }
+    .social-icon:hover{
+      background-color:var(--primary-red);
+      color:var(--white);
+      transform:scale(1.2) rotate(10deg);
+    }
+    .footer-divider{
+      height:1px;
+      background:linear-gradient(to right,transparent,rgba(209,0,7,0.3),transparent);
+      margin-bottom:24px;
+    }
+    .footer-bottom{
+      text-align:center;
+      color:#9ca3af;
+      font-size:14px;
+    }
+
+    /* Scroll to top button */
+    #scrollToTop{
+      position:fixed;
+      bottom:20px;
+      right:20px;
+      width:50px;
+      height:50px;
+      background-color:var(--primary-red);
+      color:var(--white);
+      border:none;
+      border-radius:50%;
+      cursor:pointer;
+      display:none;
+      z-index:999;
+      font-size:20px;
+      transition:all 0.3s ease;
+      align-items:center;
+      justify-content:center;
+    }
+    #scrollToTop:hover{
+      transform:scale(1.1);
+      background-color:var(--dark-red);
+    }
+
+    /* ==================== RESPONSIVE ==================== */
+    @media (max-width:1024px){
+      .hero-grid{flex-direction:column;align-items:flex-start}
+      .hero-figure{width:100%;max-width:360px}
+    }
+    @media (max-width:768px){
+      .nav-links{
+        display:none;
+      }
+      .nav-links.active{
+        display:flex;
+        position:fixed;
+        top:var(--nav-height);
+        left:0;
+        width:100%;
+        flex-direction:column;
+        background-color:var(--white);
+        gap:0;
+        padding:16px 0;
+        max-height:calc(100vh - var(--nav-height));
+        overflow-y:auto;
+        box-shadow:0 10px 30px rgba(0,0,0,0.12);
+      }
+      .nav-links.active li{
+        padding:12px 20px;
+        border-bottom:1px solid var(--gray-100);
+      }
+      .hamburger{display:flex}
+      .logo-text{font-size:18px}
+      .hero{
+        padding:24px 0 22px;
+      }
+      .home-cat-card img{height:160px}
+      .about-images img{width:100px;height:100px}
+    }
+    @media (max-width:480px){
+      .container{padding:0 16px}
+      .nav-container{padding:12px 16px}
+      .hero h1{font-size:22px}
+      .hero p{font-size:13px}
+      #scrollToTop{
+        width:40px;
+        height:40px;
+        font-size:16px;
+      }
+    }
+
+    :focus{outline:3px solid rgba(209,0,7,0.18);outline-offset:2px}
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <!-- NAVBAR (same structure as products.html) -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <div class="nav-logo" onclick="location.href='index.html'" role="button" tabindex="0">
+        <img src="logo.png" alt="Prabha Graphics" class="logo-img">
+        <span class="logo-text">Prabha Graphics</span>
+      </div>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="about.html" class="nav-link">About Us</a></li>
+        <li><a href="products.html#corporate" class="nav-link">Corporate Gifts</a></li>
+        <li><a href="products.html#personalized" class="nav-link">Personalized Gifts</a></li>
+        <li><a href="contact-us.html" class="nav-link">Contact Us</a></li>
+      </ul>
+
+      <button class="cta-btn" onclick="location.href='get-a-quote.html'">Get a Quote</button>
+
+      <div class="hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main id="main">
+    <!-- HERO -->
+    <section class="hero" aria-labelledby="heroTitle">
+      <div class="container hero-grid">
+        <div class="left">
+          <h1 id="heroTitle">Corporate gifts, personalized printing and bulk orders — all under one roof.</h1>
+          <p>From custom T-shirts and mugs to full corporate gift hampers, we help you create premium, memorable branding for your business and events.</p>
+          <div class="hero-buttons">
+            <button class="btn btn-primary" type="button" onclick="location.href='products.html'">
+              <i class="fa fa-store"></i>
+              <span>View Products</span>
+            </button>
+            <button class="btn btn-outline" type="button" onclick="window.open('https://drive.google.com/file/d/1zZUjUuO3d4mzI9BH87AC3ZOweRNgr8_O/view?usp=sharing','_blank')">
+              <i class="fa fa-file-pdf"></i>
+              <span>Open Catalogue (PDF)</span>
+            </button>
+          </div>
+        </div>
+        <figure class="hero-figure" aria-hidden="true">
+          <!-- Replace banner1.png with your actual hero image -->
+          <img loading="lazy" decoding="async" src="banner1.png" alt="Custom gifts and printing by Prabha Graphics"/>
+        </figure>
+      </div>
+    </section>
+
+    <!-- CATEGORY BLOCKS -->
+    <section class="home-categories" aria-labelledby="catTitle">
+      <div class="container">
+        <h2 id="catTitle" class="section-title">Browse by Category</h2>
+        <p class="section-sub">Quickly jump to the products you’re looking for.</p>
+
+        <div class="home-cat-grid">
+          <article class="home-cat-card" onclick="location.href='products.html#corporate'">
+            <img src="corporate-img.png" alt="Corporate & promotional gifts">
+            <div class="home-cat-info">
+              <h3>Corporate & Promotional Gifts</h3>
+              <p>Gift sets, pens, bottles, diaries, awards and more.</p>
+              <button type="button" class="view-btn">
+                <span>View now</span>
+                <i class="fa fa-arrow-right"></i>
+              </button>
+            </div>
+          </article>
+
+          <article class="home-cat-card" onclick="location.href='products.html#personalized'">
+            <img src="personalized-img.png" alt="Personalized gifts">
+            <div class="home-cat-info">
+              <h3>Personalized Gifts</h3>
+              <p>Mugs, cushions, photo frames, LED gifts and more.</p>
+              <button type="button" class="view-btn">
+                <span>View now</span>
+                <i class="fa fa-arrow-right"></i>
+              </button>
+            </div>
+          </article>
+
+          <article class="home-cat-card" onclick="location.href='products.html#other'">
+            <img src="others-img.png" alt="Other products">
+            <div class="home-cat-info">
+              <h3>Other Products</h3>
+              <p>Business cards, stationery, accessories and more.</p>
+              <button type="button" class="view-btn">
+                <span>View now</span>
+                <i class="fa fa-arrow-right"></i>
+              </button>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- MINI ABOUT -->
+    <section class="mini-about" aria-labelledby="aboutMiniTitle">
+      <div class="container about-grid">
+        <div class="about-text">
+          <h2 id="aboutMiniTitle">Your gifting & printing partner in Lucknow.</h2>
+          <p>Prabha Graphics has been helping businesses, institutions and individuals create memorable gifts and branded merchandise.</p>
+          <p>Whether it’s 10 pieces or 10,000, we focus on quality, timelines and clear communication.</p>
+          <div class="about-points">
+            <span class="pill">Bulk & retail orders</span>
+            <span class="pill">Fast delivery</span>
+            <span class="pill">Design support</span>
+            <span class="pill">Corporate & event solutions</span>
+          </div>
+        </div>
+        <div class="about-images">
+          <!-- Replace these image paths with your real photos -->
+          <img src="about-1.png" alt="Samples of custom gifts">
+          <img src="about-2.png" alt="Printed t-shirts and mugs">
+          <img src="about-3.png" alt="Corporate gift sets">
+        </div>
+      </div>
+    </section>
+
+    <!-- NEWLY ADDED PRODUCTS -->
+    <section class="home-new" aria-labelledby="newTitle">
+      <div class="container">
+        <h2 id="newTitle" class="section-title">Newly Added Products</h2>
+        <p class="section-sub">Recently added items from our catalog. Click any product for full details.</p>
+
+        <div class="new-grid-wrap">
+          <div id="newProductsGrid" class="new-grid" aria-live="polite" aria-busy="true">
+            <!-- JS will populate -->
+          </div>
+        </div>
+        <div id="newEmpty" class="new-empty" style="display:none;">
+          No products found yet. Please check again soon.
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA BANNER (LIGHT RED) -->
+    <section class="home-cta" aria-labelledby="ctaTitle">
+      <div class="container home-cta-inner">
+        <h2 id="ctaTitle">Planning a bulk order or custom branding?</h2>
+        <p>Share your requirement and we’ll suggest the best products, quantities and pricing — perfect for events, teams, festivals and promotions.</p>
+        <button class="btn btn-primary" type="button" onclick="location.href='get-a-quote.html'">
+          <i class="fa fa-file-signature"></i>
+          <span>Get a Quote</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Footer (same as products.html) -->
+    <footer class="footer" id="contact">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-col">
+            <div class="footer-logo">
+              <img src="logo.png" alt="Prabha Graphics" class="footer-logo-img">
+              <span>Prabha Graphics</span>
+            </div>
+            <p>Your trusted partner in Lucknow for all corporate and personalized printing and gifting needs.</p>
+          </div>
+
+          <div class="footer-col">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="products.html#corporate" class="footer-link">Corporate Gifts</a></li>
+              <li><a href="products.html#personalized" class="footer-link">Personalized Gifts</a></li>
+              <li><a href="products.html#other" class="footer-link">Other Products</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h3>Company</h3>
+            <ul>
+              <li><a href="about.html" class="footer-link">About Us</a></li>
+              <li><a href="contact-us.html#main" class="footer-link">Contact Us</a></li>
+              <li><a href="get-a-quote.html" class="footer-link">View Full Catalog</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h3>Contact Us</h3>
+            <div class="contact-info">
+              <p><i class="fas fa-phone"></i> 074579 94888</p>
+              <p><i class="fas fa-map-marker-alt"></i> Shop No. 4/74, Adarsh Market, Gomti Nagar Railway Sta Rd, near TC Eye Centre Road, Vinay Khand 4, Gomti Nagar, Lucknow, Uttar Pradesh 226010</p>
+              <p><i class="fas fa-globe"></i> www.prabhagraphics.in</p>
+            </div>
+            <div class="social-links">
+              <a href="https://www.instagram.com/prabhagraphics/" target="_blank" rel="noopener" class="social-icon" aria-label="Instagram">
+                <i class="fab fa-instagram"></i>
+              </a>
+              <a href="#" class="social-icon" aria-label="YouTube">
+                <i class="fab fa-youtube"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-divider"></div>
+        <div class="footer-bottom">
+          <p>&copy; 2025 Prabha Graphics. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <button id="scrollToTop"><i class="fas fa-arrow-up"></i></button>
+
+  <!-- Firebase: NEWLY ADDED PRODUCTS (same project as products page) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      query,
+      orderBy,
+      limit,
+      onSnapshot
+    } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+    apiKey: "AIzaSyCADm7aarTkJ4Hohsb2xz1EkqrkLWjSQxg",
+    authDomain: "my-project-b3537.firebaseapp.com",
+    projectId: "my-project-b3537",
+    storageBucket: "my-project-b3537.firebasestorage.app",
+    messagingSenderId: "652581310060",
+    appId: "1:652581310060:web:c00691e1c625e1a78ad249",
+    measurementId: "G-CG17J3F6YW"
+  };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const newGrid = document.getElementById('newProductsGrid');
+    const newEmpty = document.getElementById('newEmpty');
+
+    function escapeHtml(s=''){
+      return String(s).replace(/[&<>"']/g, m=>({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      }[m]));
+    }
+
+    const qProducts = query(
+      collection(db,'products'),
+      orderBy('createdAt','desc'),
+      limit(10)
+    );
+
+    onSnapshot(qProducts, snapshot => {
+      newGrid.innerHTML = '';
+      newGrid.setAttribute('aria-busy','false');
+
+      if (snapshot.empty){
+        newEmpty.style.display = 'block';
+        return;
+      }
+      newEmpty.style.display = 'none';
+
+      snapshot.forEach(docSnap => {
+        const p = docSnap.data();
+        const id = docSnap.id;
+
+        const imgSrc = (p.images && p.images[0]) || p.image || p.imageUrl || 'https://placehold.co/400x300/D10007/FFFFFF?text=Product+Image';
+        const price = p.price ? '₹'+p.price : 'View details';
+
+        const card = document.createElement('article');
+        card.className = 'np-card';
+        card.setAttribute('tabindex','0');
+        card.addEventListener('click', () => {
+          location.href = 'products.html#product-' + encodeURIComponent(id);
+        });
+        card.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+            location.href = 'products.html#product-' + encodeURIComponent(id);
+          }
+        });
+
+        card.innerHTML = `
+          <img loading="lazy" decoding="async" src="${escapeHtml(imgSrc)}" alt="${escapeHtml(p.name || 'New product')}" />
+          <div class="np-body">
+            <div class="np-title">${escapeHtml(p.name || 'New product')}</div>
+            <div class="np-meta">
+              <span class="np-price">${escapeHtml(price)}</span>
+              <span class="np-badge">New</span>
+            </div>
+          </div>
+        `;
+        newGrid.appendChild(card);
+      });
+    });
+  </script>
+
+  <!-- Header / navbar JS (same behavior as products.html) -->
+  <script>
+    const navbarEl = document.getElementById('navbar');
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('navLinks');
+    const scrollToTopBtn = document.getElementById('scrollToTop');
+
+    // Navbar scroll effect
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        navbarEl.classList.add('scrolled');
+      } else {
+        navbarEl.classList.remove('scrolled');
+      }
+
+      // Scroll to top visibility
+      if (window.scrollY > 300) {
+        scrollToTopBtn.style.display = 'flex';
+      } else {
+        scrollToTopBtn.style.display = 'none';
+      }
+    });
+
+    // Hamburger menu
+    hamburger.addEventListener('click', () => {
+      const isActive = hamburger.classList.toggle('active');
+      navLinks.classList.toggle('active');
+      hamburger.setAttribute('aria-expanded', isActive ? 'true' : 'false');
+    });
+
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('active');
+        navLinks.classList.remove('active');
+        hamburger.setAttribute('aria-expanded','false');
+      });
+    });
+
+    // Scroll to top
+    scrollToTopBtn.addEventListener('click', () => {
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+
+    // Keyboard support: close mobile nav on ESC
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        hamburger.classList.remove('active');
+        navLinks.classList.remove('active');
+        hamburger.setAttribute('aria-expanded','false');
+      }
+    });
+  </script>
+</body>
+</html>
