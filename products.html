@@ -1,0 +1,1599 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Prabha Graphics - Catalog" />
+  <title>Prabha Graphics — Products</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="logo.png" type="image/png">
+
+  <!-- Fonts & Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+
+    :root{
+      /* Brand */
+      --primary:#D10007;
+      --primary-red:#D10007;
+      --dark-red:#A00006;
+      --white:#ffffff;
+      --black:#000000;
+
+      /* Greys */
+      --gray-50:#f9fafb;
+      --gray-100:#f3f4f6;
+      --gray-200:#e5e7eb;
+      --gray-600:#4b5563;
+      --gray-800:#1f2937;
+      --gray-900:#111827;
+
+      /* Old tokens (products layout) */
+      --dark:#0f172a;
+      --muted:#6b7280;
+      --bg:#fbfbfd;
+      --card:0 10px 30px rgba(2,6,23,0.06);
+      --max:1200px;
+      --gap:16px;
+      --radius:12px;
+      --nav-height:80px;
+    }
+
+    html{
+      scroll-behavior:smooth;
+      height:100%;
+    }
+    body{
+      font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+      background-color:var(--white);
+      color:var(--gray-800);
+      overflow-x:hidden;
+      min-height:100%;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      -webkit-tap-highlight-color:transparent;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar{width:10px}
+    ::-webkit-scrollbar-track{background:var(--gray-100)}
+    ::-webkit-scrollbar-thumb{background:var(--primary-red);border-radius:10px}
+    ::-webkit-scrollbar-thumb:hover{background:var(--dark-red)}
+
+    /* Skip link */
+    .skip-link{
+      position:fixed;left:8px;top:8px;background:#000;color:#fff;padding:8px 12px;
+      border-radius:8px;z-index:9999;transform:translateY(-120%);transition:transform .18s;
+    }
+    .skip-link:focus{transform:translateY(0)}
+
+    .container{
+      max-width:1280px;
+      margin:0 auto;
+      padding:0 20px;
+    }
+
+    /* ==================== NAVBAR (from homepage) ==================== */
+    .navbar{
+      position:fixed;
+      top:0;left:0;right:0;
+      z-index:1000;
+      background-color:var(--white);
+      transition:all 0.3s ease;
+    }
+    .navbar.scrolled{
+      box-shadow:0 10px 25px rgba(0,0,0,0.1);
+    }
+    .nav-container{
+      max-width:1280px;
+      margin:0 auto;
+      padding:16px 20px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+    .nav-logo{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      cursor:pointer;
+      transition:transform 0.3s ease;
+    }
+    .nav-logo:hover{transform:scale(1.05)}
+    .logo-img{
+      width:44px;
+      height:44px;
+      border-radius:999px;
+      object-fit:contain;
+    }
+    .logo-text{
+      font-weight:700;
+      font-size:20px;
+      color:var(--gray-800);
+    }
+    .nav-links{
+      display:flex;
+      gap:24px;
+      list-style:none;
+      align-items:center;
+    }
+    .nav-link{
+      color:var(--gray-800);
+      text-decoration:none;
+      font-weight:500;
+      position:relative;
+      transition:color 0.3s ease;
+      padding-bottom:3px;
+    }
+    .nav-link::after{
+      content:'';
+      position:absolute;
+      bottom:-4px;left:0;
+      width:0;height:2px;
+      background-color:var(--primary-red);
+      transition:width 0.3s ease;
+    }
+    .nav-link:hover::after{width:100%}
+
+    .cta-btn{
+      background-color:var(--primary-red);
+      color:var(--white);
+      border:none;
+      padding:10px 24px;
+      border-radius:8px;
+      font-weight:600;
+      cursor:pointer;
+      transition:all 0.3s ease;
+      font-family:'Poppins',sans-serif;
+      white-space:nowrap;
+    }
+    .cta-btn:hover{
+      background-color:var(--dark-red);
+      transform:scale(1.05);
+    }
+
+    .hamburger{
+      display:none;
+      flex-direction:column;
+      cursor:pointer;
+      margin-left:8px;
+    }
+    .hamburger span{
+      width:24px;
+      height:3px;
+      background-color:var(--gray-800);
+      margin:4px 0;
+      transition:all 0.3s ease;
+      border-radius:2px;
+    }
+    .hamburger.active span:nth-child(1){
+      transform:rotate(-45deg) translate(-6px,6px);
+    }
+    .hamburger.active span:nth-child(2){
+      opacity:0;
+    }
+    .hamburger.active span:nth-child(3){
+      transform:rotate(45deg) translate(-6px,-6px);
+    }
+
+    /* ==================== HERO (products page) ==================== */
+    .hero{
+      min-height:220px;
+      background:linear-gradient(90deg,#fff7f7,#fff);
+      display:flex;
+      align-items:center;
+      margin-top:var(--nav-height);
+      padding:28px 0;
+    }
+    .hero-grid{
+      display:flex;
+      gap:24px;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .hero h1{
+      font-size:26px;
+      margin:0 0 8px 0;
+    }
+    .hero p{
+      color:var(--muted);
+      margin:0;
+      max-width:58ch;
+    }
+    .hero-figure{
+      width:260px;
+      border-radius:12px;
+      overflow:hidden;
+      flex-shrink:0;
+      box-shadow:0 16px 38px rgba(15,23,42,0.15);
+    }
+    .hero-figure img{
+      width:100%;height:100%;display:block;object-fit:cover;
+    }
+
+    /* ==================== CATEGORIES & PRODUCTS ==================== */
+    .categories-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+      gap:var(--gap);
+      margin:22px 0;
+    }
+    .category-card{
+      position:relative;
+      border-radius:var(--radius);
+      overflow:hidden;
+      cursor:pointer;
+      min-height:140px;
+      background:#fff;
+      box-shadow:var(--card);
+      transition:transform .18s,box-shadow .18s;
+    }
+    .category-card:hover{
+      transform:translateY(-6px);
+      box-shadow:0 18px 40px rgba(2,6,23,0.08);
+    }
+    .category-card img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      transition:transform 0.3s ease;
+    }
+    .category-card:hover img{transform:scale(1.05)}
+    .category-overlay{
+      position:absolute;
+      inset:0;
+      background:linear-gradient(180deg,transparent,rgba(0,0,0,0.45));
+      display:flex;
+      align-items:flex-end;
+      padding:14px;
+      color:#fff;
+    }
+    .category-overlay h3{
+      margin:0;font-size:16px;
+    }
+    .category-overlay p{
+      margin:4px 0 0 0;font-size:13px;opacity:0.95;
+    }
+
+    .section{margin:18px 0;padding-bottom:6px}
+    .section h2{margin:0 0 12px 0;font-size:18px}
+
+    .products-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+      gap:14px;
+    }
+    .product-card{
+      background:#fff;
+      border-radius:12px;
+      overflow:hidden;
+      box-shadow:var(--card);
+      display:flex;
+      flex-direction:column;
+      transition:transform .18s;
+    }
+    .product-card:hover{transform:translateY(-6px)}
+    .product-card img{
+      width:100%;
+      height:180px;
+      object-fit:cover;
+    }
+    .product-body{
+      padding:12px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    .product-title{font-size:15px;font-weight:700}
+    .product-vendor{color:var(--muted);font-size:13px}
+    .product-desc{color:#334155;font-size:13px}
+    .product-footer{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      margin-top:8px;
+      flex-wrap:wrap;
+    }
+    .badge{
+      background:#f1f5f9;
+      color:#0f172a;
+      padding:6px 9px;
+      border-radius:999px;
+      font-size:12px;
+    }
+    .price{
+      font-weight:800;
+      color:var(--primary);
+      margin-left:auto;
+      white-space:nowrap;
+    }
+    .old{
+      color:#9ca3af;
+      text-decoration:line-through;
+      font-size:13px;
+    }
+
+    .empty{
+      padding:24px;
+      border-radius:12px;
+      background:#fff;
+      text-align:center;
+      color:var(--muted);
+      box-shadow:var(--card);
+    }
+
+    /* ==================== PRODUCT DETAIL MODAL ==================== */
+    .modal-bg{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:flex-start;
+      justify-content:center;
+      background:rgba(15,23,42,0.7);
+      z-index:2200;
+      padding:32px 12px;
+    }
+    .modal{
+      width:100%;
+      max-width:1100px;
+      background:#ffffff;
+      border-radius:18px;
+      padding:20px 22px 22px;
+      max-height:92vh;
+      overflow:auto;
+      box-shadow:0 30px 80px rgba(15,23,42,0.6);
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+    .modal .top{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
+      flex-wrap:wrap;
+      padding-bottom:10px;
+      border-bottom:1px solid #e5e7eb;
+    }
+    .modal-title{
+      font-size:20px;
+      font-weight:700;
+      margin:0;
+    }
+    .modal-main{
+      display:flex;
+      gap:22px;
+      margin-top:10px;
+      flex-wrap:wrap;
+    }
+    .modal .left{flex:0 0 40%;min-width:260px}
+    .modal .right{flex:1;min-width:260px}
+
+    .main-image{
+      width:100%;
+      height:420px;
+      object-fit:cover;
+      border-radius:12px;
+      border:1px solid #e5e7eb;
+      background:#fff;
+      display:block;
+    }
+    .thumbs{
+      display:flex;
+      gap:8px;
+      margin-top:10px;
+      flex-wrap:wrap;
+    }
+    .thumbs img{
+      width:72px;
+      height:72px;
+      object-fit:cover;
+      border-radius:8px;
+      border:2px solid transparent;
+      cursor:pointer;
+      background:#f9fafb;
+    }
+    .thumbs img.active{border-color:var(--primary)}
+
+    .price-row{
+      display:flex;
+      gap:12px;
+      align-items:baseline;
+      margin:10px 0;
+      flex-wrap:wrap;
+    }
+    .price-row .big{
+      font-size:24px;
+      color:var(--primary);
+      font-weight:800;
+    }
+    .saving{
+      color:#065f46;
+      background:#dcfce7;
+      padding:6px 8px;
+      border-radius:8px;
+      font-weight:600;
+      font-size:13px;
+    }
+    .stock{
+      color:var(--muted);
+      margin-top:4px;
+      font-size:13px;
+    }
+
+    .meta-row{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:8px;
+    }
+    .meta{
+      background:#f8fafc;
+      padding:8px 10px;
+      border-radius:8px;
+      font-size:13px;
+      color:var(--muted);
+    }
+    .specs{
+      margin-top:12px;
+      border-radius:10px;
+      padding:12px;
+      background:#fff;
+      border:1px solid #eef2f7;
+    }
+    .specs table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:14px;
+    }
+    .specs td{
+      padding:6px 8px;
+      border-bottom:1px dashed #f1f5f9;
+      color:var(--muted);
+    }
+    .specs td:first-child{
+      width:40%;
+      color:#374151;
+      font-weight:600;
+    }
+    .tags{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .tag{
+      background:#f1f5f9;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:13px;
+      color:#111;
+    }
+    .trust{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .trust .meta{
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    .actions{
+      display:flex;
+      gap:10px;
+      margin-top:14px;
+      flex-wrap:wrap;
+    }
+    .btn{
+      background:var(--primary);
+      color:#fff;
+      padding:10px 14px;
+      border-radius:10px;
+      border:0;
+      cursor:pointer;
+      font-weight:700;
+      font-family:'Poppins',sans-serif;
+      transition:all 0.2s ease;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+    }
+    .btn:hover{
+      background:var(--dark-red);
+      transform:translateY(-1px);
+    }
+    .btn.ghost{
+      background:#fff;
+      border:1px solid #e5e7eb;
+      color:var(--dark);
+    }
+    .btn.secondary{
+      background:#334155;
+    }
+
+    /* Order modal + friendlier form */
+    .form-row{
+      display:flex;
+      gap:10px;
+      margin-top:8px;
+      flex-wrap:wrap;
+    }
+    .form-row > *{flex:1}
+    input,select,textarea{
+      width:100%;
+      padding:10px;
+      border-radius:8px;
+      border:1px solid #e6e7eb;
+      font-size:14px;
+      font-family:'Poppins',sans-serif;
+    }
+    textarea{resize:vertical}
+    label.form-label{
+      display:block;
+      font-size:13px;
+      margin-bottom:4px;
+      color:var(--gray-700,#374151);
+    }
+    .form-section-title{
+      margin-top:10px;
+      font-size:14px;
+      font-weight:600;
+      color:var(--gray-800);
+    }
+    .form-hint{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:4px;
+    }
+    .o-msg{margin-top:10px}
+
+    /* ==================== FOOTER (from homepage, linked correctly) ==================== */
+    .footer{
+      background-color:var(--gray-900);
+      color:var(--white);
+      padding:64px 0 32px;
+      margin-top:28px;
+    }
+    .footer-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+      gap:40px;
+      margin-bottom:40px;
+    }
+    .footer-col{
+      opacity:0;
+      animation:slideUp 0.8s ease forwards;
+    }
+    .footer-col:nth-child(2){animation-delay:0.1s}
+    .footer-col:nth-child(3){animation-delay:0.2s}
+    .footer-col:nth-child(4){animation-delay:0.3s}
+
+    @keyframes slideUp{
+      from{opacity:0;transform:translateY(20px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+
+    .footer-logo{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:16px;
+    }
+    .footer-logo-img{
+      width:40px;
+      height:40px;
+      border-radius:999px;
+      object-fit:contain;
+    }
+    .footer-col p{
+      color:#d1d5db;
+      line-height:1.6;
+      margin-bottom:16px;
+    }
+    .footer-col h3{
+      font-size:18px;
+      font-weight:600;
+      margin-bottom:16px;
+    }
+    .footer-col ul{list-style:none}
+    .footer-col li{margin-bottom:12px}
+    .footer-link{
+      color:#d1d5db;
+      text-decoration:none;
+      transition:all 0.3s ease;
+    }
+    .footer-link:hover{
+      color:var(--primary-red);
+      transform:translateX(5px);
+    }
+    .contact-info{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+    .contact-info p{
+      display:flex;
+      align-items:flex-start;
+      gap:8px;
+      color:#d1d5db;
+    }
+    .contact-info i{
+      color:var(--primary-red);
+      margin-top:2px;
+    }
+    .social-links{
+      display:flex;
+      gap:16px;
+      margin-top:16px;
+    }
+    .social-icon{
+      width:40px;
+      height:40px;
+      background-color:rgba(255,255,255,0.1);
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:var(--primary-red);
+      text-decoration:none;
+      transition:all 0.3s ease;
+    }
+    .social-icon:hover{
+      background-color:var(--primary-red);
+      color:var(--white);
+      transform:scale(1.2) rotate(10deg);
+    }
+    .footer-divider{
+      height:1px;
+      background:linear-gradient(to right,transparent,rgba(209,0,7,0.3),transparent);
+      margin-bottom:24px;
+    }
+    .footer-bottom{
+      text-align:center;
+      color:#9ca3af;
+    }
+
+    /* Scroll to top button */
+    #scrollToTop{
+      position:fixed;
+      bottom:20px;
+      right:20px;
+      width:50px;
+      height:50px;
+      background-color:var(--primary-red);
+      color:var(--white);
+      border:none;
+      border-radius:50%;
+      cursor:pointer;
+      display:none;
+      z-index:999;
+      font-size:20px;
+      transition:all 0.3s ease;
+      align-items:center;
+      justify-content:center;
+    }
+    #scrollToTop:hover{
+      transform:scale(1.1);
+      background-color:var(--dark-red);
+    }
+
+    /* ==================== RESPONSIVE ==================== */
+    @media (max-width:1024px){
+      .hero-grid{flex-direction:column;align-items:flex-start}
+      .hero-figure{width:100%;max-width:360px}
+      .main-image{height:320px}
+    }
+    @media (max-width:768px){
+      .nav-links{
+        display:none;
+      }
+      .nav-links.active{
+        display:flex;
+        position:fixed;
+        top:var(--nav-height);
+        left:0;
+        width:100%;
+        flex-direction:column;
+        background-color:var(--white);
+        gap:0;
+        padding:16px 0;
+        max-height:calc(100vh - var(--nav-height));
+        overflow-y:auto;
+        box-shadow:0 10px 30px rgba(0,0,0,0.12);
+      }
+      .nav-links.active li{
+        padding:12px 20px;
+        border-bottom:1px solid var(--gray-100);
+      }
+      .hamburger{display:flex}
+      .logo-text{font-size:18px}
+
+      .hero{
+        min-height:200px;
+        padding:18px 0;
+      }
+      .product-card img{height:140px}
+      .products-grid{
+        grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+      }
+      .main-image{height:260px}
+      .modal{padding:14px;max-height:95vh}
+      .modal-main{flex-direction:column}
+      .footer-grid{
+        grid-template-columns:1fr;
+        gap:24px;
+      }
+    }
+    @media (max-width:480px){
+      .container{padding:0 16px}
+      .nav-container{padding:12px 16px}
+      .hero h1{font-size:22px}
+      .hero p{font-size:13px}
+      .section h2{font-size:16px}
+      #scrollToTop{
+        width:40px;
+        height:40px;
+        font-size:16px;
+      }
+    }
+
+    :focus{outline:3px solid rgba(209,0,7,0.18);outline-offset:2px}
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <div class="nav-logo" onclick="location.href='index.html'" role="button" tabindex="0">
+        <img src="logo.png" alt="Prabha Graphics" class="logo-img">
+        <span class="logo-text">Prabha Graphics</span>
+      </div>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="about.html" class="nav-link">About Us</a></li>
+        <li><a href="products.html#corporate" class="nav-link">Corporate Gifts</a></li>
+        <li><a href="products.html#personalized" class="nav-link">Personalized Gifts</a></li>
+        <!-- Business Essentials removed -->
+        <li><a href="contact-us.html" class="nav-link">Contact Us</a></li>
+      </ul>
+
+      <button class="cta-btn" onclick="location.href='get-a-quote.html'">Get a Quote</button>
+
+      <div class="hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- PAGE CONTENT -->
+  <main id="main">
+    <!-- HERO -->
+    <section class="hero" aria-labelledby="heroTitle">
+      <div class="container hero-grid">
+        <div class="left">
+          <h1 id="heroTitle">All Products — Find exactly what you need</h1>
+          <p>Browse corporate gifts and personalized treasures. Click any product for full details, minimum quantity, and bulk pricing, then order directly on WhatsApp or via our form.</p>
+        </div>
+        <figure class="hero-figure" aria-hidden="true">
+          <img loading="lazy" decoding="async" src="banner1.png" alt="Catalog hero"/>
+        </figure>
+      </div>
+    </section>
+
+    <div class="container" style="padding-top:6px;">
+      <!-- Category cards -->
+      <div class="categories-grid" role="list" aria-label="Product categories">
+        <div class="category-card" role="listitem" onclick="scrollToSection('corporate')" tabindex="0" onkeypress="if(event.key==='Enter')scrollToSection('corporate')">
+          <img loading="lazy" decoding="async" src="corporate-img.png"/>
+          <div class="category-overlay"><div><h3>Corporate & Promotional</h3><p>Keychains, Pens, Gift Sets</p></div></div>
+        </div>
+        <div class="category-card" role="listitem" onclick="scrollToSection('personalized')" tabindex="0" onkeypress="if(event.key==='Enter')scrollToSection('personalized')">
+          <img loading="lazy" decoding="async" src="personalized-img.png" alt="Personalized"/>
+          <div class="category-overlay"><div><h3>Personalized Gifts</h3><p>Mugs, Cushions, Photo Gifts</p></div></div>
+        </div>
+        <!-- Business / Apparel category removed — products from those categories will now appear under "Other Products" -->
+        <div class="category-card" role="listitem" onclick="scrollToSection('other')" tabindex="0" onkeypress="if(event.key==='Enter')scrollToSection('other')">
+          <img loading="lazy" decoding="async" src="others-img.png" alt="Other"/>
+          <div class="category-overlay"><div><h3>Other Products</h3><p>Stationery, Accessories, Misc</p></div></div>
+        </div>
+      </div>
+
+      <!-- Product Sections -->
+      <section id="corporate" class="section" aria-label="Corporate Gifts Section">
+        <h2>Corporate & Promotional</h2>
+        <div id="corporateGrid" class="products-grid" aria-live="polite" aria-busy="false"></div>
+        <div id="corporateEmpty" class="empty" style="display:none">No products found in this category.</div>
+      </section>
+
+      <section id="personalized" class="section" aria-label="Personalized Gifts Section">
+        <h2>Personalized Gifts</h2>
+        <div id="personalizedGrid" class="products-grid" aria-live="polite" aria-busy="false"></div>
+        <div id="personalizedEmpty" class="empty" style="display:none">No products found in this category.</div>
+      </section>
+
+      <!-- Business section removed -->
+
+      <section id="other" class="section" aria-label="Other Products Section">
+        <h2>Other Products</h2>
+        <div id="otherGrid" class="products-grid" aria-live="polite" aria-busy="false"></div>
+        <div id="otherEmpty" class="empty" style="display:none">No products found in this category.</div>
+      </section>
+    </div>
+
+    <!-- Product detail modal -->
+    <div id="detailModal" class="modal-bg" role="dialog" aria-hidden="true" aria-labelledby="dTitle" aria-modal="true">
+      <div class="modal" role="document">
+        <div class="top">
+          <div>
+            <h2 id="dTitle" class="modal-title"></h2>
+            <div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
+              <span class="badge" id="dAvailability">In stock</span>
+              <span class="badge" id="dDeliveryBadge">Delivery in 3-6 days</span>
+              <span class="badge" id="dSkuBadge">SKU: —</span>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button class="btn ghost" id="detailCloseBtn" aria-label="Close product details">Close</button>
+          </div>
+        </div>
+
+        <div class="modal-main">
+          <div class="left">
+            <img id="dMainImage" class="main-image" src="" alt="product image" loading="lazy" decoding="async"/>
+            <div class="thumbs" id="dThumbs" aria-hidden="false"></div>
+            <div class="tags" id="dTagList" aria-hidden="false"></div>
+            <div class="trust">
+              <div class="meta"><i class="fa fa-shield-alt" aria-hidden="true"></i> Secure payments</div>
+              <div class="meta"><i class="fa fa-undo" aria-hidden="true"></i> Easy returns</div>
+              <div class="meta"><i class="fa fa-truck" aria-hidden="true"></i> Fast delivery</div>
+            </div>
+          </div>
+
+          <div class="right">
+            <div id="dShortDesc" style="color:#111"></div>
+
+            <div class="price-row" aria-live="polite">
+              <div class="big" id="dPrice">₹0</div>
+              <div class="old" id="dOldPrice"></div>
+              <div class="saving" id="dSaving" style="display:none"></div>
+            </div>
+            <div class="stock" id="dStockInfo">Stock: -</div>
+            <div class="stock" id="dMOQ">Minimum order quantity: -</div>
+            <div class="stock" id="dBulk">Bulk order pricing: -</div>
+
+            <div class="meta-row">
+              <div class="meta" id="dDimensions">Dimensions: -</div>
+              <div class="meta" id="dMaterial">Material: -</div>
+              <div class="meta" id="dWeight">Weight: -</div>
+            </div>
+
+            <div style="margin-top:12px" id="dVariant"></div>
+
+            <div class="specs" style="margin-top:12px">
+              <table id="dSpecsTable" aria-hidden="false"></table>
+            </div>
+
+            <div class="actions">
+              <button class="btn" id="dWhats">
+                <i class="fa fa-whatsapp" aria-hidden="true"></i>
+                <span>Order / Enquiry on WhatsApp</span>
+              </button>
+              <button class="btn secondary" id="dOrder">Order Now</button>
+              <button class="btn ghost" id="dShareBtn">Share</button>
+            </div>
+
+            <div style="margin-top:10px;color:var(--muted);font-size:13px" id="dVendor">Seller: —</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order modal -->
+    <div id="orderModal" class="modal-bg" aria-hidden="true" aria-modal="true">
+      <div class="modal" role="document">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <h3 id="orderTitle">Place Order</h3>
+          <button class="btn ghost" id="orderCloseBtn" aria-label="Close order form">Close</button>
+        </div>
+
+        <form id="orderForm" style="margin-top:12px" novalidate>
+          <div class="form-section-title">Contact details</div>
+          <div class="form-row">
+            <div>
+              <label class="form-label" for="oName">Full name *</label>
+              <input id="oName" placeholder="Your full name" required aria-required="true"/>
+            </div>
+            <div>
+              <label class="form-label" for="oPhone">Phone / WhatsApp *</label>
+              <input id="oPhone" type="tel" placeholder="Phone number (WhatsApp preferred)" required aria-required="true"/>
+            </div>
+          </div>
+          <div class="form-row">
+            <div>
+              <label class="form-label" for="oEmail">Email</label>
+              <input id="oEmail" placeholder="Email (optional)" type="email"/>
+            </div>
+          </div>
+
+          <div class="form-section-title">Delivery address</div>
+          <div class="form-row">
+            <div>
+              <label class="form-label" for="oLine1">Address line 1</label>
+              <input id="oLine1" placeholder="House / building / street"/>
+            </div>
+          </div>
+          <div class="form-row">
+            <div>
+              <label class="form-label" for="oLine2">Address line 2</label>
+              <input id="oLine2" placeholder="Area / landmark (optional)"/>
+            </div>
+          </div>
+          <div class="form-row">
+            <div>
+              <label class="form-label" for="oCity">City</label>
+              <input id="oCity" placeholder="City"/>
+            </div>
+            <div>
+              <label class="form-label" for="oState">State</label>
+              <input id="oState" placeholder="State"/>
+            </div>
+          </div>
+          <div class="form-row">
+            <div>
+              <label class="form-label" for="oPincode">Pincode</label>
+              <input id="oPincode" placeholder="Pincode"/>
+            </div>
+            <div>
+              <label class="form-label" for="oCountry">Country</label>
+              <input id="oCountry" placeholder="Country" value="India"/>
+            </div>
+          </div>
+
+          <div class="form-section-title">Product options</div>
+          <div id="orderVariantBlock" style="margin-top:6px"></div>
+
+          <div class="form-row">
+            <div>
+              <label class="form-label" for="oQty">Quantity</label>
+              <input id="oQty" type="number" min="1" value="1"/>
+              <div class="form-hint">We always respect minimum order quantity shown in product details.</div>
+            </div>
+            <div>
+              <label class="form-label" for="oPayment">Payment method</label>
+              <select id="oPayment" aria-label="Payment method">
+                <option>COD</option>
+                <option>Online</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-section-title">Notes / customization</div>
+          <textarea id="oNote" placeholder="Share text, logo instructions or special request (optional)" rows="3" style="margin-top:8px"></textarea>
+
+          <label style="display:flex;align-items:center;gap:8px;margin-top:8px">
+            <input type="checkbox" id="oWhatsapp" />
+            <span style="color:var(--muted);font-size:13px">Also send this order details to us on WhatsApp</span>
+          </label>
+
+          <div id="oMsg" class="o-msg" aria-live="polite"></div>
+
+          <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn" type="submit">Submit Order</button>
+            <button type="button" class="btn ghost" id="orderCancelBtn">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer" id="contact">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-col">
+            <div class="footer-logo">
+              <img src="logo.png" alt="Prabha Graphics" class="footer-logo-img">
+              <span>Prabha Graphics</span>
+            </div>
+            <p>Your trusted partner in Lucknow for all corporate and personalized printing and gifting needs.</p>
+          </div>
+
+          <div class="footer-col">
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="products.html#corporate" class="footer-link">Corporate Gifts</a></li>
+              <li><a href="products.html#personalized" class="footer-link">Personalized Gifts</a></li>
+              <li><a href="products.html#other" class="footer-link">Other Products</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h3>Company</h3>
+            <ul>
+              <li><a href="about.html" class="footer-link">About Us</a></li>
+              <li><a href="contact-us.html#contact" class="footer-link">Contact Us</a></li>
+              <li><a href="get-a-quote.html" class="footer-link">View Full Catalog</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h3>Contact Us</h3>
+            <div class="contact-info">
+              <p><i class="fas fa-phone"></i> 074579 94888</p>
+              <p><i class="fas fa-map-marker-alt"></i> Shop No. 4/74, Adarsh Market, Gomti Nagar Railway Sta Rd, near TC Eye Centre Road, Vinay Khand 4, Gomti Nagar, Lucknow, Uttar Pradesh 226010</p>
+              <p><i class="fas fa-globe"></i> www.prabhagraphics.in</p>
+            </div>
+            <div class="social-links">
+              <a href="https://www.instagram.com/prabhagraphics/" target="_blank" rel="noopener" class="social-icon" aria-label="Instagram">
+                <i class="fab fa-instagram"></i>
+              </a>
+              <a href="#" class="social-icon" aria-label="YouTube">
+                <i class="fab fa-youtube"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-divider"></div>
+        <div class="footer-bottom">
+          <p>&copy; 2025 Prabha Graphics. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <button id="scrollToTop"><i class="fas fa-arrow-up"></i></button>
+
+  <!-- Firebase + App Logic -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+    import { getFirestore, collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
+
+   const firebaseConfig = {
+   apiKey: "AIzaSyCADm7aarTkJ4Hohsb2xz1EkqrkLWjSQxg",
+   authDomain: "my-project-b3537.firebaseapp.com",
+   projectId: "my-project-b3537",
+   storageBucket: "my-project-b3537.firebasestorage.app",
+   messagingSenderId: "652581310060",
+   appId: "1:652581310060:web:c00691e1c625e1a78ad249",
+   measurementId: "G-CG17J3F6YW"
+ };
+
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const shopPhone = "917457994888"; // wa.me format
+
+    // Grid refs
+    const corporateGrid = document.getElementById('corporateGrid');
+    const personalizedGrid = document.getElementById('personalizedGrid');
+    const otherGrid = document.getElementById('otherGrid');
+
+    // Empty placeholders
+    const empties = {
+      corporate: document.getElementById('corporateEmpty'),
+      personalized: document.getElementById('personalizedEmpty'),
+      other: document.getElementById('otherEmpty')
+    };
+
+    // Detail modal refs
+    const detailModal = document.getElementById('detailModal');
+    const dTitle = document.getElementById('dTitle');
+    const dMainImage = document.getElementById('dMainImage');
+    const dThumbs = document.getElementById('dThumbs');
+    const dShortDesc = document.getElementById('dShortDesc');
+    const dPrice = document.getElementById('dPrice');
+    const dOldPrice = document.getElementById('dOldPrice');
+    const dSaving = document.getElementById('dSaving');
+    const dStockInfo = document.getElementById('dStockInfo');
+    const dVariant = document.getElementById('dVariant');
+    const dVendor = document.getElementById('dVendor');
+    const dTagList = document.getElementById('dTagList');
+    const dDimensions = document.getElementById('dDimensions');
+    const dMaterial = document.getElementById('dMaterial');
+    const dWeight = document.getElementById('dWeight');
+    const dSpecsTable = document.getElementById('dSpecsTable');
+    const dDeliveryBadge = document.getElementById('dDeliveryBadge');
+    const dSkuBadge = document.getElementById('dSkuBadge');
+    const dAvailability = document.getElementById('dAvailability');
+    const dWhats = document.getElementById('dWhats');
+    const dOrderBtn = document.getElementById('dOrder');
+    const dShareBtn = document.getElementById('dShareBtn');
+    const dMOQ = document.getElementById('dMOQ');
+    const dBulk = document.getElementById('dBulk');
+    const detailCloseBtn = document.getElementById('detailCloseBtn');
+
+    // Order modal refs
+    const orderModal = document.getElementById('orderModal');
+    const orderForm = document.getElementById('orderForm');
+    const orderVariantBlock = document.getElementById('orderVariantBlock');
+    const oMsg = document.getElementById('oMsg');
+    const orderCloseBtn = document.getElementById('orderCloseBtn');
+    const orderCancelBtn = document.getElementById('orderCancelBtn');
+
+    let activeProduct = null;
+    let allProducts = [];
+
+    // Real-time products
+    const qProducts = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
+    onSnapshot(qProducts, snapshot => {
+      // Clear grids
+      corporateGrid.innerHTML = '';
+      personalizedGrid.innerHTML = '';
+      otherGrid.innerHTML = '';
+
+      const counts = {corporate:0,personalized:0,other:0};
+
+      allProducts = [];
+      window._prabhaProducts = {};
+
+      snapshot.forEach(docSnap => {
+        const p = docSnap.data(); p.id = docSnap.id;
+        allProducts.push(p);
+        const card = createProductCard(p);
+        const cat = (p.category || '').toLowerCase();
+
+        // New mapping: Business/Apparel removed -> send such products to "other".
+        if (cat.includes('corporate') || cat.includes('promot')) {
+          corporateGrid.appendChild(card); counts.corporate++;
+        }
+        else if (cat.includes('personal')) {
+          personalizedGrid.appendChild(card); counts.personalized++;
+        }
+        else if (cat.includes('business') || cat.includes('essent') || cat.includes('apparel') || cat.includes('shirt') || cat.includes('t-shirt') || cat.includes('polo')) {
+          // Business/apparel categories have been removed from the UI — show them under "Other Products"
+          otherGrid.appendChild(card); counts.other++;
+        }
+        else {
+          otherGrid.appendChild(card); counts.other++;
+        }
+      });
+
+      // toggle empties
+      Object.keys(empties).forEach(k => empties[k].style.display = (counts[k] === 0 ? 'block' : 'none'));
+
+      // preserve hash scroll
+      setTimeout(()=> {
+        const h = location.hash.replace('#','');
+        if (h) scrollToSection(h);
+      }, 200);
+    });
+
+    function createProductCard(p){
+      const card = document.createElement('div');
+      card.className = 'product-card';
+      const discount = p.oldPrice && p.price && p.oldPrice > p.price ? Math.round(((p.oldPrice - p.price)/p.oldPrice)*100) : 0;
+      const img = (p.images && p.images[0]) || p.image || p.imageUrl || '';
+      const fallbackImg = 'https://placehold.co/400x300/D10007/FFFFFF?text=Product+Image';
+
+      card.innerHTML = `
+        <img loading="lazy" decoding="async" src="${escapeHtml(img || fallbackImg)}" alt="${escapeHtml(p.name)}"/>
+        <div class="product-body">
+          <div>
+            <div class="product-title">${escapeHtml(p.name)}</div>
+            <div class="product-vendor">${escapeHtml(p.vendor||'')}</div>
+          </div>
+          <div class="product-desc">${escapeHtml((p.description||'').slice(0,90))}...</div>
+          <div class="product-footer">
+            ${discount ? `<span class="badge">-${discount}%</span>` : `<span class="badge">${escapeHtml(p.type||'ready-made')}</span>`}
+            ${p.oldPrice ? `<span class="old">₹${escapeHtml(String(p.oldPrice))}</span>` : ''}
+            <div class="price">₹${escapeHtml(String(p.price||0))}</div>
+            <button class="btn" type="button" onclick='openDetail("${p.id}")' aria-label="View product details">View</button>
+          </div>
+        </div>
+      `;
+      card.dataset.productId = p.id;
+      window._prabhaProducts[p.id] = p;
+      return card;
+    }
+
+    // Scroll helper for category cards
+    function scrollToSection(id){
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.scrollIntoView({behavior:'smooth', block:'start'});
+      el.style.boxShadow = '0 10px 30px rgba(209,0,7,0.12)';
+      setTimeout(()=> el.style.boxShadow = '', 1300);
+    }
+    window.scrollToSection = scrollToSection;
+
+    // Open detail modal
+    window.openDetail = function(id){
+      const p = window._prabhaProducts && window._prabhaProducts[id];
+      if (!p) return alert('Product not found');
+      activeProduct = p;
+
+      const detailFallbackImg = 'https://placehold.co/800x600/D10007/FFFFFF?text=Product+Preview';
+
+      dTitle.textContent = p.name || '';
+      dMainImage.src = (p.images && p.images[0]) || p.image || p.imageUrl || detailFallbackImg;
+      dThumbs.innerHTML = '';
+      (p.images || []).forEach((u, i) => {
+        const t = document.createElement('img'); t.src = u; if(i===0) t.classList.add('active');
+        t.onclick = () => { dMainImage.src = u; Array.from(dThumbs.children).forEach(c=>c.classList.remove('active')); t.classList.add('active'); };
+        dThumbs.appendChild(t);
+      });
+
+      dShortDesc.textContent = p.shortDescription || (p.description || '').slice(0,220);
+      dPrice.textContent = '₹' + (p.price || 0);
+      dOldPrice.textContent = p.oldPrice ? '₹' + p.oldPrice : '';
+      if(p.oldPrice && p.price && p.oldPrice > p.price){
+        dSaving.style.display='inline-block'; dSaving.textContent = 'Save ₹' + (p.oldPrice - p.price);
+      } else { dSaving.style.display='none'; }
+
+      dStockInfo.textContent = (p.variants && p.variants.length) ? ('Variants: '+p.variants.length) : ('Stock: '+(p.stock||0));
+      dDeliveryBadge.textContent = p.deliveryEstimate || 'Delivery in 3-6 days';
+      dSkuBadge.textContent = 'SKU: ' + (p.sku || '—');
+      dAvailability.textContent = (p.stock > 0 || (p.variants && p.variants.some(v=>v.stock>0))) ? 'In stock' : 'Out of stock';
+
+      const minQty = p.minQty || 1;
+      dMOQ.textContent = 'Minimum order quantity: ' + minQty;
+      dBulk.textContent = 'Bulk order pricing: ' + (p.bulkPricingNote || 'Available for higher quantities – share your required quantity on WhatsApp.');
+
+      // Meta fields
+      dDimensions.textContent = 'Dimensions: ' + (p.dimensions || '-');
+      dMaterial.textContent = 'Material: ' + (p.material || '-');
+      dWeight.textContent = 'Weight: ' + (p.weight || '-');
+
+      // Specs table
+      dSpecsTable.innerHTML = '';
+      const specRows = [
+        ['SKU', p.sku || '-'],
+        ['Brand', p.brand || p.vendor || '-'],
+        ['Material', p.material || '-'],
+        ['Dimensions', p.dimensions || '-'],
+        ['Weight', p.weight || '-'],
+        ['Type', p.type || '-'],
+        ['Category', p.category || '-'],
+        ['Warranty', p.warranty || '-'],
+        ['Minimum Qty', p.minQty ? String(p.minQty) : 'As per product'],
+        ['Bulk Pricing', p.bulkPricingNote || 'Available on request']
+      ];
+      specRows.forEach(([k,v])=>{
+        const tr = document.createElement('tr'); tr.innerHTML = `<td>${escapeHtml(k)}</td><td>${escapeHtml(v)}</td>`;
+        dSpecsTable.appendChild(tr);
+      });
+
+      // Tags
+      dTagList.innerHTML = '';
+      (p.tags || []).forEach(t => {
+        const s = document.createElement('span'); s.className='tag'; s.textContent = t; dTagList.appendChild(s);
+      });
+
+      // Variants
+      dVariant.innerHTML = '';
+      if (p.variants && p.variants.length){
+        const s = document.createElement('select'); s.id='modalVariantSelect';
+        s.innerHTML = '<option value="">Select variant</option>';
+        p.variants.forEach(v => {
+          const opt = document.createElement('option');
+          opt.value = encodeURIComponent(JSON.stringify(v));
+          opt.textContent = `${v.label}${v.price ? ' - ₹'+v.price : ''}${v.stock ? ' ('+v.stock+' in stock)' : ''}`;
+          s.appendChild(opt);
+        });
+        s.onchange = () => {
+          if (!s.value) { dPrice.textContent = '₹' + (p.price||0); dStockInfo.textContent = 'Stock: '+(p.stock||0); return; }
+          const v = JSON.parse(decodeURIComponent(s.value));
+          dPrice.textContent = '₹' + (v.price || p.price || 0);
+          dStockInfo.textContent = v.stock ? ('Stock: '+v.stock) : ('Stock: '+(p.stock||0));
+        };
+        dVariant.appendChild(s);
+      }
+
+      // Seller + actions
+      dVendor.textContent = 'Seller: ' + (p.vendor || 'Prabha Graphics');
+
+      // WhatsApp message including MOQ and bulk info
+      dWhats.onclick = ()=> {
+        const msgLines = [
+          "Hi, I am interested in this product.",
+          `Product: ${p.name}`,
+          `SKU: ${p.sku || '-'}`,
+          "",
+          `Minimum order quantity: ${minQty}`,
+          p.bulkPricingNote
+            ? `Bulk order pricing: ${p.bulkPricingNote}`
+            : "Please share best bulk pricing for higher quantities.",
+          "",
+          "Please share total amount and payment details.",
+          "I will send my logo / text and reference picture here."
+        ];
+        const msg = msgLines.join('\n');
+        window.open(`https://wa.me/${shopPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+      };
+
+      if (p.type === 'customized'){
+        dOrderBtn.style.display = 'none';
+      } else {
+        dOrderBtn.style.display = 'inline-block';
+        dOrderBtn.onclick = ()=> openOrderModal(p);
+      }
+
+      dShareBtn.onclick = () => {
+        const url = location.origin + location.pathname + '#product-' + encodeURIComponent(p.id);
+        if (navigator.share) {
+          navigator.share({title: p.name, text: p.shortDescription || '', url }).catch(()=>{});
+        } else {
+          navigator.clipboard?.writeText(url).then(()=> alert('Product link copied to clipboard'));
+        }
+      };
+
+      // Show modal with focus management
+      detailModal.style.display = 'flex';
+      detailModal.setAttribute('aria-hidden','false');
+      document.body.style.overflow = 'hidden';
+      trapFocus(detailModal);
+    };
+
+    function closeDetail(){
+      detailModal.style.display='none';
+      detailModal.setAttribute('aria-hidden','true');
+      activeProduct=null;
+      document.body.style.overflow = '';
+    }
+
+    // Order modal
+    function openOrderModal(p){
+      activeProduct = p;
+      orderVariantBlock.innerHTML = '';
+
+      const qtyInput = document.getElementById('oQty');
+      const minQty = p.minQty || 1;
+      qtyInput.value = minQty;
+      qtyInput.min = minQty;
+
+      if (p.variants && p.variants.length){
+        const sel = document.createElement('select'); sel.id = 'orderVariant';
+        sel.innerHTML = '<option value="">Select variant</option>';
+        p.variants.forEach(v=> sel.innerHTML += `<option value='${encodeURIComponent(JSON.stringify(v))}'>${v.label}${v.price?' - ₹'+v.price:''}${v.stock?' ('+v.stock+' in stock)':''}</option>`);
+        const wrap = document.createElement('div');
+        wrap.innerHTML = `<label class="form-label" for="orderVariant">Variant</label>`;
+        wrap.appendChild(sel);
+        orderVariantBlock.appendChild(wrap);
+      }
+      if (p.sizes && p.sizes.length){
+        const sel2 = document.createElement('select'); sel2.id='orderSize';
+        sel2.innerHTML = '<option value="">Select size</option>';
+        p.sizes.forEach(s=> sel2.innerHTML += `<option>${s}</option>`);
+        const wrap2 = document.createElement('div');
+        wrap2.innerHTML = `<label class="form-label" for="orderSize">Size</label>`;
+        wrap2.appendChild(sel2);
+        orderVariantBlock.appendChild(wrap2);
+      }
+      if (p.colors && p.colors.length){
+        const sel3 = document.createElement('select'); sel3.id='orderColor';
+        sel3.innerHTML = '<option value="">Select color</option>';
+        p.colors.forEach(c=> sel3.innerHTML += `<option>${c}</option>`);
+        const wrap3 = document.createElement('div');
+        wrap3.innerHTML = `<label class="form-label" for="orderColor">Color</label>`;
+        wrap3.appendChild(sel3);
+        orderVariantBlock.appendChild(wrap3);
+      }
+      orderModal.style.display='flex'; orderModal.setAttribute('aria-hidden','false');
+      document.body.style.overflow='hidden';
+      trapFocus(orderModal);
+    }
+    function closeOrder(){
+      orderModal.style.display='none'; orderModal.setAttribute('aria-hidden','true');
+      orderForm.reset(); oMsg.innerHTML=''; document.body.style.overflow='';
+    }
+
+    // Submit order -> Firestore
+    orderForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!activeProduct) return showOrderError('No product selected.');
+      const name = document.getElementById('oName').value.trim();
+      const phone = document.getElementById('oPhone').value.trim();
+      if (!name || !phone) return showOrderError('Please fill your name and phone number.');
+      const email = document.getElementById('oEmail').value.trim();
+      const line1 = document.getElementById('oLine1').value.trim();
+      const line2 = document.getElementById('oLine2').value.trim();
+      const city = document.getElementById('oCity').value.trim();
+      const state = document.getElementById('oState').value.trim();
+      const pincode = document.getElementById('oPincode').value.trim();
+      const country = document.getElementById('oCountry').value.trim();
+      const qty = parseInt(document.getElementById('oQty').value) || 1;
+      const note = document.getElementById('oNote').value.trim();
+      const alsoWhats = document.getElementById('oWhatsapp').checked;
+      const paymentMethod = document.getElementById('oPayment').value;
+
+      let variant = null;
+      const vsel = document.getElementById('orderVariant');
+      if (vsel && vsel.value) variant = JSON.parse(decodeURIComponent(vsel.value));
+
+      const size = document.getElementById('orderSize') ? document.getElementById('orderSize').value : '';
+      const color = document.getElementById('orderColor') ? document.getElementById('orderColor').value : '';
+
+      const order = {
+        productId: activeProduct.id,
+        productName: activeProduct.name,
+        productSnapshot: {
+          name: activeProduct.name,
+          sku: activeProduct.sku || '',
+          images: activeProduct.images || [],
+          vendor: activeProduct.vendor || ''
+        },
+        productType: activeProduct.type || 'ready-made',
+        variantId: variant ? variant.id : '',
+        variantLabel: variant ? variant.label : '',
+        variantPrice: variant ? (variant.price || activeProduct.price) : activeProduct.price,
+        selectedSize: size || '',
+        selectedColor: color || '',
+        quantity: qty,
+        customerName: name,
+        customerPhone: phone,
+        customerEmail: email || '',
+        address: { line1, line2, city, state, pincode, country },
+        paymentMethod,
+        note: note || '',
+        status: 'pending',
+        createdAt: serverTimestamp()
+      };
+
+      try {
+        const ordersCol = collection(db, 'orders');
+        await addDoc(ordersCol, order);
+        showOrderSuccess('Order saved. We will contact you soon.');
+
+        if (alsoWhats){
+          const lines = [
+            "I have submitted an order from your website.",
+            `Product: ${activeProduct.name}`,
+            `SKU: ${activeProduct.sku || '-'}`,
+            `Qty: ${qty}`,
+            activeProduct.minQty
+              ? `Minimum order quantity: ${activeProduct.minQty}`
+              : 'Minimum order quantity: As discussed',
+            activeProduct.bulkPricingNote
+              ? `Bulk order pricing: ${activeProduct.bulkPricingNote}`
+              : 'Please confirm your best bulk order price for my quantity.',
+            "",
+            `Name: ${name}`,
+            `Phone: ${phone}`,
+            `Address: ${line1} ${line2}, ${city} - ${pincode}`,
+            "",
+            `Payment method: ${paymentMethod}`,
+            "",
+            "Customization text / picture: (I will send here)"
+          ];
+          const waText = lines.join('\n');
+          setTimeout(()=> window.open(`https://wa.me/${shopPhone}?text=${encodeURIComponent(waText)}`, '_blank'), 700);
+        }
+        setTimeout(()=> closeOrder(), 900);
+      } catch (err) {
+        console.error('order save failed', err);
+        showOrderError('Could not submit order: '+ err.message);
+      }
+    });
+
+    function showOrderError(msg){
+      oMsg.innerHTML = `<div style="background:#fee2e2;padding:10px;border-radius:8px;color:#991b1b;font-size:13px">${escapeHtml(msg)}</div>`;
+    }
+    function showOrderSuccess(msg){
+      oMsg.innerHTML = `<div style="background:#dcfce7;padding:10px;border-radius:8px;color:#065f46;font-size:13px">${escapeHtml(msg)}</div>`;
+    }
+
+    // Helpers
+    function escapeHtml(s=''){ return String(s).replace(/[&<>\"']/g, m=> ({'&':'&amp;','<':'&lt;','>':'&gt;', '"':'&quot;',"'":'&#39;'})[m]); }
+
+    // Close buttons and Escape support for modals
+    detailCloseBtn.addEventListener('click', closeDetail);
+    orderCloseBtn.addEventListener('click', closeOrder);
+    orderCancelBtn.addEventListener('click', closeOrder);
+    document.addEventListener('keydown', (e)=>{
+      if (e.key === 'Escape') {
+        if (detailModal.style.display==='flex') closeDetail();
+        if (orderModal.style.display==='flex') closeOrder();
+      }
+    });
+
+    // Hash open product (if you ever want sharable links later)
+    window.addEventListener('load', ()=> {
+      const h = location.hash.replace('#','');
+      if (h.startsWith('product-')) {
+        const id = decodeURIComponent(h.replace('product-',''));
+        setTimeout(()=>{ if(window._prabhaProducts && window._prabhaProducts[id]) openDetail(id); }, 400);
+      }
+    });
+
+    // Simple focus trap (works for modal)
+    let _trap = null;
+    function trapFocus(container){
+      releaseTrap();
+      const focusable = container.querySelectorAll('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])');
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length-1];
+      _trap = function(e){
+        if (e.key === 'Tab'){
+          if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+          else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        }
+      };
+      container.addEventListener('keydown', _trap);
+      setTimeout(()=> first && first.focus(), 50);
+    }
+    function releaseTrap(){
+      if(!_trap) return;
+      document.removeEventListener('keydown', _trap);
+      _trap = null;
+    }
+
+    console.log('🎉 Prabha Graphics Products Page - Business/Apparel removed: such products show under "Other Products" now.');
+  </script>
+
+  <!-- Header / navbar JS (non-module, from homepage) -->
+  <script>
+    const navbarEl = document.getElementById('navbar');
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('navLinks');
+    const scrollToTopBtn = document.getElementById('scrollToTop');
+
+    // Navbar scroll effect
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        navbarEl.classList.add('scrolled');
+      } else {
+        navbarEl.classList.remove('scrolled');
+      }
+
+      // Scroll to top visibility
+      if (window.scrollY > 300) {
+        scrollToTopBtn.style.display = 'flex';
+      } else {
+        scrollToTopBtn.style.display = 'none';
+      }
+    });
+
+    // Hamburger menu
+    hamburger.addEventListener('click', () => {
+      const isActive = hamburger.classList.toggle('active');
+      navLinks.classList.toggle('active');
+      hamburger.setAttribute('aria-expanded', isActive ? 'true' : 'false');
+    });
+
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('active');
+        navLinks.classList.remove('active');
+        hamburger.setAttribute('aria-expanded','false');
+      });
+    });
+
+    // Smooth scroll only for same-page hashes (e.g. #corporate)
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior:'smooth', block:'start' });
+        }
+      });
+    });
+
+    // Scroll to top
+    scrollToTopBtn.addEventListener('click', () => {
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+
+    // Keyboard support
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        hamburger.classList.remove('active');
+        navLinks.classList.remove('active');
+        hamburger.setAttribute('aria-expanded','false');
+      }
+    });
+  </script>
+</body>
+</html>
