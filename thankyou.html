@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Thank You — Prabha Graphics</title>
+  <link rel="icon" href="logo.png">
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+  <style>
+    :root{
+      --primary:#D10007;
+      --primary-dark:#A00006;
+      --black:#111;
+      --muted:#6b7280;
+      --bg:#f9fafb;
+      --card:#ffffff;
+      --radius:16px;
+      --border:#e5e7eb;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;font-family:"Poppins",sans-serif;}
+
+    body{
+      background:linear-gradient(180deg,#fff7f7,#fff);
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      padding:30px 14px;
+    }
+
+    .wrapper{
+      width:100%;
+      max-width:900px;
+      background:var(--card);
+      border-radius:var(--radius);
+      padding:32px;
+      box-shadow:0 25px 70px rgba(15,23,42,0.12);
+      border:1px solid var(--border);
+      animation:fadeUp 0.6s ease;
+    }
+
+    @keyframes fadeUp{
+      from{opacity:0;transform:translateY(20px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+
+    .head{
+      display:flex;
+      align-items:center;
+      gap:18px;
+      margin-bottom:20px;
+    }
+    .head img{
+      width:64px;height:64px;border-radius:12px;object-fit:cover;
+      box-shadow:0 10px 20px rgba(0,0,0,0.1);
+    }
+    .head h1{
+      font-size:26px;
+      font-weight:800;
+      color:#111827;
+      margin-bottom:4px;
+    }
+    .head p{
+      color:var(--muted);
+      font-size:14px;
+      max-width:60ch;
+    }
+
+    .success-badge{
+      background:#dcfce7;
+      color:#065f46;
+      padding:10px 14px;
+      border-radius:12px;
+      font-weight:700;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      margin-bottom:16px;
+      font-size:14px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:1.2fr 1fr;
+      gap:20px;
+    }
+    @media(max-width:800px){
+      .grid{grid-template-columns:1fr;gap:14px;}
+    }
+
+    .card{
+      background:white;
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:20px;
+      box-shadow:0 10px 20px rgba(15,23,42,0.05);
+    }
+    .card h2{
+      font-size:18px;
+      font-weight:700;
+      color:#111827;
+      margin-bottom:10px;
+    }
+    .card p{
+      color:#374151;
+      font-size:14px;
+      margin:6px 0;
+      line-height:1.5;
+    }
+
+    .receipt-row{
+      display:flex;
+      justify-content:space-between;
+      padding:8px 0;
+      border-bottom:1px dashed #f1f5f9;
+      font-size:14px;
+      color:#374151;
+    }
+    .receipt-row:last-child{
+      border-bottom:0;
+    }
+    .total{
+      font-weight:800;
+      color:var(--primary);
+      font-size:18px;
+    }
+
+    .actions{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      margin-top:12px;
+    }
+
+    .btn{
+      padding:12px 14px;
+      border:none;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:700;
+      font-size:14px;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:12px;
+    }
+    .btn.primary{
+      background:var(--primary);
+      color:white;
+    }
+    .btn.primary:hover{
+      background:var(--primary-dark);
+    }
+    .btn.ghost{
+      background:#f9fafb;
+      border:1px solid var(--border);
+      color:#111;
+    }
+    .btn.wa{
+      background:#25D366;
+      color:#013220;
+    }
+
+    .muted{
+      font-size:13px;
+      color:var(--muted);
+      margin-top:8px;
+      text-align:center;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="wrapper">
+    <div class="head">
+      <img src="logo.png" alt="Prabha Graphics">
+      <div>
+        <h1 id="title">Thank You!</h1>
+        <p id="subtitle">We received your submission and will contact you shortly.</p>
+      </div>
+    </div>
+
+    <div class="success-badge" id="statusBadge" style="display:none;">
+      <i class="fa-solid fa-circle-check"></i>
+      <span id="badgeText">Success</span>
+    </div>
+
+    <div class="grid">
+      <!-- LEFT -->
+      <div class="card" id="leftCard">
+        <h2 id="leftTitle">Your request has been received</h2>
+        <p id="leftMsg">Thank you for choosing Prabha Graphics. We will get back to you as soon as possible.</p>
+
+        <div id="receipt" style="margin-top:16px;display:none;">
+          <h2>Order Summary</h2>
+
+          <div class="receipt-row">
+            <div>Order ID</div><div id="rId">—</div>
+          </div>
+          <div class="receipt-row">
+            <div>Item</div><div id="rName">—</div>
+          </div>
+          <div class="receipt-row">
+            <div>Date</div><div id="rDate"></div>
+          </div>
+          <div class="receipt-row">
+            <div>Payment</div><div id="rPayment">—</div>
+          </div>
+          <div class="receipt-row">
+            <div>Total</div><div class="total" id="rAmount">₹0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div class="card">
+        <h2>Next Steps</h2>
+
+        <div class="actions">
+          <button class="btn primary" onclick="location.href='products.html'">
+            <i class="fa-solid fa-bag-shopping"></i>
+            View Products
+          </button>
+
+          <button class="btn ghost" onclick="location.href='index.html'">
+            <i class="fa-solid fa-house"></i>
+            Go to Home
+          </button>
+
+          <button class="btn wa" id="waBtn">
+            <i class="fa-brands fa-whatsapp"></i>
+            Chat on WhatsApp
+          </button>
+        </div>
+
+        <div class="muted">
+          For any questions, message us on WhatsApp — we reply quickly.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Shop WhatsApp number
+    const shopPhone = "917457994888";
+
+    function qp(key){
+      const u = new URLSearchParams(location.search);
+      return u.get(key) ? decodeURIComponent(u.get(key)) : null;
+    }
+
+    const type = (qp("type") || "generic").toLowerCase();
+    const id = qp("id") || qp("orderId") || "";
+    const name = qp("name") || qp("product") || "";
+    const amount = qp("amount") || "";
+    const customer = qp("customer") || "";
+    const payment = qp("payment") || "Not specified";
+
+    const statusBadge = document.getElementById("statusBadge");
+    const badgeText = document.getElementById("badgeText");
+
+    const title = document.getElementById("title");
+    const subtitle = document.getElementById("subtitle");
+
+    const leftTitle = document.getElementById("leftTitle");
+    const leftMsg = document.getElementById("leftMsg");
+
+    const receipt = document.getElementById("receipt");
+    const rId = document.getElementById("rId");
+    const rName = document.getElementById("rName");
+    const rAmount = document.getElementById("rAmount");
+    const rPayment = document.getElementById("rPayment");
+    const rDate = document.getElementById("rDate");
+
+    rDate.textContent = new Date().toLocaleString();
+
+    if (["order","quote","service"].includes(type) || id || name){
+      statusBadge.style.display = "inline-flex";
+
+      if(type==="order"){
+        badgeText.textContent = "Order Received";
+        title.textContent = "Thank You — Order Confirmed";
+        subtitle.textContent = "We received your order. Our team will contact you soon.";
+        leftTitle.textContent = "Order Received Successfully";
+      }
+      else if(type==="quote"){
+        badgeText.textContent = "Quote Submitted";
+        title.textContent = "Thank You — Quote Request Received";
+        subtitle.textContent = "We will respond with pricing shortly.";
+        leftTitle.textContent = "Your Quote Request Is Submitted";
+      }
+      else{
+        badgeText.textContent = "Request Received";
+        title.textContent = "Thank You — Request Received";
+        leftTitle.textContent = "We Received Your Request";
+      }
+
+      leftMsg.textContent = "We will reach out shortly with next steps and details.";
+
+      receipt.style.display = "block";
+      rId.textContent = id || "—";
+      rName.textContent = name || "—";
+      rAmount.textContent = amount ? "₹" + amount : "₹0";
+      rPayment.textContent = payment;
+    }
+
+    document.getElementById("waBtn").onclick = function(){
+      const msg =
+        "Hi, I have a query regarding my recent " +
+        (type==="order"?"order":"request") +
+        (id?` (ID: ${id})`:"") +
+        (name?`\nProduct: ${name}`:"") +
+        "\nPlease assist.";
+
+      window.open(`https://wa.me/${shopPhone}?text=${encodeURIComponent(msg)}`,"_blank");
+    };
+
+  </script>
+
+</body>
+</html>
