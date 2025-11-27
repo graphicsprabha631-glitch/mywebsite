@@ -244,7 +244,7 @@
       transform:translateY(-1px);
     }
 
-    /* ====== HERO FIGURE: replaced with slider (keeps same sizing) ====== */
+    /* ====== HERO FIGURE: slider with fixed heights ====== */
     .hero-figure{
       width:320px;
       border-radius:18px;
@@ -254,40 +254,39 @@
       position:relative;
       background:#fff;
     }
+
     /* Slider container inside hero-figure */
     .slider {
       position:relative;
       width:100%;
       height:100%;
-      min-height:200px;
+      min-height:220px;
       display:block;
       overflow:hidden;
       background:#fff;
     }
-    .slider .slides {
-      display:flex;
-      height:100%;
-      width:300%;
-      transition:transform 520ms cubic-bezier(.2,.9,.3,1);
+
+    /* FIX: force consistent slide height so different image sizes won't change layout */
+    #homeSlider .slides { display:flex; height:360px; transition:transform 520ms cubic-bezier(.2,.9,.3,1); }
+    #homeSlider .slide  { flex:0 0 100%; height:360px; overflow:hidden; display:block; }
+    #homeSlider .slide img { width:100%; height:100%; object-fit:cover; object-position:center; display:block; }
+
+    /* responsive heights */
+    @media (max-width:1024px){
+      #homeSlider .slides, #homeSlider .slide { height:320px; }
     }
-    .slider .slide {
-      flex:0 0 100%;
-      height:100%;
-      display:block;
-      object-fit:cover;
-      width:100%;
+    @media (max-width:768px){
+      #homeSlider .slides, #homeSlider .slide { height:260px; }
     }
-    .slider .slide img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      display:block;
+    @media (max-width:480px){
+      #homeSlider .slides, #homeSlider .slide { height:200px; }
     }
+
     .slide-btn{
       position:absolute;
       top:50%;
       transform:translateY(-50%);
-      background:rgba(255,255,255,0.9);
+      background:rgba(255,255,255,0.92);
       border:0;
       width:40px;height:40px;border-radius:10px;
       display:flex;align-items:center;justify-content:center;
@@ -295,6 +294,7 @@
       cursor:pointer;
       font-size:20px;
       color:var(--primary-red);
+      z-index:15;
     }
     .slide-btn:focus{outline:3px solid rgba(209,0,7,0.18);outline-offset:3px}
     .slide-btn.prev{left:10px}
@@ -395,7 +395,7 @@
       align-items:center;
     }
 
-    /* rest of CSS unchanged (kept as original) */
+    /* MINI ABOUT */
     .mini-about{
       padding:30px 0 28px;
     }
@@ -768,10 +768,10 @@
                 <img loading="lazy" decoding="async" src="banner1.png" alt="Prabha Graphics hero image 1">
               </div>
               <div class="slide" role="listitem">
-                <img loading="lazy" decoding="async" src="banner2.jpg" alt="Prabha Graphics hero image 2">
+                <img loading="lazy" decoding="async" src="banner2.png" alt="Prabha Graphics hero image 2">
               </div>
               <div class="slide" role="listitem">
-                <img loading="lazy" decoding="async" src="banner3.jpg" alt="Prabha Graphics hero image 3">
+                <img loading="lazy" decoding="async" src="banner3.png" alt="Prabha Graphics hero image 3">
               </div>
             </div>
 
@@ -851,9 +851,9 @@
         </div>
         <div class="about-images">
           <!-- Replace these image paths with your real photos -->
-          <img src="about-1.png" alt="Samples of custom gifts">
-          <img src="about-2.png" alt="Printed t-shirts and mugs">
-          <img src="about-3.png" alt="Corporate gift sets">
+          <img src="banner1.png" alt="Samples of custom gifts">
+          <img src="banner2.jpg" alt="Printed t-shirts and mugs">
+          <img src="banner3.jpg" alt="Corporate gift sets">
         </div>
       </div>
     </section>
@@ -1029,72 +1029,111 @@
     });
   </script>
 
-  <!-- SLIDER JS: minimal, lightweight -->
+  <!-- SLIDER JS (improved auto-play, stable on resize, resume after interaction) -->
   <script>
-    (function(){
-      const slider = document.getElementById('homeSlider');
-      if(!slider) return;
-      const slidesContainer = slider.querySelector('.slides');
-      const slides = Array.from(slider.querySelectorAll('.slide'));
-      const prevBtn = document.getElementById('slidePrev');
-      const nextBtn = document.getElementById('slideNext');
-      const dots = Array.from(document.querySelectorAll('#sliderDots .dot'));
-      let index = 0;
-      let autoplay = true;
-      const interval = 4000;
-      let timer = null;
+  (function () {
+    const slider = document.getElementById("homeSlider");
+    if (!slider) return;
 
-      function goTo(i){
-        index = (i + slides.length) % slides.length;
-        const offset = index * -100;
-        slidesContainer.style.transform = `translateX(${offset}%)`;
-        dots.forEach(d => d.classList.remove('active'));
-        if(dots[index]) dots[index].classList.add('active');
-      }
-      function next(){ goTo(index+1); }
-      function prev(){ goTo(index-1); }
+    const slidesContainer = slider.querySelector(".slides");
+    const slides = Array.from(slider.querySelectorAll(".slide"));
+    const prevBtn = document.getElementById("slidePrev");
+    const nextBtn = document.getElementById("slideNext");
+    const dots = Array.from(document.querySelectorAll("#sliderDots .dot"));
 
-      // events
-      nextBtn.addEventListener('click', ()=>{ next(); resetTimer(); });
-      prevBtn.addEventListener('click', ()=>{ prev(); resetTimer(); });
+    let index = 0;
+    let autoplay = true;
+    let timer = null;
 
-      dots.forEach(d => {
-        d.addEventListener('click', (e)=>{
-          const i = Number(d.dataset.index);
-          goTo(i);
-          resetTimer();
-        });
+    const INTERVAL = 4000; // 4 seconds
+
+    function goTo(i) {
+      index = (i + slides.length) % slides.length;
+      slidesContainer.style.transform = `translateX(-${index * 100}%)`;
+      dots.forEach((d) => d.classList.remove("active"));
+      if(dots[index]) dots[index].classList.add("active");
+    }
+
+    function next() {
+      goTo(index + 1);
+    }
+
+    function prev() {
+      goTo(index - 1);
+    }
+
+    // Button Events
+    nextBtn.addEventListener("click", () => {
+      autoplay = false;
+      next();
+      restartAutoplay();
+    });
+
+    prevBtn.addEventListener("click", () => {
+      autoplay = false;
+      prev();
+      restartAutoplay();
+    });
+
+    // Dot Navigation
+    dots.forEach((dot) => {
+      dot.addEventListener("click", () => {
+        autoplay = false;
+        goTo(Number(dot.dataset.index));
+        restartAutoplay();
       });
+    });
 
-      // keyboard support
-      slider.addEventListener('keydown', (e)=>{
-        if(e.key === 'ArrowLeft') { prev(); resetTimer(); }
-        if(e.key === 'ArrowRight') { next(); resetTimer(); }
-      });
+    // Auto Slide
+    function startAutoplay() {
+      if (timer) clearInterval(timer);
+      timer = setInterval(() => {
+        if (autoplay) next();
+      }, INTERVAL);
+    }
 
-      // autoplay
-      function startTimer(){
-        if(timer) clearInterval(timer);
-        timer = setInterval(()=> { if(autoplay) next(); }, interval);
+    function restartAutoplay() {
+      if (timer) clearInterval(timer);
+      setTimeout(() => {
+        autoplay = true;
+        startAutoplay();
+      }, 3000); // resume after 3 seconds
+    }
+
+    // Pause on hover/focus
+    slider.addEventListener("mouseenter", () => (autoplay = false));
+    slider.addEventListener("mouseleave", () => (autoplay = true));
+    slider.addEventListener("focusin", () => (autoplay = false));
+    slider.addEventListener("focusout", () => (autoplay = true));
+
+    // Keyboard Support
+    slider.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowLeft") {
+        autoplay = false;
+        prev();
+        restartAutoplay();
       }
-      function resetTimer(){ autoplay = true; startTimer(); }
+      if (e.key === "ArrowRight") {
+        autoplay = false;
+        next();
+        restartAutoplay();
+      }
+    });
 
-      // pause on hover / focus
-      slider.addEventListener('mouseenter', ()=> autoplay = false);
-      slider.addEventListener('mouseleave', ()=> autoplay = true);
-      slider.addEventListener('focusin', ()=> autoplay = false);
-      slider.addEventListener('focusout', ()=> autoplay = true);
+    // Keep slider stable on resize
+    window.addEventListener("resize", () => {
+      slidesContainer.style.transition = "none";
+      goTo(index);
+      requestAnimationFrame(() => {
+        slidesContainer.style.transition = "transform 520ms cubic-bezier(.2,.9,.3,1)";
+      });
+    });
 
-      // ensure images are sized correctly on load / resize
-      window.addEventListener('resize', ()=> goTo(index));
-
-      // init
-      goTo(0);
-      startTimer();
-
-      // make slider focusable for keyboard
-      slider.tabIndex = 0;
-    })();
+    // Init
+    goTo(0);
+    startAutoplay();
+    slider.tabIndex = 0;
+  })();
   </script>
 
   <!-- Header / navbar JS (same behavior as products.html) -->
