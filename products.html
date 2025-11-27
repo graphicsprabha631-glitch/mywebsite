@@ -912,11 +912,11 @@
           <div class="form-row">
             <div>
               <label class="form-label" for="oName">Full name *</label>
-              <input id="oName" placeholder="Your full name" required aria-required="true"/>
+              <input id="oName" placeholder="Your full name" required aria-required="true" pattern="[A-Za-z\s]+" />
             </div>
             <div>
               <label class="form-label" for="oPhone">Phone / WhatsApp *</label>
-              <input id="oPhone" type="tel" placeholder="Phone number (WhatsApp preferred)" required aria-required="true"/>
+              <input id="oPhone" type="tel" placeholder="Phone number (WhatsApp preferred)" required aria-required="true" />
             </div>
           </div>
           <div class="form-row">
@@ -1069,7 +1069,6 @@
    measurementId: "G-CG17J3F6YW"
  };
 
-
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const shopPhone = "917457994888"; // wa.me format
@@ -1121,8 +1120,55 @@
     const orderCloseBtn = document.getElementById('orderCloseBtn');
     const orderCancelBtn = document.getElementById('orderCancelBtn');
 
+    // Name + phone inputs (for validation rules)
+    const oName = document.getElementById('oName');
+    const oPhone = document.getElementById('oPhone');
+
     let activeProduct = null;
     let allProducts = [];
+
+    // ---------- INPUT VALIDATION (NAME + PHONE) ----------
+    // Name: only letters and spaces (sanitize while typing)
+    oName.addEventListener('input', () => {
+      oName.value = oName.value.replace(/[^a-zA-Z\s]/g, '');
+    });
+    // Prevent paste with invalid characters into name
+    oName.addEventListener('paste', (e) => {
+      const txt = (e.clipboardData || window.clipboardData).getData('text');
+      if (!/^[A-Za-z\s]+$/.test(txt)) {
+        e.preventDefault();
+        const cleaned = txt.replace(/[^a-zA-Z\s]/g, '');
+        document.execCommand('insertText', false, cleaned);
+      }
+    });
+
+    // Phone: only digits (sanitize while typing)
+    oPhone.addEventListener('input', () => {
+      oPhone.value = oPhone.value.replace(/[^0-9]/g, '');
+    });
+    // Prevent paste with non-digits
+    oPhone.addEventListener('paste', (e) => {
+      const txt = (e.clipboardData || window.clipboardData).getData('text');
+      if (!/^\d+$/.test(txt)) {
+        e.preventDefault();
+        const cleaned = txt.replace(/\D/g, '');
+        document.execCommand('insertText', false, cleaned);
+      }
+    });
+
+    // ---------- BULK PRICING FORMATTER (USES ADMIN bulkPricing) ----------
+    function formatBulkPricing(p){
+      const bp = p.bulkPricing || {};
+      const parts = [];
+      if (bp['10'])  parts.push(`10+ units: ₹${bp['10']}/pc`);
+      if (bp['50'])  parts.push(`50+ units: ₹${bp['50']}/pc`);
+      if (bp['100']) parts.push(`100+ units: ₹${bp['100']}/pc`);
+
+      if (!parts.length){
+        return 'Available for higher quantities – share your required quantity on WhatsApp.';
+      }
+      return parts.join(' | ');
+    }
 
     // Real-time products
     const qProducts = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
@@ -1231,21 +1277,23 @@
         dSaving.style.display='inline-block'; dSaving.textContent = 'Save ₹' + (p.oldPrice - p.price);
       } else { dSaving.style.display='none'; }
 
-      dStockInfo.textContent = (p.variants && p.variants.length) ? ('Variants: '+p.variants.length) : ('Stock: '+(p.stock||0));
+      // Hide the raw stock text in popup as requested
+      dStockInfo.style.display = 'none';
+
       dDeliveryBadge.textContent = p.deliveryEstimate || 'Delivery in 3-6 days';
       dSkuBadge.textContent = 'SKU: ' + (p.sku || '—');
       dAvailability.textContent = (p.stock > 0 || (p.variants && p.variants.some(v=>v.stock>0))) ? 'In stock' : 'Out of stock';
 
       const minQty = p.minQty || 1;
       dMOQ.textContent = 'Minimum order quantity: ' + minQty;
-      dBulk.textContent = 'Bulk order pricing: ' + (p.bulkPricingNote || 'Available for higher quantities – share your required quantity on WhatsApp.');
+      dBulk.textContent = 'Bulk order pricing: ' + formatBulkPricing(p);
 
       // Meta fields
       dDimensions.textContent = 'Dimensions: ' + (p.dimensions || '-');
       dMaterial.textContent = 'Material: ' + (p.material || '-');
       dWeight.textContent = 'Weight: ' + (p.weight || '-');
 
-      // Specs table
+      // Specs table (Warranty row REMOVED)
       dSpecsTable.innerHTML = '';
       const specRows = [
         ['SKU', p.sku || '-'],
@@ -1255,9 +1303,8 @@
         ['Weight', p.weight || '-'],
         ['Type', p.type || '-'],
         ['Category', p.category || '-'],
-        ['Warranty', p.warranty || '-'],
         ['Minimum Qty', p.minQty ? String(p.minQty) : 'As per product'],
-        ['Bulk Pricing', p.bulkPricingNote || 'Available on request']
+        ['Bulk Pricing', formatBulkPricing(p)]
       ];
       specRows.forEach(([k,v])=>{
         const tr = document.createElement('tr'); tr.innerHTML = `<td>${escapeHtml(k)}</td><td>${escapeHtml(v)}</td>`;
@@ -1282,28 +1329,29 @@
           s.appendChild(opt);
         });
         s.onchange = () => {
-          if (!s.value) { dPrice.textContent = '₹' + (p.price||0); dStockInfo.textContent = 'Stock: '+(p.stock||0); return; }
+          if (!s.value) {
+            dPrice.textContent = '₹' + (p.price||0);
+            return;
+          }
           const v = JSON.parse(decodeURIComponent(s.value));
           dPrice.textContent = '₹' + (v.price || p.price || 0);
-          dStockInfo.textContent = v.stock ? ('Stock: '+v.stock) : ('Stock: '+(p.stock||0));
         };
         dVariant.appendChild(s);
       }
 
-      // Seller + actions
-      dVendor.textContent = 'Seller: ' + (p.vendor || 'Prabha Graphics');
+      // Seller line removed visually
+      dVendor.style.display = 'none';
 
-      // WhatsApp message including MOQ and bulk info
+      // WhatsApp message including MOQ and bulk info (uses bulkPricing from admin)
       dWhats.onclick = ()=> {
+        const bulkText = formatBulkPricing(p);
         const msgLines = [
           "Hi, I am interested in this product.",
           `Product: ${p.name}`,
           `SKU: ${p.sku || '-'}`,
           "",
           `Minimum order quantity: ${minQty}`,
-          p.bulkPricingNote
-            ? `Bulk order pricing: ${p.bulkPricingNote}`
-            : "Please share best bulk pricing for higher quantities.",
+          `Bulk order pricing: ${bulkText}`,
           "",
           "Please share total amount and payment details.",
           "I will send my logo / text and reference picture here."
@@ -1352,6 +1400,14 @@
       qtyInput.value = minQty;
       qtyInput.min = minQty;
 
+      // enforce min while typing (local to this product)
+      const enforceMin = () => {
+        const val = parseInt(qtyInput.value) || 0;
+        if (val < minQty) qtyInput.value = minQty;
+      };
+      qtyInput.removeEventListener('input', enforceMin); // avoid duplicates
+      qtyInput.addEventListener('input', enforceMin);
+
       if (p.variants && p.variants.length){
         const sel = document.createElement('select'); sel.id = 'orderVariant';
         sel.innerHTML = '<option value="">Select variant</option>';
@@ -1392,9 +1448,16 @@
     orderForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!activeProduct) return showOrderError('No product selected.');
+
       const name = document.getElementById('oName').value.trim();
       const phone = document.getElementById('oPhone').value.trim();
-      if (!name || !phone) return showOrderError('Please fill your name and phone number.');
+
+      // client-side validations (extra)
+      if (!name) return showOrderError('Please enter your name.');
+      if (!/^[A-Za-z\s]+$/.test(name)) return showOrderError('Name can only contain letters and spaces.');
+      if (!phone) return showOrderError('Please enter your phone number.');
+      if (!/^\d+$/.test(phone)) return showOrderError('Phone must contain digits only.');
+
       const email = document.getElementById('oEmail').value.trim();
       const line1 = document.getElementById('oLine1').value.trim();
       const line2 = document.getElementById('oLine2').value.trim();
@@ -1402,7 +1465,12 @@
       const state = document.getElementById('oState').value.trim();
       const pincode = document.getElementById('oPincode').value.trim();
       const country = document.getElementById('oCountry').value.trim();
-      const qty = parseInt(document.getElementById('oQty').value) || 1;
+      const qty = parseInt(document.getElementById('oQty').value) || 0;
+
+      // enforce minQty on submit
+      const minQtyAllowed = activeProduct.minQty || 1;
+      if (qty < minQtyAllowed) return showOrderError(`Minimum order quantity for this product is ${minQtyAllowed}. Please increase quantity.`);
+
       const note = document.getElementById('oNote').value.trim();
       const alsoWhats = document.getElementById('oWhatsapp').checked;
       const paymentMethod = document.getElementById('oPayment').value;
@@ -1446,17 +1514,15 @@
         showOrderSuccess('Order saved. We will contact you soon.');
 
         if (alsoWhats){
+          const minQty = activeProduct.minQty || 1;
+          const bulkText = formatBulkPricing(activeProduct);
           const lines = [
             "I have submitted an order from your website.",
             `Product: ${activeProduct.name}`,
             `SKU: ${activeProduct.sku || '-'}`,
             `Qty: ${qty}`,
-            activeProduct.minQty
-              ? `Minimum order quantity: ${activeProduct.minQty}`
-              : 'Minimum order quantity: As discussed',
-            activeProduct.bulkPricingNote
-              ? `Bulk order pricing: ${activeProduct.bulkPricingNote}`
-              : 'Please confirm your best bulk order price for my quantity.',
+            `Minimum order quantity: ${minQty}`,
+            `Bulk order pricing: ${bulkText}`,
             "",
             `Name: ${name}`,
             `Phone: ${phone}`,
@@ -1469,7 +1535,13 @@
           const waText = lines.join('\n');
           setTimeout(()=> window.open(`https://wa.me/${shopPhone}?text=${encodeURIComponent(waText)}`, '_blank'), 700);
         }
-        setTimeout(()=> closeOrder(), 900);
+
+        // After placing order, redirect to thankyou.html
+        setTimeout(()=> {
+          closeOrder();
+          window.location.href = 'thankyou.html';
+        }, 900);
+
       } catch (err) {
         console.error('order save failed', err);
         showOrderError('Could not submit order: '+ err.message);
@@ -1529,7 +1601,7 @@
       _trap = null;
     }
 
-    console.log('🎉 Prabha Graphics Products Page - Business/Apparel removed: such products show under "Other Products" now.');
+    console.log('🎉 Prabha Graphics Products Page - Business/Apparel removed: such products show under "Other Products" now. MinQty enforced, name/phone validation added, redirect enabled.');
   </script>
 
   <!-- Header / navbar JS (non-module, from homepage) -->
