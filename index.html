@@ -243,18 +243,84 @@
       color:#fff;
       transform:translateY(-1px);
     }
+
+    /* ====== HERO FIGURE: replaced with slider (keeps same sizing) ====== */
     .hero-figure{
       width:320px;
       border-radius:18px;
       overflow:hidden;
       flex-shrink:0;
       box-shadow:0 16px 38px rgba(15,23,42,0.16);
+      position:relative;
+      background:#fff;
     }
-    .hero-figure img{
-      width:100%;height:100%;display:block;object-fit:cover;
+    /* Slider container inside hero-figure */
+    .slider {
+      position:relative;
+      width:100%;
+      height:100%;
+      min-height:200px;
+      display:block;
+      overflow:hidden;
+      background:#fff;
+    }
+    .slider .slides {
+      display:flex;
+      height:100%;
+      width:300%;
+      transition:transform 520ms cubic-bezier(.2,.9,.3,1);
+    }
+    .slider .slide {
+      flex:0 0 100%;
+      height:100%;
+      display:block;
+      object-fit:cover;
+      width:100%;
+    }
+    .slider .slide img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+    .slide-btn{
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      background:rgba(255,255,255,0.9);
+      border:0;
+      width:40px;height:40px;border-radius:10px;
+      display:flex;align-items:center;justify-content:center;
+      box-shadow:0 8px 20px rgba(2,6,23,0.12);
+      cursor:pointer;
+      font-size:20px;
+      color:var(--primary-red);
+    }
+    .slide-btn:focus{outline:3px solid rgba(209,0,7,0.18);outline-offset:3px}
+    .slide-btn.prev{left:10px}
+    .slide-btn.next{right:10px}
+    .slider .dots{
+      position:absolute;
+      left:50%;
+      transform:translateX(-50%);
+      bottom:10px;
+      display:flex;
+      gap:8px;
+      z-index:20;
+    }
+    .slider .dot{
+      width:10px;height:10px;border-radius:50%;
+      background:rgba(255,255,255,0.85);
+      border:1px solid rgba(0,0,0,0.06);
+      cursor:pointer;
+    }
+    .slider .dot.active{
+      background:var(--primary-red);
+      box-shadow:0 6px 16px rgba(209,0,7,0.18);
+      transform:scale(1.15);
     }
 
-    /* ==================== HOME CATEGORIES ==================== */
+    /* ==================== CATEGORIES & PRODUCTS ==================== */
     .home-categories{
       padding:32px 0 24px;
     }
@@ -329,10 +395,9 @@
       align-items:center;
     }
 
-    /* ==================== MINI ABOUT SECTION ==================== */
+    /* rest of CSS unchanged (kept as original) */
     .mini-about{
       padding:30px 0 28px;
-      background:var(--gray-50);
     }
     .about-grid{
       display:flex;
@@ -380,7 +445,7 @@
       box-shadow:0 8px 20px rgba(15,23,42,0.12);
     }
 
-    /* ==================== NEWLY ADDED PRODUCTS ==================== */
+    /* NEWLY ADDED PRODUCTS */
     .home-new{
       padding:32px 0 26px;
     }
@@ -446,7 +511,7 @@
       text-align:center;
     }
 
-    /* ==================== CTA (LIGHT RED HERO) ==================== */
+    /* CTA (LIGHT RED HERO) */
     .home-cta{
       background:#ffe5e5;
       padding:34px 0 40px;
@@ -466,7 +531,7 @@
       margin-bottom:14px;
     }
 
-    /* ==================== FOOTER (EXACT LIKE PRODUCTS PAGE) ==================== */
+    /* FOOTER (EXACT LIKE PRODUCTS PAGE) */
     .footer{
       background-color:var(--gray-900);
       color:var(--white);
@@ -694,10 +759,33 @@
             </button>
           </div>
         </div>
+
+        <!-- ====== SLIDER (replaces single banner1.png) ====== -->
         <figure class="hero-figure" aria-hidden="true">
-          <!-- Replace banner1.png with your actual hero image -->
-          <img loading="lazy" decoding="async" src="banner1.png" alt="Custom gifts and printing by Prabha Graphics"/>
+          <div class="slider" id="homeSlider" aria-label="Homepage hero slider">
+            <div class="slides" role="list">
+              <div class="slide" role="listitem">
+                <img loading="lazy" decoding="async" src="banner1.png" alt="Prabha Graphics hero image 1">
+              </div>
+              <div class="slide" role="listitem">
+                <img loading="lazy" decoding="async" src="banner2.jpg" alt="Prabha Graphics hero image 2">
+              </div>
+              <div class="slide" role="listitem">
+                <img loading="lazy" decoding="async" src="banner3.jpg" alt="Prabha Graphics hero image 3">
+              </div>
+            </div>
+
+            <button class="slide-btn prev" aria-label="Previous slide" id="slidePrev">&lsaquo;</button>
+            <button class="slide-btn next" aria-label="Next slide" id="slideNext">&rsaquo;</button>
+
+            <div class="dots" id="sliderDots" aria-hidden="false" role="tablist">
+              <button class="dot" data-index="0" aria-label="Slide 1"></button>
+              <button class="dot" data-index="1" aria-label="Slide 2"></button>
+              <button class="dot" data-index="2" aria-label="Slide 3"></button>
+            </div>
+          </div>
         </figure>
+        <!-- ====== end slider ====== -->
       </div>
     </section>
 
@@ -939,6 +1027,74 @@
         newGrid.appendChild(card);
       });
     });
+  </script>
+
+  <!-- SLIDER JS: minimal, lightweight -->
+  <script>
+    (function(){
+      const slider = document.getElementById('homeSlider');
+      if(!slider) return;
+      const slidesContainer = slider.querySelector('.slides');
+      const slides = Array.from(slider.querySelectorAll('.slide'));
+      const prevBtn = document.getElementById('slidePrev');
+      const nextBtn = document.getElementById('slideNext');
+      const dots = Array.from(document.querySelectorAll('#sliderDots .dot'));
+      let index = 0;
+      let autoplay = true;
+      const interval = 4000;
+      let timer = null;
+
+      function goTo(i){
+        index = (i + slides.length) % slides.length;
+        const offset = index * -100;
+        slidesContainer.style.transform = `translateX(${offset}%)`;
+        dots.forEach(d => d.classList.remove('active'));
+        if(dots[index]) dots[index].classList.add('active');
+      }
+      function next(){ goTo(index+1); }
+      function prev(){ goTo(index-1); }
+
+      // events
+      nextBtn.addEventListener('click', ()=>{ next(); resetTimer(); });
+      prevBtn.addEventListener('click', ()=>{ prev(); resetTimer(); });
+
+      dots.forEach(d => {
+        d.addEventListener('click', (e)=>{
+          const i = Number(d.dataset.index);
+          goTo(i);
+          resetTimer();
+        });
+      });
+
+      // keyboard support
+      slider.addEventListener('keydown', (e)=>{
+        if(e.key === 'ArrowLeft') { prev(); resetTimer(); }
+        if(e.key === 'ArrowRight') { next(); resetTimer(); }
+      });
+
+      // autoplay
+      function startTimer(){
+        if(timer) clearInterval(timer);
+        timer = setInterval(()=> { if(autoplay) next(); }, interval);
+      }
+      function resetTimer(){ autoplay = true; startTimer(); }
+
+      // pause on hover / focus
+      slider.addEventListener('mouseenter', ()=> autoplay = false);
+      slider.addEventListener('mouseleave', ()=> autoplay = true);
+      slider.addEventListener('focusin', ()=> autoplay = false);
+      slider.addEventListener('focusout', ()=> autoplay = true);
+
+      // ensure images are sized correctly on load / resize
+      window.addEventListener('resize', ()=> goTo(index));
+
+      // init
+      goTo(0);
+      startTimer();
+
+      // make slider focusable for keyboard
+      slider.tabIndex = 0;
+    })();
   </script>
 
   <!-- Header / navbar JS (same behavior as products.html) -->
