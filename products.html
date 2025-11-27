@@ -519,6 +519,26 @@
       background:#334155;
     }
 
+    /* Sticky footer + scrollable modal body for order modal */
+    .modal-scroll{
+      overflow:auto;
+      max-height: calc(92vh - 160px);
+      padding-right: 6px;
+    }
+    .order-actions{
+      position: sticky;
+      bottom: 0;
+      background: #fff;
+      padding-top: 10px;
+      padding-bottom: 6px;
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      z-index: 12;
+      border-top:1px solid #eef2f7;
+      border-radius:0 0 12px 12px;
+    }
+
     /* Order modal + friendlier form */
     .form-row{
       display:flex;
@@ -554,6 +574,14 @@
       margin-top:4px;
     }
     .o-msg{margin-top:10px}
+
+    /* Total amount display */
+    .order-total{
+      margin-top:10px;
+      font-size:16px;
+      font-weight:700;
+      color:var(--primary);
+    }
 
     /* ==================== FOOTER (from homepage, linked correctly) ==================== */
     .footer{
@@ -907,92 +935,101 @@
           <button class="btn ghost" id="orderCloseBtn" aria-label="Close order form">Close</button>
         </div>
 
-        <form id="orderForm" style="margin-top:12px" novalidate>
-          <div class="form-section-title">Contact details</div>
-          <div class="form-row">
-            <div>
-              <label class="form-label" for="oName">Full name *</label>
-              <input id="oName" placeholder="Your full name" required aria-required="true" pattern="[A-Za-z\s]+" />
+        <!-- modal-scroll wraps form content so footer can be sticky -->
+        <div class="modal-scroll">
+          <form id="orderForm" style="margin-top:12px" novalidate>
+            <div class="form-section-title">Contact details</div>
+            <div class="form-row">
+              <div>
+                <label class="form-label" for="oName">Full name *</label>
+                <input id="oName" placeholder="Your full name" required aria-required="true" pattern="[A-Za-z\s]+" />
+              </div>
+              <div>
+                <label class="form-label" for="oPhone">Phone / WhatsApp *</label>
+                <input id="oPhone" type="tel" placeholder="Phone number (WhatsApp preferred)" required aria-required="true" />
+              </div>
             </div>
-            <div>
-              <label class="form-label" for="oPhone">Phone / WhatsApp *</label>
-              <input id="oPhone" type="tel" placeholder="Phone number (WhatsApp preferred)" required aria-required="true" />
+            <div class="form-row">
+              <div>
+                <label class="form-label" for="oEmail">Email</label>
+                <input id="oEmail" placeholder="Email (optional)" type="email"/>
+              </div>
             </div>
-          </div>
-          <div class="form-row">
-            <div>
-              <label class="form-label" for="oEmail">Email</label>
-              <input id="oEmail" placeholder="Email (optional)" type="email"/>
-            </div>
-          </div>
 
-          <div class="form-section-title">Delivery address</div>
-          <div class="form-row">
-            <div>
-              <label class="form-label" for="oLine1">Address line 1</label>
-              <input id="oLine1" placeholder="House / building / street"/>
+            <div class="form-section-title">Delivery address</div>
+            <div class="form-row">
+              <div>
+                <label class="form-label" for="oLine1">Address line 1</label>
+                <input id="oLine1" placeholder="House / building / street"/>
+              </div>
             </div>
-          </div>
-          <div class="form-row">
-            <div>
-              <label class="form-label" for="oLine2">Address line 2</label>
-              <input id="oLine2" placeholder="Area / landmark (optional)"/>
+            <div class="form-row">
+              <div>
+                <label class="form-label" for="oLine2">Address line 2</label>
+                <input id="oLine2" placeholder="Area / landmark (optional)"/>
+              </div>
             </div>
-          </div>
-          <div class="form-row">
-            <div>
-              <label class="form-label" for="oCity">City</label>
-              <input id="oCity" placeholder="City"/>
+            <div class="form-row">
+              <div>
+                <label class="form-label" for="oCity">City</label>
+                <input id="oCity" placeholder="City"/>
+              </div>
+              <div>
+                <label class="form-label" for="oState">State</label>
+                <input id="oState" placeholder="State"/>
+              </div>
             </div>
-            <div>
-              <label class="form-label" for="oState">State</label>
-              <input id="oState" placeholder="State"/>
+            <div class="form-row">
+              <div>
+                <label class="form-label" for="oPincode">Pincode</label>
+                <input id="oPincode" placeholder="Pincode"/>
+              </div>
+              <div>
+                <label class="form-label" for="oCountry">Country</label>
+                <input id="oCountry" placeholder="Country" value="India"/>
+              </div>
             </div>
-          </div>
-          <div class="form-row">
-            <div>
-              <label class="form-label" for="oPincode">Pincode</label>
-              <input id="oPincode" placeholder="Pincode"/>
-            </div>
-            <div>
-              <label class="form-label" for="oCountry">Country</label>
-              <input id="oCountry" placeholder="Country" value="India"/>
-            </div>
-          </div>
 
-          <div class="form-section-title">Product options</div>
-          <div id="orderVariantBlock" style="margin-top:6px"></div>
+            <div class="form-section-title">Product options</div>
+            <div id="orderVariantBlock" style="margin-top:6px"></div>
 
-          <div class="form-row">
-            <div>
-              <label class="form-label" for="oQty">Quantity</label>
-              <input id="oQty" type="number" min="1" value="1"/>
-              <div class="form-hint">We always respect minimum order quantity shown in product details.</div>
+            <div class="form-row">
+              <div>
+                <label class="form-label" for="oQty">Quantity</label>
+                <input id="oQty" type="number" min="1" value="1"/>
+                <div class="form-hint">We always respect minimum order quantity shown in product details.</div>
+              </div>
+              <div>
+                <label class="form-label" for="oPayment">Payment method</label>
+                <select id="oPayment" aria-label="Payment method">
+                  <option>COD</option>
+                  <option>Online</option>
+                </select>
+              </div>
             </div>
-            <div>
-              <label class="form-label" for="oPayment">Payment method</label>
-              <select id="oPayment" aria-label="Payment method">
-                <option>COD</option>
-                <option>Online</option>
-              </select>
-            </div>
-          </div>
 
-          <div class="form-section-title">Notes / customization</div>
-          <textarea id="oNote" placeholder="Share text, logo instructions or special request (optional)" rows="3" style="margin-top:8px"></textarea>
+            <!-- Total amount display -->
+            <div class="order-total" id="orderTotal">Total Amount: ₹0</div>
 
-          <label style="display:flex;align-items:center;gap:8px;margin-top:8px">
-            <input type="checkbox" id="oWhatsapp" />
-            <span style="color:var(--muted);font-size:13px">Also send this order details to us on WhatsApp</span>
-          </label>
+            <div class="form-section-title">Notes / customization</div>
+            <textarea id="oNote" placeholder="Share text, logo instructions or special request (optional)" rows="3" style="margin-top:8px"></textarea>
 
-          <div id="oMsg" class="o-msg" aria-live="polite"></div>
+            <label style="display:flex;align-items:center;gap:8px;margin-top:8px">
+              <input type="checkbox" id="oWhatsapp" />
+              <span style="color:var(--muted);font-size:13px">Also send this order details to us on WhatsApp</span>
+            </label>
 
-          <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn" type="submit">Submit Order</button>
-            <button type="button" class="btn ghost" id="orderCancelBtn">Cancel</button>
-          </div>
-        </form>
+            <div id="oMsg" class="o-msg" aria-live="polite"></div>
+
+          </form>
+        </div>
+
+        <!-- sticky footer actions (keeps order button visible on mobile) -->
+        <div class="order-actions" role="toolbar" aria-hidden="false">
+          <button class="btn" id="orderSubmitBtn" type="button">Submit Order</button>
+          <button type="button" class="btn ghost" id="orderCancelBtn">Cancel</button>
+        </div>
+
       </div>
     </div>
 
@@ -1053,7 +1090,6 @@
   </main>
 
   <button id="scrollToTop"><i class="fas fa-arrow-up"></i></button>
-
   <!-- Firebase + App Logic -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
@@ -1119,10 +1155,13 @@
     const oMsg = document.getElementById('oMsg');
     const orderCloseBtn = document.getElementById('orderCloseBtn');
     const orderCancelBtn = document.getElementById('orderCancelBtn');
+    const orderSubmitBtn = document.getElementById('orderSubmitBtn');
 
     // Name + phone inputs (for validation rules)
     const oName = document.getElementById('oName');
     const oPhone = document.getElementById('oPhone');
+    const oQty = document.getElementById('oQty');
+    const orderTotal = document.getElementById('orderTotal');
 
     let activeProduct = null;
     let allProducts = [];
@@ -1160,9 +1199,11 @@
     function formatBulkPricing(p){
       const bp = p.bulkPricing || {};
       const parts = [];
-      if (bp['10'])  parts.push(`10+ units: ₹${bp['10']}/pc`);
-      if (bp['50'])  parts.push(`50+ units: ₹${bp['50']}/pc`);
-      if (bp['100']) parts.push(`100+ units: ₹${bp['100']}/pc`);
+      // administrators usually set keys like '10','50','100' etc.
+      const keys = Object.keys(bp).sort((a,b)=> Number(a)-Number(b));
+      keys.forEach(k => {
+        if (bp[k]) parts.push(`${k}+ units: ₹${bp[k]}/pc`);
+      });
 
       if (!parts.length){
         return 'Available for higher quantities – share your required quantity on WhatsApp.';
@@ -1253,6 +1294,31 @@
     }
     window.scrollToSection = scrollToSection;
 
+    // helper to compute price from product + optional selected variant
+    function computeUnitPrice(product, variantObj){
+      if (variantObj && typeof variantObj.price === 'number') return variantObj.price;
+      if (variantObj && variantObj.price && !isNaN(Number(variantObj.price))) return Number(variantObj.price);
+      if (product && typeof product.price === 'number') return product.price;
+      if (product && product.price && !isNaN(Number(product.price))) return Number(product.price);
+      return 0;
+    }
+
+    // update displayed total amount in order modal
+    function updateOrderTotal(){
+      if(!activeProduct) return;
+      let unitPrice = activeProduct.price || 0;
+      const vsel = document.getElementById('orderVariant');
+      if (vsel && vsel.value){
+        try {
+          const v = JSON.parse(decodeURIComponent(vsel.value));
+          unitPrice = computeUnitPrice(activeProduct, v);
+        } catch(e){}
+      }
+      const qty = Math.max(1, parseInt(oQty.value) || 0);
+      const total = unitPrice * qty;
+      orderTotal.textContent = `Total Amount: ₹${total.toLocaleString('en-IN')}`;
+    }
+
     // Open detail modal
     window.openDetail = function(id){
       const p = window._prabhaProducts && window._prabhaProducts[id];
@@ -1329,10 +1395,7 @@
           s.appendChild(opt);
         });
         s.onchange = () => {
-          if (!s.value) {
-            dPrice.textContent = '₹' + (p.price||0);
-            return;
-          }
+          if (!s.value) { dPrice.textContent = '₹' + (p.price||0); return; }
           const v = JSON.parse(decodeURIComponent(s.value));
           dPrice.textContent = '₹' + (v.price || p.price || 0);
         };
@@ -1404,10 +1467,12 @@
       const enforceMin = () => {
         const val = parseInt(qtyInput.value) || 0;
         if (val < minQty) qtyInput.value = minQty;
+        updateOrderTotal();
       };
       qtyInput.removeEventListener('input', enforceMin); // avoid duplicates
       qtyInput.addEventListener('input', enforceMin);
 
+      // Variants / sizes / colors in order form
       if (p.variants && p.variants.length){
         const sel = document.createElement('select'); sel.id = 'orderVariant';
         sel.innerHTML = '<option value="">Select variant</option>';
@@ -1416,6 +1481,9 @@
         wrap.innerHTML = `<label class="form-label" for="orderVariant">Variant</label>`;
         wrap.appendChild(sel);
         orderVariantBlock.appendChild(wrap);
+
+        // update total when variant changes
+        sel.addEventListener('change', updateOrderTotal);
       }
       if (p.sizes && p.sizes.length){
         const sel2 = document.createElement('select'); sel2.id='orderSize';
@@ -1435,6 +1503,10 @@
         wrap3.appendChild(sel3);
         orderVariantBlock.appendChild(wrap3);
       }
+
+      // Show initial total
+      setTimeout(updateOrderTotal, 40);
+
       orderModal.style.display='flex'; orderModal.setAttribute('aria-hidden','false');
       document.body.style.overflow='hidden';
       trapFocus(orderModal);
@@ -1442,9 +1514,16 @@
     function closeOrder(){
       orderModal.style.display='none'; orderModal.setAttribute('aria-hidden','true');
       orderForm.reset(); oMsg.innerHTML=''; document.body.style.overflow='';
+      activeProduct = null;
+      // reset displayed total
+      orderTotal.textContent = 'Total Amount: ₹0';
     }
 
-    // Submit order -> Firestore
+    // Submit order -> Firestore (using sticky orderSubmitBtn)
+    orderSubmitBtn.addEventListener('click', (e) => {
+      orderForm.requestSubmit(); // delegates to form submit
+    });
+
     orderForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!activeProduct) return showOrderError('No product selected.');
@@ -1482,6 +1561,9 @@
       const size = document.getElementById('orderSize') ? document.getElementById('orderSize').value : '';
       const color = document.getElementById('orderColor') ? document.getElementById('orderColor').value : '';
 
+      const unitPrice = computeUnitPrice(activeProduct, variant);
+      const totalAmount = unitPrice * qty;
+
       const order = {
         productId: activeProduct.id,
         productName: activeProduct.name,
@@ -1498,6 +1580,8 @@
         selectedSize: size || '',
         selectedColor: color || '',
         quantity: qty,
+        unitPrice: unitPrice,
+        totalAmount: totalAmount,
         customerName: name,
         customerPhone: phone,
         customerEmail: email || '',
@@ -1529,6 +1613,7 @@
             `Address: ${line1} ${line2}, ${city} - ${pincode}`,
             "",
             `Payment method: ${paymentMethod}`,
+            `Total amount: ₹${totalAmount}`,
             "",
             "Customization text / picture: (I will send here)"
           ];
@@ -1569,6 +1654,16 @@
       }
     });
 
+    // Update total when quantity changes (also keep min enforcement)
+    oQty.addEventListener('input', () => {
+      // keep at least 1 until activeProduct sets min
+      if (!activeProduct) return;
+      const minQty = activeProduct.minQty || 1;
+      const val = parseInt(oQty.value) || 0;
+      if (val < minQty) oQty.value = minQty;
+      updateOrderTotal();
+    });
+
     // Hash open product (if you ever want sharable links later)
     window.addEventListener('load', ()=> {
       const h = location.hash.replace('#','');
@@ -1601,7 +1696,7 @@
       _trap = null;
     }
 
-    console.log('🎉 Prabha Graphics Products Page - Business/Apparel removed: such products show under "Other Products" now. MinQty enforced, name/phone validation added, redirect enabled.');
+    console.log('🎉 Prabha Graphics Products Page - MinQty enforced, name/phone validation, total amount, sticky order footer, redirect enabled.');
   </script>
 
   <!-- Header / navbar JS (non-module, from homepage) -->
