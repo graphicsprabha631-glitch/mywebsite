@@ -395,55 +395,96 @@
       align-items:center;
     }
 
-    /* MINI ABOUT */
-    .mini-about{
-      padding:30px 0 28px;
-    }
-    .about-grid{
-      display:flex;
-      gap:22px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
-    .about-text{
-      flex:1 1 260px;
-    }
-    .about-text h2{
-      font-size:20px;
-      margin-bottom:8px;
-    }
-    .about-text p{
-      font-size:14px;
-      color:var(--muted);
-      margin-bottom:6px;
-    }
-    .about-points{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      margin-top:8px;
-    }
-    .pill{
-      padding:6px 10px;
-      border-radius:999px;
-      background:#fff;
-      box-shadow:0 5px 18px rgba(15,23,42,0.08);
-      font-size:12px;
-      color:#111827;
-    }
-    .about-images{
-      flex:0 0 auto;
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    .about-images img{
-      width:120px;
-      height:120px;
-      object-fit:cover;
-      border-radius:14px;
-      box-shadow:0 8px 20px rgba(15,23,42,0.12);
-    }
+/* ==================== MINI ABOUT SECTION (boxed separator) ==================== */
+.mini-about{
+  padding:40px 0 36px;
+  background:var(--gray-50);
+}
+
+/* Outer card that visually separates the section */
+.about-card{
+  background:#ffffff;
+  border-radius:18px;
+  box-shadow:0 18px 45px rgba(15,23,42,0.12);
+  border:1px solid #e5e7eb;
+  padding:22px 22px 20px;
+  position:relative;
+  overflow:hidden;
+}
+
+/* Accent line at the top of the box */
+.about-card::before{
+  content:'';
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:4px;
+  background:linear-gradient(90deg,#D10007,#fb7185);
+}
+
+/* Optional subtle label above content (can remove if you don’t like it) */
+.about-card-label{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:0.12em;
+  color:var(--muted);
+  margin-bottom:6px;
+}
+
+/* existing layout inside the box */
+.about-grid{
+  display:flex;
+  gap:22px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.about-text{
+  flex:1 1 260px;
+}
+
+.about-text h2{
+  font-size:20px;
+  margin-bottom:8px;
+}
+
+.about-text p{
+  font-size:14px;
+  color:var(--muted);
+  margin-bottom:6px;
+}
+
+.about-points{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:8px;
+}
+
+.pill{
+  padding:6px 10px;
+  border-radius:999px;
+  background:#fff;
+  box-shadow:0 5px 18px rgba(15,23,42,0.08);
+  font-size:12px;
+  color:#111827;
+}
+
+.about-images{
+  flex:0 0 auto;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.about-images img{
+  width:120px;
+  height:120px;
+  object-fit:cover;
+  border-radius:14px;
+  box-shadow:0 8px 20px rgba(15,23,42,0.12);
+}
 
     /* NEWLY ADDED PRODUCTS */
     .home-new{
@@ -765,13 +806,13 @@
           <div class="slider" id="homeSlider" aria-label="Homepage hero slider">
             <div class="slides" role="list">
               <div class="slide" role="listitem">
-                <img loading="lazy" decoding="async" src="banner1.png" alt="Prabha Graphics hero image 1">
+                <img loading="lazy" decoding="async" src="banner1.webp" alt="Prabha Graphics hero image 1">
               </div>
               <div class="slide" role="listitem">
-                <img loading="lazy" decoding="async" src="banner2.jpg" alt="Prabha Graphics hero image 2">
+                <img loading="lazy" decoding="async" src="banner2.webp" alt="Prabha Graphics hero image 2">
               </div>
               <div class="slide" role="listitem">
-                <img loading="lazy" decoding="async" src="banner3.jpg" alt="Prabha Graphics hero image 3">
+                <img loading="lazy" decoding="async" src="banner3.webp" alt="Prabha Graphics hero image 3">
               </div>
             </div>
 
@@ -851,9 +892,9 @@
         </div>
         <div class="about-images">
           <!-- Replace these image paths with your real photos -->
-          <img src="banner1.png" alt="Samples of custom gifts">
-          <img src="banner2.jpg" alt="Printed t-shirts and mugs">
-          <img src="banner3.jpg" alt="Corporate gift sets">
+          <img src="banner1.webp" alt="Samples of custom gifts">
+          <img src="banner2.webp" alt="Printed t-shirts and mugs">
+          <img src="banner3.webp" alt="Corporate gift sets">
         </div>
       </div>
     </section>
