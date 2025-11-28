@@ -753,8 +753,41 @@
         grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
       }
       .main-image{height:260px}
-      .modal{padding:14px;max-height:95vh}
-      .modal-main{flex-direction:column}
+
+      /* === FULL-PAGE MODAL STYLE ON MOBILE === */
+      .modal-bg{
+        align-items:stretch;
+        padding:0;
+      }
+      .modal{
+        max-width:none;
+        width:100%;
+        height:100vh;
+        max-height:100vh;
+        border-radius:0;
+        padding:14px 14px 10px;
+        display:flex;
+        flex-direction:column;
+      }
+      .modal-main{
+        flex:1;
+        overflow:auto;
+        margin-top:10px;
+      }
+      .modal-scroll{
+        max-height:none;
+        flex:1;
+        overflow:auto;
+        padding-right:4px;
+      }
+      .order-actions{
+        position:sticky;
+        bottom:0;
+        background:#fff;
+        box-shadow:0 -8px 20px rgba(15,23,42,0.12);
+        border-radius:0;
+      }
+
       .footer-grid{
         grid-template-columns:1fr;
         gap:24px;
@@ -1294,7 +1327,7 @@
     }
     window.scrollToSection = scrollToSection;
 
-    // helper to compute price from product + optional selected variant
+    // base unit price (product or variant)
     function computeUnitPrice(product, variantObj){
       if (variantObj && typeof variantObj.price === 'number') return variantObj.price;
       if (variantObj && variantObj.price && !isNaN(Number(variantObj.price))) return Number(variantObj.price);
@@ -1303,20 +1336,49 @@
       return 0;
     }
 
+    // get bulk price per unit from product/variant bulkPricing based on quantity
+    function getBulkUnitPrice(product, variantObj, qty){
+      let source = null;
+      if (variantObj && variantObj.bulkPricing) {
+        source = variantObj.bulkPricing;
+      } else if (product && product.bulkPricing) {
+        source = product.bulkPricing;
+      }
+      if (!source) return 0;
+
+      const keys = Object.keys(source).map(k=>Number(k)).filter(n=>!isNaN(n)).sort((a,b)=>a-b);
+      let chosen = 0;
+      keys.forEach(threshold => {
+        if (qty >= threshold && source[String(threshold)]) {
+          chosen = source[String(threshold)];
+        }
+      });
+      return chosen || 0;
+    }
+
     // update displayed total amount in order modal
     function updateOrderTotal(){
       if(!activeProduct) return;
-      let unitPrice = activeProduct.price || 0;
+      let qty = Math.max(1, parseInt(oQty.value) || 0);
+
+      let variant = null;
       const vsel = document.getElementById('orderVariant');
       if (vsel && vsel.value){
         try {
-          const v = JSON.parse(decodeURIComponent(vsel.value));
-          unitPrice = computeUnitPrice(activeProduct, v);
+          variant = JSON.parse(decodeURIComponent(vsel.value));
         } catch(e){}
       }
-      const qty = Math.max(1, parseInt(oQty.value) || 0);
+
+      const baseUnit = computeUnitPrice(activeProduct, variant);
+      const bulkUnit = getBulkUnitPrice(activeProduct, variant, qty);
+      const unitPrice = bulkUnit || baseUnit;
       const total = unitPrice * qty;
-      orderTotal.textContent = `Total Amount: ₹${total.toLocaleString('en-IN')}`;
+
+      if (bulkUnit) {
+        orderTotal.textContent = `Estimated Total (bulk price): ₹${total.toLocaleString('en-IN')}`;
+      } else {
+        orderTotal.textContent = `Total Amount: ₹${total.toLocaleString('en-IN')}`;
+      }
     }
 
     // Open detail modal
@@ -1402,7 +1464,7 @@
         dVariant.appendChild(s);
       }
 
-      // Seller line removed visually
+      // Seller line hidden
       dVendor.style.display = 'none';
 
       // WhatsApp message including MOQ and bulk info (uses bulkPricing from admin)
@@ -1463,13 +1525,12 @@
       qtyInput.value = minQty;
       qtyInput.min = minQty;
 
-      // enforce min while typing (local to this product)
       const enforceMin = () => {
         const val = parseInt(qtyInput.value) || 0;
         if (val < minQty) qtyInput.value = minQty;
         updateOrderTotal();
       };
-      qtyInput.removeEventListener('input', enforceMin); // avoid duplicates
+      qtyInput.removeEventListener('input', enforceMin);
       qtyInput.addEventListener('input', enforceMin);
 
       // Variants / sizes / colors in order form
@@ -1482,7 +1543,6 @@
         wrap.appendChild(sel);
         orderVariantBlock.appendChild(wrap);
 
-        // update total when variant changes
         sel.addEventListener('change', updateOrderTotal);
       }
       if (p.sizes && p.sizes.length){
@@ -1515,7 +1575,6 @@
       orderModal.style.display='none'; orderModal.setAttribute('aria-hidden','true');
       orderForm.reset(); oMsg.innerHTML=''; document.body.style.overflow='';
       activeProduct = null;
-      // reset displayed total
       orderTotal.textContent = 'Total Amount: ₹0';
     }
 
@@ -1546,7 +1605,6 @@
       const country = document.getElementById('oCountry').value.trim();
       const qty = parseInt(document.getElementById('oQty').value) || 0;
 
-      // enforce minQty on submit
       const minQtyAllowed = activeProduct.minQty || 1;
       if (qty < minQtyAllowed) return showOrderError(`Minimum order quantity for this product is ${minQtyAllowed}. Please increase quantity.`);
 
@@ -1561,7 +1619,9 @@
       const size = document.getElementById('orderSize') ? document.getElementById('orderSize').value : '';
       const color = document.getElementById('orderColor') ? document.getElementById('orderColor').value : '';
 
-      const unitPrice = computeUnitPrice(activeProduct, variant);
+      const baseUnit = computeUnitPrice(activeProduct, variant);
+      const bulkUnit = getBulkUnitPrice(activeProduct, variant, qty);
+      const unitPrice = bulkUnit || baseUnit;
       const totalAmount = unitPrice * qty;
 
       const order = {
@@ -1654,9 +1714,8 @@
       }
     });
 
-    // Update total when quantity changes (also keep min enforcement)
+    // Update total when quantity changes
     oQty.addEventListener('input', () => {
-      // keep at least 1 until activeProduct sets min
       if (!activeProduct) return;
       const minQty = activeProduct.minQty || 1;
       const val = parseInt(oQty.value) || 0;
@@ -1664,7 +1723,7 @@
       updateOrderTotal();
     });
 
-    // Hash open product (if you ever want sharable links later)
+    // Hash open product
     window.addEventListener('load', ()=> {
       const h = location.hash.replace('#','');
       if (h.startsWith('product-')) {
@@ -1673,7 +1732,7 @@
       }
     });
 
-    // Simple focus trap (works for modal)
+    // Simple focus trap
     let _trap = null;
     function trapFocus(container){
       releaseTrap();
@@ -1696,7 +1755,7 @@
       _trap = null;
     }
 
-    console.log('🎉 Prabha Graphics Products Page - MinQty enforced, name/phone validation, total amount, sticky order footer, redirect enabled.');
+    console.log('🎉 Prabha Graphics Products Page - Fullscreen mobile modals + bulk-based total amount ready.');
   </script>
 
   <!-- Header / navbar JS (non-module, from homepage) -->
