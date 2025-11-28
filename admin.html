@@ -269,7 +269,25 @@
       min-width:160px;
     }
 
-    /* ====== BETTER GALLERY PREVIEW ====== */
+    /* ====== DRAG & DROP UPLOAD ====== */
+    .drop-zone{
+      margin-top:6px;
+      padding:14px;
+      border-radius:10px;
+      border:2px dashed #cbd5f5;
+      background:#f9fafb;
+      text-align:center;
+      font-size:12px;
+      color:#4b5563;
+      cursor:pointer;
+      transition:border-color .2s,background .2s;
+    }
+    .drop-zone.dragover{
+      border-color:var(--primary);
+      background:#fef2f2;
+    }
+
+    /* ====== GALLERY PREVIEW ====== */
     .thumbs-preview{
       margin-top:10px;
       display:flex;
@@ -454,6 +472,72 @@
       padding:1px 4px;
       font-size:11px;
     }
+
+    /* ====== ADMIN TABS / SECTIONS (Shopify-like) ====== */
+    .admin-tabs{
+      display:flex;
+      gap:8px;
+      border-bottom:1px solid var(--border);
+      margin-bottom:10px;
+      flex-wrap:wrap;
+    }
+    .admin-tab{
+      border:none;
+      background:#f3f4f6;
+      color:#4b5563;
+      padding:6px 12px;
+      border-radius:999px;
+      font-size:12px;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+    .admin-tab i{font-size:12px;}
+    .admin-tab.active{
+      background:var(--primary);
+      color:#fff;
+      box-shadow:0 8px 18px rgba(220,38,38,0.35);
+    }
+    .admin-section{
+      display:none;
+      flex-direction:column;
+      gap:14px;
+    }
+    .admin-section.active{
+      display:flex;
+    }
+
+    /* ====== CATEGORY LIST STYLES ====== */
+    .category-item{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      border:1px solid #e5e7eb;
+      border-radius:10px;
+      padding:8px 9px;
+      margin-bottom:6px;
+      background:#fff;
+      font-size:12px;
+      gap:8px;
+    }
+    .category-main{
+      font-weight:600;
+      color:#111827;
+    }
+    .category-subchips{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      margin-top:4px;
+    }
+    .category-subchip{
+      background:#eef2ff;
+      border-radius:999px;
+      padding:3px 8px;
+      font-size:11px;
+      color:#4338ca;
+    }
   </style>
 </head>
 <body>
@@ -481,7 +565,7 @@
   </header>
 
   <main class="page">
-    <!-- LEFT: AUTH + PRODUCT FORM + LIST -->
+    <!-- LEFT: AUTH + PRODUCT / CATEGORY MANAGEMENT -->
     <section>
       <div class="card">
         <div class="card-header">
@@ -514,184 +598,249 @@
 
       <!-- Panel hidden until auth -->
       <div id="panelArea" style="display:none;margin-top:14px;flex-direction:column;gap:14px">
-        <!-- PRODUCT FORM -->
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <div class="card-title">Add / Edit Product</div>
-              <div class="card-sub">Categories: Corporate & Promotional, Personalized Gifts, Other Products</div>
-            </div>
-            <span style="font-size:11px;color:var(--muted)">Fields marked * are important for listing</span>
-          </div>
-
-          <input type="hidden" id="prodId" />
-
-          <div class="row">
-            <div class="col">
-              <label for="mainCategory">Main Category *</label>
-              <select id="mainCategory">
-                <option>Corporate & Promotional</option>
-                <option>Personalized Gifts</option>
-                <option>Other Products</option>
-              </select>
-            </div>
-            <div class="col">
-              <label for="subCategory">Sub-category</label>
-              <select id="subCategory"></select>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col">
-              <label for="pName">Product Name *</label>
-              <input id="pName" type="text" placeholder="Classic Printed Mug" />
-            </div>
-            <div class="col">
-              <label for="pPrice">Price (₹) *</label>
-              <input id="pPrice" type="number" placeholder="299" />
-            </div>
-            <div class="col">
-              <label for="pOldPrice">Old Price (₹)</label>
-              <input id="pOldPrice" type="number" placeholder="399" />
-            </div>
-          </div>
-
-          <label for="pSKU">Unique Code (SKU) — auto-filled</label>
-          <input id="pSKU" type="text" readonly placeholder="Will be generated if empty" />
-
-          <!-- IMAGE URL TAGS -->
-          <label>Image URLs (you can add multiple links)</label>
-          <div class="chip-container" id="chipsContainer">
-            <div class="chip-input-wrap">
-              <input id="pImageUrlInput" type="text" placeholder="Paste image URL and press Enter" />
-            </div>
-          </div>
-          <div class="card-sub" style="margin-top:3px">
-            Tip: Paste any number of online URLs (Drive public link, CDN, website images etc). Each will become a gallery image.
-          </div>
-
-          <!-- File uploads still supported -->
-          <label for="pFiles">Or upload images (optional)</label>
-          <input id="pFiles" type="file" accept="image/*" multiple />
-          <div id="uploadPreview" class="thumbs-preview"></div>
-
-          <label for="pDescription">Description</label>
-          <textarea id="pDescription" placeholder="Short description with key details, print area etc."></textarea>
-
-          <div class="row">
-            <div class="col">
-              <label for="pSizes">Sizes (comma separated)</label>
-              <input id="pSizes" placeholder="S,M,L,XL" />
-            </div>
-            <div class="col">
-              <label for="pColors">Colors (comma separated)</label>
-              <input id="pColors" placeholder="Red,Black,White" />
-            </div>
-            <div class="col">
-              <label for="pTags">Tags (comma separated)</label>
-              <input id="pTags" placeholder="tshirt,corporate,bulk" />
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col">
-              <label for="pMinQty">Minimum Order Qty</label>
-              <input id="pMinQty" type="number" placeholder="1" />
-            </div>
-            <div class="col">
-              <label for="pStock">Stock (approx.)</label>
-              <input id="pStock" type="number" placeholder="50" />
-            </div>
-            <div class="col">
-              <label for="pVendor">Vendor</label>
-              <input id="pVendor" type="text" placeholder="Prabha Graphics" />
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col">
-              <label for="pMaterial">Material</label>
-              <input id="pMaterial" type="text" placeholder="Cotton, Ceramic, MDF, etc." />
-            </div>
-            <div class="col">
-              <label for="pDimensions">Dimensions</label>
-              <input id="pDimensions" type="text" placeholder="10 x 12 cm" />
-            </div>
-            <div class="col">
-              <label for="pWeight">Weight</label>
-              <input id="pWeight" type="text" placeholder="250 g" />
-            </div>
-          </div>
-
-          <!-- Bulk pricing & rating -->
-          <label>Bulk pricing (per unit)</label>
-          <div class="row">
-            <div class="col">
-              <input id="bulk10" type="number" placeholder="Price for 10+" />
-              <div class="card-sub">≥ 10 units</div>
-            </div>
-            <div class="col">
-              <input id="bulk50" type="number" placeholder="Price for 50+" />
-              <div class="card-sub">≥ 50 units</div>
-            </div>
-            <div class="col">
-              <input id="bulk100" type="number" placeholder="Price for 100+" />
-              <div class="card-sub">≥ 100 units</div>
-            </div>
-          </div>
-
-          <div class="row" style="margin-top:6px">
-            <div class="col">
-              <label for="pRating">Rating (0.0 – 5.0)</label>
-              <input id="pRating" type="number" min="0" max="5" step="0.1" placeholder="4.5" />
-            </div>
-            <div class="col">
-              <label for="pWarranty">Warranty / Guarantee</label>
-              <input id="pWarranty" type="text" placeholder="e.g., 1 year warranty" />
-            </div>
-            <div class="col">
-              <label for="pTypeSelect">Type</label>
-              <select id="pTypeSelect">
-                <option value="ready-made">Ready-made</option>
-                <option value="customized">Customized</option>
-              </select>
-            </div>
-          </div>
-
-          <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
-            <button id="saveProduct" class="btn primary">
-              <i class="fas fa-save"></i><span>Save Product</span>
-            </button>
-            <button id="clearProduct" class="btn ghost">
-              <i class="fas fa-rotate-left"></i><span>Clear Form</span>
-            </button>
-          </div>
-          <div id="prodMsg"></div>
+        <!-- Admin tabs -->
+        <div class="admin-tabs">
+          <button class="admin-tab active" data-target="productsSection">
+            <i class="fas fa-box"></i> Products
+          </button>
+          <button class="admin-tab" data-target="categoriesSection">
+            <i class="fas fa-list-ul"></i> Categories
+          </button>
         </div>
 
-        <!-- PRODUCT LIST -->
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <div class="card-title">Products</div>
-              <div class="card-sub">Live synced with Firestore (<code>products</code> collection)</div>
+        <!-- PRODUCTS SECTION -->
+        <section id="productsSection" class="admin-section active">
+          <!-- PRODUCT FORM -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Add / Edit Product</div>
+                <div class="card-sub">Categories: Corporate & Promotional, Personalized Gifts, Other Products (from Category Manager)</div>
+              </div>
+              <span style="font-size:11px;color:var(--muted)">Fields marked * are important for listing</span>
             </div>
-          </div>
-          <div class="toolbar">
-            <div class="toolbar-search">
-              <input id="searchInput" placeholder="Search by name / SKU / tag" />
-              <select id="filterCategory">
-                <option value="">All categories</option>
-                <option>Corporate & Promotional</option>
-                <option>Personalized Gifts</option>
-                <option>Other Products</option>
-              </select>
+
+            <input type="hidden" id="prodId" />
+
+            <div class="row">
+              <div class="col">
+                <label for="mainCategory">Main Category *</label>
+                <select id="mainCategory"></select>
+              </div>
+              <div class="col">
+                <label for="subCategory">Sub-category</label>
+                <select id="subCategory"></select>
+              </div>
             </div>
-            <span style="font-size:11px;color:var(--muted)">Click “Edit” to load details into the form</span>
+
+            <div class="row">
+              <div class="col">
+                <label for="pName">Product Name *</label>
+                <input id="pName" type="text" placeholder="Classic Printed Mug" />
+              </div>
+              <div class="col">
+                <label for="pPrice">Price (₹) *</label>
+                <input id="pPrice" type="number" placeholder="299" />
+              </div>
+              <div class="col">
+                <label for="pOldPrice">Old Price (₹)</label>
+                <input id="pOldPrice" type="number" placeholder="399" />
+              </div>
+            </div>
+
+            <label for="pSKU">Unique Code (SKU) — auto-filled</label>
+            <input id="pSKU" type="text" readonly placeholder="Will be generated if empty" />
+
+            <!-- IMAGE URL TAGS -->
+            <label>Image URLs (you can add multiple links)</label>
+            <div class="chip-container" id="chipsContainer">
+              <div class="chip-input-wrap">
+                <input id="pImageUrlInput" type="text" placeholder="Paste image URL and press Enter" />
+              </div>
+            </div>
+            <div class="card-sub" style="margin-top:3px">
+              Tip: Paste any number of online URLs (Drive public link, CDN, website images etc). Each will become a gallery image.
+            </div>
+
+            <!-- File uploads with drag & drop -->
+            <label for="pFiles">Or upload images (optional)</label>
+            <div id="dropZone" class="drop-zone">
+              <p style="margin:0;font-weight:500;">Click to choose files or drag & drop images here</p>
+              <p style="margin:4px 0 0 0;font-size:11px;color:var(--muted);">
+                You can upload multiple images. JPG, PNG, WEBP recommended.
+              </p>
+              <input id="pFiles" type="file" accept="image/*" multiple style="display:none" />
+            </div>
+            <div id="uploadPreview" class="thumbs-preview"></div>
+
+            <label for="pDescription">Description</label>
+            <textarea id="pDescription" placeholder="Short description with key details, print area etc."></textarea>
+
+            <div class="row">
+              <div class="col">
+                <label for="pSizes">Sizes (comma separated)</label>
+                <input id="pSizes" placeholder="S,M,L,XL" />
+              </div>
+              <div class="col">
+                <label for="pColors">Colors (comma separated)</label>
+                <input id="pColors" placeholder="Red,Black,White" />
+              </div>
+              <div class="col">
+                <label for="pTags">Tags (comma separated)</label>
+                <input id="pTags" placeholder="tshirt,corporate,bulk" />
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col">
+                <label for="pMinQty">Minimum Order Qty</label>
+                <input id="pMinQty" type="number" placeholder="1" />
+              </div>
+              <div class="col">
+                <label for="pStock">Stock (approx.)</label>
+                <input id="pStock" type="number" placeholder="50" />
+              </div>
+              <div class="col">
+                <label for="pVendor">Vendor</label>
+                <input id="pVendor" type="text" placeholder="Prabha Graphics" />
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col">
+                <label for="pMaterial">Material</label>
+                <input id="pMaterial" type="text" placeholder="Cotton, Ceramic, MDF, etc." />
+              </div>
+              <div class="col">
+                <label for="pDimensions">Dimensions</label>
+                <input id="pDimensions" type="text" placeholder="10 x 12 cm" />
+              </div>
+              <div class="col">
+                <label for="pWeight">Weight</label>
+                <input id="pWeight" type="text" placeholder="250 g" />
+              </div>
+            </div>
+
+            <!-- Bulk pricing & rating -->
+            <label>Bulk pricing (per unit)</label>
+            <div class="row">
+              <div class="col">
+                <input id="bulk10" type="number" placeholder="Price for 10+" />
+                <div class="card-sub">≥ 10 units</div>
+              </div>
+              <div class="col">
+                <input id="bulk50" type="number" placeholder="Price for 50+" />
+                <div class="card-sub">≥ 50 units</div>
+              </div>
+              <div class="col">
+                <input id="bulk100" type="number" placeholder="Price for 100+" />
+                <div class="card-sub">≥ 100 units</div>
+              </div>
+            </div>
+
+            <div class="row" style="margin-top:6px">
+              <div class="col">
+                <label for="pRating">Rating (0.0 – 5.0)</label>
+                <input id="pRating" type="number" min="0" max="5" step="0.1" placeholder="4.5" />
+              </div>
+              <div class="col">
+                <label for="pWarranty">Warranty / Guarantee</label>
+                <input id="pWarranty" type="text" placeholder="e.g., 1 year warranty" />
+              </div>
+              <div class="col">
+                <label for="pTypeSelect">Type</label>
+                <select id="pTypeSelect">
+                  <option value="ready-made">Ready-made</option>
+                  <option value="customized">Customized</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+              <button id="saveProduct" class="btn primary">
+                <i class="fas fa-save"></i><span>Save Product</span>
+              </button>
+              <button id="clearProduct" class="btn ghost">
+                <i class="fas fa-rotate-left"></i><span>Clear Form</span>
+              </button>
+            </div>
+            <div id="prodMsg"></div>
           </div>
 
-          <div id="productsList" class="product-list">Loading…</div>
-        </div>
+          <!-- PRODUCT LIST -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Products</div>
+                <div class="card-sub">Live synced with Firestore (<code>products</code> collection)</div>
+              </div>
+            </div>
+            <div class="toolbar">
+              <div class="toolbar-search">
+                <input id="searchInput" placeholder="Search by name / SKU / tag" />
+                <select id="filterCategory">
+                  <option value="">All categories</option>
+                  <option>Corporate & Promotional</option>
+                  <option>Personalized Gifts</option>
+                  <option>Other Products</option>
+                </select>
+              </div>
+              <span style="font-size:11px;color:var(--muted)">Click “Edit” to load details into the form</span>
+            </div>
+
+            <div id="productsList" class="product-list">Loading…</div>
+          </div>
+        </section>
+
+        <!-- CATEGORIES SECTION -->
+        <section id="categoriesSection" class="admin-section">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Categories & Sub-categories</div>
+                <div class="card-sub">Manage main categories and their sub-categories used in the product form.</div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col">
+                <input type="hidden" id="catId" />
+                <label for="catName">Category name *</label>
+                <input id="catName" type="text" placeholder="Corporate & Promotional" />
+                <label for="catDescription">Description</label>
+                <textarea id="catDescription" placeholder="Short internal note (optional)"></textarea>
+                <label for="catSort">Display order (optional)</label>
+                <input id="catSort" type="number" placeholder="1" />
+              </div>
+              <div class="col">
+                <label>Sub-categories</label>
+                <div id="subChipContainer" class="chip-container">
+                  <div class="chip-input-wrap">
+                    <input id="subInput" type="text" placeholder="Type a sub-category and press Enter" />
+                  </div>
+                </div>
+                <div class="card-sub" style="margin-top:4px">
+                  Examples: Pens, Keychains, Bottles, Gift Hampers, Stationery, etc.
+                </div>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+              <button id="saveCategory" class="btn primary">
+                <i class="fas fa-save"></i><span>Save Category</span>
+              </button>
+              <button id="clearCategory" class="btn ghost">
+                <i class="fas fa-rotate-left"></i><span>Clear</span>
+              </button>
+            </div>
+            <div id="catMsg" class="card-sub" style="margin-top:6px"></div>
+
+            <div style="margin-top:16px">
+              <div class="card-sub" style="margin-bottom:6px">Existing categories</div>
+              <div id="categoriesList" class="panel-scroll"></div>
+            </div>
+          </div>
+        </section>
       </div>
     </section>
 
@@ -734,10 +883,10 @@
 
   <div class="footnote">
     <div>
-      Collections used: <code>products</code>, <code>orders</code>, <code>quotes</code>, <code>contactMessages</code>
+      Collections used: <code>products</code>, <code>orders</code>, <code>quotes</code>, <code>contactMessages</code>, <code>categories</code>
     </div>
     <div>
-      Ensure Firestore rules allow: public create for orders/quotes/messages, restricted write for products.
+      Ensure Firestore rules allow: public create for orders/quotes/messages, restricted write for products/categories.
     </div>
   </div>
 
@@ -792,6 +941,7 @@
     const pImageUrlInput = document.getElementById('pImageUrlInput');
     const chipsContainer = document.getElementById('chipsContainer');
     const pFiles = document.getElementById('pFiles');
+    const dropZone = document.getElementById('dropZone');
     const uploadPreview = document.getElementById('uploadPreview');
 
     const pDescription = document.getElementById('pDescription');
@@ -823,20 +973,271 @@
     const searchInput = document.getElementById('searchInput');
     const filterCategory = document.getElementById('filterCategory');
 
-    /* ---------- SUBCATEGORY MAP (NO APPAREL/BUSINESS) ---------- */
-    const subMap = {
-      'Corporate & Promotional': ['Pens','Keychains','Gift Hampers','Corporate T-shirts','Gift Boxes','Desk Items'],
-      'Personalized Gifts': ['Mugs','Photo Frames','Cushions','Phone Covers','Bottles','Keychains','Photo Gifts'],
-      'Other Products': ['Stationery','Accessories','Clocks','Misc','Packaging']
-    };
+    // Tabs
+    const adminTabs = document.querySelectorAll('.admin-tab');
+    const adminSections = document.querySelectorAll('.admin-section');
+
+    // Category manager refs
+    const catId = document.getElementById('catId');
+    const catName = document.getElementById('catName');
+    const catDescription = document.getElementById('catDescription');
+    const catSort = document.getElementById('catSort');
+    const subChipContainer = document.getElementById('subChipContainer');
+    const subInput = document.getElementById('subInput');
+    const saveCategory = document.getElementById('saveCategory');
+    const clearCategory = document.getElementById('clearCategory');
+    const catMsg = document.getElementById('catMsg');
+    const categoriesList = document.getElementById('categoriesList');
+
+    /* ---------- TAB LOGIC ---------- */
+    adminTabs.forEach(btn => {
+      btn.addEventListener('click', () => {
+        adminTabs.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const targetId = btn.dataset.target;
+        adminSections.forEach(sec => {
+          sec.classList.toggle('active', sec.id === targetId);
+        });
+      });
+    });
+
+    /* ---------- SUBCATEGORY / CATEGORY DATA ---------- */
+    let categoryDocs = [];
+    let subValues = [];
+
+    function getSubcategoriesFor(mainCatName){
+      if (categoryDocs && categoryDocs.length){
+        const cat = categoryDocs.find(c => c.name === mainCatName);
+        if (cat && Array.isArray(cat.subcategories)) return cat.subcategories;
+        return [];
+      }
+      // Legacy fallback if categories not yet set in Firestore
+      const legacy = {
+        'Corporate & Promotional': ['Pens','Keychains','Gift Hampers','Corporate T-shirts','Gift Boxes','Desk Items'],
+        'Personalized Gifts': ['Mugs','Photo Frames','Cushions','Phone Covers','Bottles','Keychains','Photo Gifts'],
+        'Other Products': ['Stationery','Accessories','Clocks','Misc','Packaging']
+      };
+      return legacy[mainCatName] || [];
+    }
+
     function populateSub(){
-      const list = subMap[mainCategory.value] || [];
+      const list = getSubcategoriesFor(mainCategory.value);
       subCategory.innerHTML = '';
-      list.forEach(s => subCategory.innerHTML += `<option>${s}</option>`);
-      if (!list.length) subCategory.innerHTML = '<option>Other</option>';
+      if (list.length){
+        list.forEach(s => {
+          const opt = document.createElement('option');
+          opt.value = s;
+          opt.textContent = s;
+          subCategory.appendChild(opt);
+        });
+      } else {
+        const opt = document.createElement('option');
+        opt.value = '';
+        opt.textContent = 'Other';
+        subCategory.appendChild(opt);
+      }
     }
     mainCategory.addEventListener('change', populateSub);
-    populateSub();
+
+    function refreshCategorySelectOptions(){
+      if (!mainCategory) return;
+      const current = mainCategory.value;
+      mainCategory.innerHTML = '';
+
+      if (categoryDocs.length){
+        categoryDocs.forEach(cat => {
+          const opt = document.createElement('option');
+          opt.value = cat.name;
+          opt.textContent = cat.name;
+          mainCategory.appendChild(opt);
+        });
+      } else {
+        ['Corporate & Promotional','Personalized Gifts','Other Products'].forEach(name => {
+          const opt = document.createElement('option');
+          opt.value = name;
+          opt.textContent = name;
+          mainCategory.appendChild(opt);
+        });
+      }
+
+      if (current && !Array.from(mainCategory.options).some(o => o.value === current)){
+        const extra = document.createElement('option');
+        extra.value = current;
+        extra.textContent = current;
+        mainCategory.appendChild(extra);
+      }
+
+      if (current){
+        mainCategory.value = current;
+      } else if (mainCategory.options[0]){
+        mainCategory.value = mainCategory.options[0].value;
+      }
+
+      populateSub();
+    }
+
+    function renderSubChips(){
+      if (!subChipContainer) return;
+      const inputWrap = subChipContainer.querySelector('.chip-input-wrap');
+      subChipContainer.innerHTML = '';
+      subValues.forEach((s, idx) => {
+        const chip = document.createElement('div');
+        chip.className = 'chip';
+        chip.innerHTML = `
+          <span>${escapeHtml(s)}</span>
+          <button type="button" data-index="${idx}">&times;</button>
+        `;
+        subChipContainer.appendChild(chip);
+      });
+      subChipContainer.appendChild(inputWrap);
+      subChipContainer.querySelectorAll('.chip button').forEach(btn => {
+        btn.onclick = () => {
+          const i = Number(btn.dataset.index);
+          subValues.splice(i,1);
+          renderSubChips();
+        };
+      });
+    }
+
+    function addSubFromInput(){
+      const val = (subInput.value || '').trim();
+      if (!val) return;
+      val.split(',').map(x => x.trim()).filter(Boolean).forEach(v => {
+        if (!subValues.includes(v)) subValues.push(v);
+      });
+      subInput.value = '';
+      renderSubChips();
+    }
+
+    if (subInput){
+      subInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter'){
+          e.preventDefault();
+          addSubFromInput();
+        }
+      });
+      subInput.addEventListener('blur', addSubFromInput);
+    }
+
+    function clearCategoryForm(){
+      if (!catId) return;
+      catId.value = '';
+      catName.value = '';
+      catDescription.value = '';
+      catSort.value = '';
+      subValues = [];
+      renderSubChips();
+      catMsg.textContent = '';
+    }
+
+    if (clearCategory){
+      clearCategory.addEventListener('click', clearCategoryForm);
+    }
+
+    if (saveCategory){
+      saveCategory.addEventListener('click', async () => {
+        if (!catName) return;
+        catMsg.style.color = '#b91c1c';
+        const name = catName.value.trim();
+        if (!name){
+          catMsg.textContent = 'Category name is required.';
+          return;
+        }
+        const description = (catDescription.value || '').trim();
+        const sortOrderVal = catSort.value;
+        const sortOrder = sortOrderVal ? Number(sortOrderVal) : null;
+
+        const payload = {
+          name,
+          description,
+          subcategories: subValues.slice(),
+          updatedAt: serverTimestamp(),
+          ...(sortOrder !== null && !Number.isNaN(sortOrder) ? { sortOrder } : {}),
+          ...(catId.value ? {} : { createdAt: serverTimestamp() })
+        };
+
+        try{
+          if (catId.value){
+            await updateDoc(doc(db,'categories',catId.value), payload);
+            catMsg.textContent = 'Category updated.';
+          } else {
+            await addDoc(collection(db,'categories'), payload);
+            catMsg.textContent = 'Category added.';
+          }
+          catMsg.style.color = '#16a34a';
+          setTimeout(clearCategoryForm, 800);
+        }catch(err){
+          console.error(err);
+          catMsg.textContent = 'Save failed: ' + err.message;
+        }
+      });
+    }
+
+    function renderCategoriesList(){
+      if (!categoriesList) return;
+      categoriesList.innerHTML = '';
+      if (!categoryDocs.length){
+        categoriesList.innerHTML = '<div class="card-sub">No categories yet. Add your first category on the left.</div>';
+        return;
+      }
+      categoryDocs.forEach(cat => {
+        const el = document.createElement('div');
+        el.className = 'category-item';
+        const subs = Array.isArray(cat.subcategories) ? cat.subcategories : [];
+        el.innerHTML = `
+          <div>
+            <div class="category-main">${escapeHtml(cat.name || '')}</div>
+            ${cat.description ? `<div style="font-size:11px;color:#6b7280;margin-top:2px;">${escapeHtml(cat.description)}</div>` : ''}
+            ${
+              subs.length
+                ? `<div class="category-subchips">
+                     ${subs.map(s => `<span class="category-subchip">${escapeHtml(s)}</span>`).join('')}
+                   </div>`
+                : '<div class="card-sub" style="margin-top:4px">No sub-categories added.</div>'
+            }
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;min-width:110px;">
+            ${typeof cat.sortOrder === 'number' ? `<span class="pill-status">Order: ${cat.sortOrder}</span>` : ''}
+            <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;">
+              <button class="btn small ghost cat-edit" data-id="${cat.id}">
+                <i class="fas fa-pen"></i>Edit
+              </button>
+              <button class="btn small danger cat-delete" data-id="${cat.id}">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        `;
+        categoriesList.appendChild(el);
+      });
+
+      categoriesList.querySelectorAll('.cat-edit').forEach(btn => {
+        btn.onclick = () => {
+          const id = btn.dataset.id;
+          const cat = categoryDocs.find(c => c.id === id);
+          if (!cat) return;
+          catId.value = cat.id;
+          catName.value = cat.name || '';
+          catDescription.value = cat.description || '';
+          catSort.value = (typeof cat.sortOrder === 'number') ? cat.sortOrder : '';
+          subValues = Array.isArray(cat.subcategories) ? [...cat.subcategories] : [];
+          renderSubChips();
+          catMsg.textContent = '';
+        };
+      });
+
+      categoriesList.querySelectorAll('.cat-delete').forEach(btn => {
+        btn.onclick = async () => {
+          const id = btn.dataset.id;
+          if (!confirm('Delete this category?')) return;
+          try{
+            await deleteDoc(doc(db,'categories',id));
+          }catch(err){
+            alert('Delete failed: ' + err.message);
+          }
+        };
+      });
+    }
 
     /* ---------- AUTH ---------- */
     signInBtn.addEventListener('click', async ()=>{
@@ -864,13 +1265,13 @@
     let unsubOrders = null;
     let unsubQuotes = null;
     let unsubMessages = null;
+    let unsubCategories = null;
 
     onAuthStateChanged(auth, user =>{
       if (user){
         authMsg.textContent = '';
         authMsg.style.color = '#16a34a';
         authMsg.textContent = 'Signed in as ' + (user.email || '');
-        signInBtn.style.display = 'inline-flex';
         signInBtn.style.display = 'none';
         signOutBtn.style.display = 'inline-flex';
         panelArea.style.display = 'flex';
@@ -887,6 +1288,21 @@
 
     function startListeners(){
       if (unsubProducts) return;
+
+      // CATEGORIES
+      unsubCategories = onSnapshot(
+        query(collection(db,'categories'), orderBy('sortOrder','asc')),
+        snap =>{
+          categoryDocs = [];
+          snap.forEach(docSnap => {
+            const d = docSnap.data();
+            d.id = docSnap.id;
+            categoryDocs.push(d);
+          });
+          renderCategoriesList();
+          refreshCategorySelectOptions();
+        }
+      );
 
       // PRODUCTS
       unsubProducts = onSnapshot(
@@ -960,8 +1376,17 @@
               prodId.value = snap2.id;
 
               // Category mapping: if old ones exist, keep them
-              mainCategory.value = d.mainCategory || 'Other Products';
-              if (!subMap[mainCategory.value]) mainCategory.value = 'Other Products';
+              // Make sure select has this category
+              refreshCategorySelectOptions();
+              if (d.mainCategory){
+                if (!Array.from(mainCategory.options).some(o => o.value === d.mainCategory)){
+                  const extra = document.createElement('option');
+                  extra.value = d.mainCategory;
+                  extra.textContent = d.mainCategory;
+                  mainCategory.appendChild(extra);
+                }
+                mainCategory.value = d.mainCategory;
+              }
               populateSub();
               if (d.subCategory && Array.from(subCategory.options).some(o => o.value === d.subCategory)){
                 subCategory.value = d.subCategory;
@@ -995,9 +1420,9 @@
               } else if (d.imageUrl) {
                 imageUrlValues = [d.imageUrl];
               }
-              uploadedFileUrls = [];
+              pendingFiles = [];
               renderChips();
-              renderThumbs();
+              renderThumbsCombined();
 
               window.scrollTo({top:0,behavior:'smooth'});
             };
@@ -1219,10 +1644,12 @@
       if (unsubOrders){unsubOrders();unsubOrders=null;}
       if (unsubQuotes){unsubQuotes();unsubQuotes=null;}
       if (unsubMessages){unsubMessages();unsubMessages=null;}
+      if (unsubCategories){unsubCategories();unsubCategories=null;}
       productsList.innerHTML = '';
       ordersArea.innerHTML = '';
       quotesArea.innerHTML = '';
       messagesArea.innerHTML = '';
+      if (categoriesList) categoriesList.innerHTML = '';
     }
 
     /* ---------- SKU GENERATOR ---------- */
@@ -1233,9 +1660,9 @@
       return `${prefix}-${ts}-${rand}`;
     }
 
-    /* ---------- IMAGE URL TAG LOGIC ---------- */
-    let imageUrlValues = [];   // URLs from input
-    let uploadedFileUrls = []; // URLs from Firebase Storage
+    /* ---------- IMAGE URL TAG LOGIC + FILES ---------- */
+    let imageUrlValues = [];   // URLs (existing + new from uploads)
+    let pendingFiles = [];     // File objects to upload
 
     function renderChips(){
       const inputWrap = chipsContainer.querySelector('.chip-input-wrap');
@@ -1255,17 +1682,22 @@
           const i = Number(btn.dataset.index);
           imageUrlValues.splice(i,1);
           renderChips();
-          renderThumbs();
+          renderThumbsCombined();
         };
       });
     }
 
-    function renderThumbs(){
+    function renderThumbsCombined(){
       uploadPreview.innerHTML = '';
-      const all = [...imageUrlValues, ...uploadedFileUrls];
-      all.forEach(url =>{
+      pendingFiles.forEach(f =>{
+        const url = URL.createObjectURL(f);
         const img = document.createElement('img');
         img.src = url;
+        uploadPreview.appendChild(img);
+      });
+      imageUrlValues.forEach(u =>{
+        const img = document.createElement('img');
+        img.src = u;
         uploadPreview.appendChild(img);
       });
     }
@@ -1279,7 +1711,7 @@
       });
       pImageUrlInput.value = '';
       renderChips();
-      renderThumbs();
+      renderThumbsCombined();
     }
 
     pImageUrlInput.addEventListener('keydown',(e)=>{
@@ -1292,23 +1724,40 @@
       addUrlFromInput();
     });
 
-    // File uploads preview (local only; real upload happens on save)
+    // File input -> add to pendingFiles
     pFiles.addEventListener('change', ()=>{
-      renderThumbsTemp();
+      const files = Array.from(pFiles.files || []);
+      if (files.length){
+        pendingFiles = pendingFiles.concat(files);
+        renderThumbsCombined();
+      }
+      pFiles.value = '';
     });
 
-    function renderThumbsTemp(){
-      uploadPreview.innerHTML = '';
-      Array.from(pFiles.files || []).forEach(f=>{
-        const url = URL.createObjectURL(f);
-        const img = document.createElement('img');
-        img.src = url;
-        uploadPreview.appendChild(img);
+    // Drag & Drop
+    if (dropZone){
+      dropZone.addEventListener('click', () => pFiles.click());
+      ['dragenter','dragover'].forEach(evt => {
+        dropZone.addEventListener(evt, e => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZone.classList.add('dragover');
+        });
       });
-      imageUrlValues.forEach(u=>{
-        const img = document.createElement('img');
-        img.src = u;
-        uploadPreview.appendChild(img);
+      ['dragleave','drop'].forEach(evt => {
+        dropZone.addEventListener(evt, e => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (evt !== 'drop') dropZone.classList.remove('dragover');
+        });
+      });
+      dropZone.addEventListener('drop', e => {
+        const files = Array.from(e.dataTransfer.files || []).filter(f => f.type.startsWith('image/'));
+        if (files.length){
+          pendingFiles = pendingFiles.concat(files);
+          renderThumbsCombined();
+        }
+        dropZone.classList.remove('dragover');
       });
     }
 
@@ -1339,8 +1788,7 @@
       prodMsg.style.color = '#6b7280';
 
       // Upload files if any
-      uploadedFileUrls = [];
-      const files = Array.from(pFiles.files || []);
+      const files = pendingFiles.slice();
       try{
         for (const f of files){
           const path = `products/${sku}_${Date.now()}_${f.name}`;
@@ -1349,18 +1797,20 @@
           await new Promise((resolve, reject)=>{
             task.on('state_changed', ()=>{}, err=>reject(err), async ()=>{
               const dl = await getDownloadURL(task.snapshot.ref);
-              uploadedFileUrls.push(dl);
+              imageUrlValues.push(dl);
               resolve();
             });
           });
         }
+        pendingFiles = [];
       }catch(err){
         console.error('upload failed', err);
         prodMsg.textContent = 'Image upload failed: ' + err.message;
+        prodMsg.style.color = '#b91c1c';
         return;
       }
 
-      const allImages = [...imageUrlValues, ...uploadedFileUrls];
+      const allImages = imageUrlValues.slice();
       const coverImage = allImages[0] || '';
 
       const product = {
@@ -1425,8 +1875,7 @@
 
     function clearForm(){
       prodId.value = '';
-      mainCategory.value = 'Corporate & Promotional';
-      populateSub();
+      refreshCategorySelectOptions();
       pName.value = '';
       pPrice.value = '';
       pOldPrice.value = '';
@@ -1447,12 +1896,13 @@
       bulk100.value = '';
       pRating.value = '';
       pWarranty.value = '';
-      pFiles.value = '';
+      pendingFiles = [];
       imageUrlValues = [];
-      uploadedFileUrls = [];
       renderChips();
       uploadPreview.innerHTML = '';
       prodMsg.textContent = '';
+      if (mainCategory.options[0]) mainCategory.value = mainCategory.options[0].value;
+      populateSub();
     }
 
     /* ---------- SEARCH + FILTER UI ---------- */
@@ -1477,6 +1927,8 @@
         '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
       })[m]);
     }
+
+    console.log('🎉 Prabha Graphics Admin — Shopify-style sections + category manager + drag/drop images ready.');
   </script>
 </body>
 </html>
