@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Admin — Login</title>
+
+<style>
+  :root{
+    --primary:#D10007;
+    --primary-dark:#A00006;
+    --muted:#6b7280;
+    --bg:#f3f4f6;
+    --radius:14px;
+    --max-width:1280px;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:'Poppins',sans-serif;
+    background:radial-gradient(circle at top left,#fee2e2,#f9fafb 42%,#e5e7eb 100%);
+    color:#111827;
+  }
+
+  /* HEADER */
+  .header{
+    position:fixed;top:0;left:0;right:0;
+    background:#ffffffcc;
+    backdrop-filter:blur(12px);
+    box-shadow:0 10px 30px rgba(15,23,42,0.08);
+    z-index:50;
+  }
+  .nav-container{
+    max-width:var(--max-width);
+    margin:0 auto;
+    padding:10px 20px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .logo-circle{
+    width:40px;height:40px;border-radius:999px;
+    background:var(--primary);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:800;font-size:18px;
+  }
+  .brand-text strong{font-size:16px}
+  .brand-text div{font-size:11px;color:var(--muted)}
+
+  /* MAIN */
+  .main{
+    max-width:var(--max-width);
+    margin:100px auto 30px;
+    padding:0 20px;
+  }
+
+  .card{
+    background:#fff;
+    border-radius:var(--radius);
+    padding:20px;
+    border:1px solid #e5e7eb;
+    box-shadow:0 10px 30px rgba(15,23,42,0.06);
+  }
+
+  .input{
+    width:100%;
+    padding:9px 12px;
+    border-radius:10px;
+    border:1px solid #e5e7eb;
+    margin-top:4px;
+    background:#f9fafb;
+    font-size:14px;
+  }
+
+  label{font-size:13px;color:#4b5563;margin-top:12px;display:block}
+
+  .btn{
+    border:none;
+    padding:9px 14px;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:14px;
+  }
+  .btn.primary{
+    background:var(--primary);
+    color:#fff;
+  }
+  .btn.primary:hover{background:var(--primary-dark)}
+
+  .small{font-size:12px;color:var(--muted)}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+  <div class="nav-container">
+    <div class="logo-circle">PG</div>
+    <div class="brand-text">
+      <strong>Prabha Graphics</strong>
+      <div>Admin Login</div>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+  <div class="card" style="max-width:420px;margin:0 auto;">
+    <h2 style="margin-bottom:8px;font-size:20px">Admin Sign In</h2>
+    <p class="small" style="margin-bottom:12px">Use admin email & password</p>
+
+    <label>Email</label>
+    <input id="email" type="email" class="input" placeholder="admin@example.com">
+
+    <label>Password</label>
+    <input id="password" type="password" class="input" placeholder="password">
+
+    <div style="margin-top:14px;display:flex;gap:10px">
+      <button id="signIn" class="btn primary">Sign in</button>
+      <button id="demo" class="btn">Fill demo</button>
+    </div>
+
+    <div id="msg" style="margin-top:10px;font-size:13px;color:#b91c1c"></div>
+  </div>
+</main>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+
+  /* FIREBASE CONFIG (SAME AS YOUR ORIGINAL) */
+  const firebaseConfig = {
+    apiKey: "AIzaSyCADm7aarTkJ4Hohsb2xz1EkqrkLWjSQxg",
+    authDomain: "my-project-b3537.firebaseapp.com",
+    projectId: "my-project-b3537",
+    storageBucket: "my-project-b3537.firebasestorage.app",
+    messagingSenderId: "652581310060",
+    appId: "1:652581310060:web:c00691e1c625e1a78ad249",
+    measurementId: "G-CG17J3F6YW"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  const email = document.getElementById("email");
+  const password = document.getElementById("password");
+  const signInBtn = document.getElementById("signIn");
+  const msg = document.getElementById("msg");
+  const demoBtn = document.getElementById("demo");
+
+  signInBtn.addEventListener("click", async () => {
+    msg.textContent = "";
+
+    let e = email.value.trim();
+    let p = password.value.trim();
+
+    if (!e || !p) {
+      msg.textContent = "Enter email & password.";
+      return;
+    }
+
+    try {
+      await signInWithEmailAndPassword(auth, e, p);
+      window.location.href = "admin-dashboard.html";
+    } catch (err) {
+      msg.textContent = err.message;
+    }
+  });
+
+  demoBtn.addEventListener("click", () => {
+    email.value = "admin@example.com";
+    password.value = "password123";
+  });
+</script>
+
+</body>
+</html>
