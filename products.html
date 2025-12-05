@@ -15,38 +15,27 @@
 
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
-
     :root{
-      /* Brand */
       --primary:#D10007;
       --primary-red:#D10007;
       --dark-red:#A00006;
       --white:#ffffff;
       --black:#000000;
-
-      /* Greys */
       --gray-50:#f9fafb;
       --gray-100:#f3f4f6;
       --gray-200:#e5e7eb;
       --gray-600:#4b5563;
       --gray-800:#1f2937;
       --gray-900:#111827;
-
-      /* Old tokens (products layout) */
-      --dark:#0f172a;
       --muted:#6b7280;
-      --bg:#fbfbfd;
       --card:0 10px 30px rgba(2,6,23,0.06);
       --max:1200px;
       --gap:16px;
       --radius:12px;
       --nav-height:80px;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
     }
-
-    html{
-      scroll-behavior:smooth;
-      height:100%;
-    }
+    html{scroll-behavior:smooth;height:100%}
     body{
       font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
       background-color:var(--white);
@@ -56,742 +45,177 @@
       -webkit-font-smoothing:antialiased;
       -moz-osx-font-smoothing:grayscale;
       -webkit-tap-highlight-color:transparent;
+      padding-bottom: calc(var(--safe-bottom));
     }
 
-    /* Custom scrollbar */
+    /* Body lock when modal open: set by JS (class modal-open) */
+    body.modal-open{
+      overflow:hidden;
+      position:fixed;
+      width:100%;
+    }
+
+    /* Scrollbar */
     ::-webkit-scrollbar{width:10px}
     ::-webkit-scrollbar-track{background:var(--gray-100)}
     ::-webkit-scrollbar-thumb{background:var(--primary-red);border-radius:10px}
     ::-webkit-scrollbar-thumb:hover{background:var(--dark-red)}
 
-    /* Skip link */
-    .skip-link{
-      position:fixed;left:8px;top:8px;background:#000;color:#fff;padding:8px 12px;
-      border-radius:8px;z-index:9999;transform:translateY(-120%);transition:transform .18s;
-    }
+    .skip-link{position:fixed;left:8px;top:8px;background:#000;color:#fff;padding:8px 12px;border-radius:8px;z-index:9999;transform:translateY(-120%);transition:transform .18s}
     .skip-link:focus{transform:translateY(0)}
 
-    .container{
-      max-width:1280px;
-      margin:0 auto;
-      padding:0 20px;
-    }
+    .container{max-width:1280px;margin:0 auto;padding:0 20px}
 
-    /* ==================== NAVBAR (from homepage) ==================== */
+    /* NAV */
     .navbar{
-      position:fixed;
-      top:0;left:0;right:0;
-      z-index:1000;
-      background-color:var(--white);
-      transition:all 0.3s ease;
+      position:fixed;top:0;left:0;right:0;z-index:1000;background-color:var(--white);transition:all 0.3s ease;
+      backdrop-filter: blur(4px);
     }
-    .navbar.scrolled{
-      box-shadow:0 10px 25px rgba(0,0,0,0.1);
-    }
-    .nav-container{
-      max-width:1280px;
-      margin:0 auto;
-      padding:16px 20px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-    }
-    .nav-logo{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      cursor:pointer;
-      transition:transform 0.3s ease;
-    }
-    .nav-logo:hover{transform:scale(1.05)}
-    .logo-img{
-      width:44px;
-      height:44px;
-      border-radius:999px;
-      object-fit:contain;
-    }
-    .logo-text{
-      font-weight:700;
-      font-size:20px;
-      color:var(--gray-800);
-    }
-    .nav-links{
-      display:flex;
-      gap:24px;
-      list-style:none;
-      align-items:center;
-    }
-    .nav-link{
-      color:var(--gray-800);
-      text-decoration:none;
-      font-weight:500;
-      position:relative;
-      transition:color 0.3s ease;
-      padding-bottom:3px;
-    }
-    .nav-link::after{
-      content:'';
-      position:absolute;
-      bottom:-4px;left:0;
-      width:0;height:2px;
-      background-color:var(--primary-red);
-      transition:width 0.3s ease;
-    }
+    .navbar.scrolled{box-shadow:0 10px 25px rgba(0,0,0,0.08)}
+    .nav-container{max-width:1280px;margin:0 auto;padding:16px 20px;display:flex;justify-content:space-between;align-items:center}
+    .nav-logo{display:flex;align-items:center;gap:8px;cursor:pointer}
+    .logo-img{width:44px;height:44px;border-radius:999px;object-fit:contain}
+    .logo-text{font-weight:700;font-size:20px;color:var(--gray-800)}
+    .nav-links{display:flex;gap:24px;list-style:none;align-items:center}
+    .nav-link{color:var(--gray-800);text-decoration:none;font-weight:500;position:relative;padding-bottom:3px}
+    .nav-link::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background-color:var(--primary-red);transition:width 0.3s}
     .nav-link:hover::after{width:100%}
+    .cta-btn{background-color:var(--primary-red);color:var(--white);border:none;padding:10px 20px;border-radius:8px;font-weight:600;cursor:pointer;white-space:nowrap}
+    .cta-btn:hover{background-color:var(--dark-red)}
+    .hamburger{display:none;flex-direction:column;cursor:pointer;margin-left:8px}
+    .hamburger span{width:24px;height:3px;background-color:var(--gray-800);margin:4px 0;transition:all .3s;border-radius:2px}
+    .hamburger.active span:nth-child(1){transform:rotate(-45deg) translate(-6px,6px)}
+    .hamburger.active span:nth-child(2){opacity:0}
+    .hamburger.active span:nth-child(3){transform:rotate(45deg) translate(-6px,-6px)}
 
-    .cta-btn{
-      background-color:var(--primary-red);
-      color:var(--white);
-      border:none;
-      padding:10px 24px;
-      border-radius:8px;
-      font-weight:600;
-      cursor:pointer;
-      transition:all 0.3s ease;
-      font-family:'Poppins',sans-serif;
-      white-space:nowrap;
-    }
-    .cta-btn:hover{
-      background-color:var(--dark-red);
-      transform:scale(1.05);
-    }
+    /* HERO */
+    .hero{min-height:220px;background:linear-gradient(90deg,#fff7f7,#fff);display:flex;align-items:center;margin-top:var(--nav-height);padding:28px 0}
+    .hero-grid{display:flex;gap:24px;align-items:center;justify-content:space-between}
+    .hero h1{font-size:26px;margin:0 0 8px 0}
+    .hero p{color:var(--muted);margin:0;max-width:58ch}
+    .hero-figure{width:260px;border-radius:12px;overflow:hidden;flex-shrink:0;box-shadow:0 16px 38px rgba(15,23,42,0.15)}
+    .hero-figure img{width:100%;height:100%;display:block;object-fit:cover}
 
-    .hamburger{
-      display:none;
-      flex-direction:column;
-      cursor:pointer;
-      margin-left:8px;
-    }
-    .hamburger span{
-      width:24px;
-      height:3px;
-      background-color:var(--gray-800);
-      margin:4px 0;
-      transition:all 0.3s ease;
-      border-radius:2px;
-    }
-    .hamburger.active span:nth-child(1){
-      transform:rotate(-45deg) translate(-6px,6px);
-    }
-    .hamburger.active span:nth-child(2){
-      opacity:0;
-    }
-    .hamburger.active span:nth-child(3){
-      transform:rotate(45deg) translate(-6px,-6px);
-    }
-
-    /* ==================== HERO (products page) ==================== */
-    .hero{
-      min-height:220px;
-      background:linear-gradient(90deg,#fff7f7,#fff);
-      display:flex;
-      align-items:center;
-      margin-top:var(--nav-height);
-      padding:28px 0;
-    }
-    .hero-grid{
-      display:flex;
-      gap:24px;
-      align-items:center;
-      justify-content:space-between;
-    }
-    .hero h1{
-      font-size:26px;
-      margin:0 0 8px 0;
-    }
-    .hero p{
-      color:var(--muted);
-      margin:0;
-      max-width:58ch;
-    }
-    .hero-figure{
-      width:260px;
-      border-radius:12px;
-      overflow:hidden;
-      flex-shrink:0;
-      box-shadow:0 16px 38px rgba(15,23,42,0.15);
-    }
-    .hero-figure img{
-      width:100%;height:100%;display:block;object-fit:cover;
-    }
-
-    /* ==================== CATEGORIES & PRODUCTS ==================== */
-    .categories-grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-      gap:var(--gap);
-      margin:22px 0;
-    }
-    .category-card{
-      position:relative;
-      border-radius:var(--radius);
-      overflow:hidden;
-      cursor:pointer;
-      min-height:140px;
-      background:#fff;
-      box-shadow:var(--card);
-      transition:transform .18s,box-shadow .18s;
-    }
-    .category-card:hover{
-      transform:translateY(-6px);
-      box-shadow:0 18px 40px rgba(2,6,23,0.08);
-    }
-    .category-card img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      display:block;
-      transition:transform 0.3s ease;
-    }
+    /* CATEGORIES & PRODUCTS */
+    .categories-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:var(--gap);margin:22px 0}
+    .category-card{position:relative;border-radius:var(--radius);overflow:hidden;cursor:pointer;min-height:140px;background:#fff;box-shadow:var(--card);transition:transform .18s,box-shadow .18s}
+    .category-card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(2,6,23,0.08)}
+    .category-card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}
     .category-card:hover img{transform:scale(1.05)}
-    .category-overlay{
-      position:absolute;
-      inset:0;
-      background:linear-gradient(180deg,transparent,rgba(0,0,0,0.45));
-      display:flex;
-      align-items:flex-end;
-      padding:14px;
-      color:#fff;
-    }
-    .category-overlay h3{
-      margin:0;font-size:16px;
-    }
-    .category-overlay p{
-      margin:4px 0 0 0;font-size:13px;opacity:0.95;
-    }
+    .category-overlay{position:absolute;inset:0;background:linear-gradient(180deg,transparent,rgba(0,0,0,0.45));display:flex;align-items:flex-end;padding:14px;color:#fff}
+    .category-overlay h3{margin:0;font-size:16px}
+    .category-overlay p{margin:4px 0 0 0;font-size:13px;opacity:0.95}
 
     .section{margin:18px 0;padding-bottom:6px}
     .section h2{margin:0 0 12px 0;font-size:18px}
-
-    .products-grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-      gap:14px;
-    }
-    .product-card{
-      background:#fff;
-      border-radius:12px;
-      overflow:hidden;
-      box-shadow:var(--card);
-      display:flex;
-      flex-direction:column;
-      transition:transform .18s;
-    }
+    .products-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+    .product-card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:var(--card);display:flex;flex-direction:column;transition:transform .18s}
     .product-card:hover{transform:translateY(-6px)}
-    .product-card img{
-      width:100%;
-      height:180px;
-      object-fit:cover;
-    }
-    .product-body{
-      padding:12px;
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-    }
+    .product-card img{width:100%;height:180px;object-fit:cover}
+    .product-body{padding:12px;display:flex;flex-direction:column;gap:8px}
     .product-title{font-size:15px;font-weight:700}
     .product-vendor{color:var(--muted);font-size:13px}
     .product-desc{color:#334155;font-size:13px}
-    .product-footer{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      margin-top:8px;
-      flex-wrap:wrap;
-    }
-    .badge{
-      background:#f1f5f9;
-      color:#0f172a;
-      padding:6px 9px;
-      border-radius:999px;
-      font-size:12px;
-    }
-    .price{
-      font-weight:800;
-      color:var(--primary);
-      margin-left:auto;
-      white-space:nowrap;
-    }
-    .old{
-      color:#9ca3af;
-      text-decoration:line-through;
-      font-size:13px;
-    }
+    .product-footer{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap}
+    .badge{background:#f1f5f9;color:#0f172a;padding:6px 9px;border-radius:999px;font-size:12px}
+    .price{font-weight:800;color:var(--primary);margin-left:auto;white-space:nowrap}
+    .old{color:#9ca3af;text-decoration:line-through;font-size:13px}
+    .empty{padding:24px;border-radius:12px;background:#fff;text-align:center;color:var(--muted);box-shadow:var(--card)}
 
-    .empty{
-      padding:24px;
-      border-radius:12px;
-      background:#fff;
-      text-align:center;
-      color:var(--muted);
-      box-shadow:var(--card);
-    }
-
-    /* ==================== PRODUCT DETAIL MODAL ==================== */
-    .modal-bg{
-      position:fixed;
-      inset:0;
-      display:none;
-      align-items:flex-start;
-      justify-content:center;
-      background:rgba(15,23,42,0.7);
-      z-index:2200;
-      padding:32px 12px;
-    }
-    .modal{
-      width:100%;
-      max-width:1100px;
-      background:#ffffff;
-      border-radius:18px;
-      padding:20px 22px 22px;
-      max-height:92vh;
-      overflow:auto;
-      box-shadow:0 30px 80px rgba(15,23,42,0.6);
-      display:flex;
-      flex-direction:column;
-      gap:16px;
-    }
-    .modal .top{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:12px;
-      flex-wrap:wrap;
-      padding-bottom:10px;
-      border-bottom:1px solid #e5e7eb;
-    }
-    .modal-title{
-      font-size:20px;
-      font-weight:700;
-      margin:0;
-    }
-    .modal-main{
-      display:flex;
-      gap:22px;
-      margin-top:10px;
-      flex-wrap:wrap;
-    }
+    /* MODALS */
+    .modal-bg{position:fixed;inset:0;display:none;align-items:flex-start;justify-content:center;background:rgba(15,23,42,0.7);z-index:2200;padding:32px 12px}
+    .modal{width:100%;max-width:1100px;background:#ffffff;border-radius:18px;padding:20px 22px 22px;max-height:92vh;overflow:auto;box-shadow:0 30px 80px rgba(15,23,42,0.6);display:flex;flex-direction:column;gap:16px}
+    .modal .top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;padding-bottom:10px;border-bottom:1px solid #e5e7eb}
+    .modal-title{font-size:20px;font-weight:700;margin:0}
+    .modal-main{display:flex;gap:22px;margin-top:10px;flex-wrap:wrap}
     .modal .left{flex:0 0 40%;min-width:260px}
     .modal .right{flex:1;min-width:260px}
-
-    .main-image{
-      width:100%;
-      height:420px;
-      object-fit:cover;
-      border-radius:12px;
-      border:1px solid #e5e7eb;
-      background:#fff;
-      display:block;
-    }
-    .thumbs{
-      display:flex;
-      gap:8px;
-      margin-top:10px;
-      flex-wrap:wrap;
-    }
-    .thumbs img{
-      width:72px;
-      height:72px;
-      object-fit:cover;
-      border-radius:8px;
-      border:2px solid transparent;
-      cursor:pointer;
-      background:#f9fafb;
-    }
+    .main-image{width:100%;height:420px;object-fit:cover;border-radius:12px;border:1px solid #e5e7eb;background:#fff;display:block}
+    .thumbs{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+    .thumbs img{width:72px;height:72px;object-fit:cover;border-radius:8px;border:2px solid transparent;cursor:pointer;background:#f9fafb}
     .thumbs img.active{border-color:var(--primary)}
+    .price-row{display:flex;gap:12px;align-items:baseline;margin:10px 0;flex-wrap:wrap}
+    .price-row .big{font-size:24px;color:var(--primary);font-weight:800}
+    .saving{color:#065f46;background:#dcfce7;padding:6px 8px;border-radius:8px;font-weight:600;font-size:13px}
+    .stock{color:var(--muted);margin-top:4px;font-size:13px}
+    .meta-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    .meta{background:#f8fafc;padding:8px 10px;border-radius:8px;font-size:13px;color:var(--muted)}
+    .specs{margin-top:12px;border-radius:10px;padding:12px;background:#fff;border:1px solid #eef2f7}
+    .specs table{width:100%;border-collapse:collapse;font-size:14px}
+    .specs td{padding:6px 8px;border-bottom:1px dashed #f1f5f9;color:var(--muted)}
+    .specs td:first-child{width:40%;color:#374151;font-weight:600}
+    .tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .tag{background:#f1f5f9;padding:6px 10px;border-radius:999px;font-size:13px;color:#111}
+    .trust{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+    .btn{background:var(--primary);color:#fff;padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:700;font-family:'Poppins',sans-serif;transition:all 0.2s;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+    .btn:hover{background:var(--dark-red);transform:translateY(-1px)}
+    .btn.ghost{background:#fff;border:1px solid #e5e7eb;color:var(--gray-800)}
+    .btn.secondary{background:#334155}
 
-    .price-row{
-      display:flex;
-      gap:12px;
-      align-items:baseline;
-      margin:10px 0;
-      flex-wrap:wrap;
-    }
-    .price-row .big{
-      font-size:24px;
-      color:var(--primary);
-      font-weight:800;
-    }
-    .saving{
-      color:#065f46;
-      background:#dcfce7;
-      padding:6px 8px;
-      border-radius:8px;
-      font-weight:600;
-      font-size:13px;
-    }
-    .stock{
-      color:var(--muted);
-      margin-top:4px;
-      font-size:13px;
-    }
-
-    .meta-row{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      margin-top:8px;
-    }
-    .meta{
-      background:#f8fafc;
-      padding:8px 10px;
-      border-radius:8px;
-      font-size:13px;
-      color:var(--muted);
-    }
-    .specs{
-      margin-top:12px;
-      border-radius:10px;
-      padding:12px;
-      background:#fff;
-      border:1px solid #eef2f7;
-    }
-    .specs table{
-      width:100%;
-      border-collapse:collapse;
-      font-size:14px;
-    }
-    .specs td{
-      padding:6px 8px;
-      border-bottom:1px dashed #f1f5f9;
-      color:var(--muted);
-    }
-    .specs td:first-child{
-      width:40%;
-      color:#374151;
-      font-weight:600;
-    }
-    .tags{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      margin-top:10px;
-    }
-    .tag{
-      background:#f1f5f9;
-      padding:6px 10px;
-      border-radius:999px;
-      font-size:13px;
-      color:#111;
-    }
-    .trust{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top:10px;
-    }
-    .trust .meta{
-      display:flex;
-      gap:8px;
-      align-items:center;
-    }
-    .actions{
-      display:flex;
-      gap:10px;
-      margin-top:14px;
-      flex-wrap:wrap;
-    }
-    .btn{
-      background:var(--primary);
-      color:#fff;
-      padding:10px 14px;
-      border-radius:10px;
-      border:0;
-      cursor:pointer;
-      font-weight:700;
-      font-family:'Poppins',sans-serif;
-      transition:all 0.2s ease;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:6px;
-    }
-    .btn:hover{
-      background:var(--dark-red);
-      transform:translateY(-1px);
-    }
-    .btn.ghost{
-      background:#fff;
-      border:1px solid #e5e7eb;
-      color:var(--dark);
-    }
-    .btn.secondary{
-      background:#334155;
-    }
-
-    /* Sticky footer + scrollable modal body for order modal */
-    .modal-scroll{
-      overflow:auto;
-      max-height: calc(92vh - 160px);
-      padding-right: 6px;
-    }
-    .order-actions{
-      position: sticky;
-      bottom: 0;
-      background: #fff;
-      padding-top: 10px;
-      padding-bottom: 6px;
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      z-index: 12;
-      border-top:1px solid #eef2f7;
-      border-radius:0 0 12px 12px;
-    }
-
-    /* Order modal + friendlier form */
-    .form-row{
-      display:flex;
-      gap:10px;
-      margin-top:8px;
-      flex-wrap:wrap;
-    }
+    /* Order modal specifics */
+    .modal-scroll{overflow:auto;max-height: calc(92vh - 160px);padding-right:6px}
+    .order-actions{position: sticky; bottom: 0; background: #fff; padding:12px calc(16px + var(--safe-bottom)); display:flex;gap:8px;flex-wrap:wrap;z-index:12;border-top:1px solid #eef2f7;border-radius:0 0 12px 12px}
+    .form-row{display:flex;gap:10px;margin-top:8px;flex-wrap:wrap}
     .form-row > *{flex:1}
-    input,select,textarea{
-      width:100%;
-      padding:10px;
-      border-radius:8px;
-      border:1px solid #e6e7eb;
-      font-size:14px;
-      font-family:'Poppins',sans-serif;
-    }
+    input,select,textarea{width:100%;padding:14px;border-radius:10px;border:1px solid #e6e7eb;font-size:15px;font-family:'Poppins',sans-serif}
     textarea{resize:vertical}
-    label.form-label{
-      display:block;
-      font-size:13px;
-      margin-bottom:4px;
-      color:var(--gray-700,#374151);
-    }
-    .form-section-title{
-      margin-top:10px;
-      font-size:14px;
-      font-weight:600;
-      color:var(--gray-800);
-    }
-    .form-hint{
-      font-size:12px;
-      color:var(--muted);
-      margin-top:4px;
-    }
+    label.form-label{display:block;font-size:13px;margin-bottom:4px;color:var(--gray-700)}
+    .form-section-title{margin-top:10px;font-size:14px;font-weight:600;color:var(--gray-800)}
+    .form-hint{font-size:12px;color:var(--muted);margin-top:4px}
     .o-msg{margin-top:10px}
+    .order-total{margin-top:10px;font-size:16px;font-weight:700;color:var(--primary)}
+    .price-breakdown{margin-top:8px;font-size:14px;color:var(--muted);background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #eef2f7}
+    .price-breakdown small{display:block;color:var(--muted);font-size:12px;margin-top:6px}
 
-    /* Total amount display */
-    .order-total{
-      margin-top:10px;
-      font-size:16px;
-      font-weight:700;
-      color:var(--primary);
-    }
-
-    /* ==================== FOOTER (from homepage, linked correctly) ==================== */
-    .footer{
-      background-color:var(--gray-900);
-      color:var(--white);
-      padding:64px 0 32px;
-      margin-top:28px;
-    }
-    .footer-grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-      gap:40px;
-      margin-bottom:40px;
-    }
-    .footer-col{
-      opacity:0;
-      animation:slideUp 0.8s ease forwards;
-    }
-    .footer-col:nth-child(2){animation-delay:0.1s}
-    .footer-col:nth-child(3){animation-delay:0.2s}
-    .footer-col:nth-child(4){animation-delay:0.3s}
-
-    @keyframes slideUp{
-      from{opacity:0;transform:translateY(20px)}
-      to{opacity:1;transform:translateY(0)}
-    }
-
-    .footer-logo{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      margin-bottom:16px;
-    }
-    .footer-logo-img{
-      width:40px;
-      height:40px;
-      border-radius:999px;
-      object-fit:contain;
-    }
-    .footer-col p{
-      color:#d1d5db;
-      line-height:1.6;
-      margin-bottom:16px;
-    }
-    .footer-col h3{
-      font-size:18px;
-      font-weight:600;
-      margin-bottom:16px;
-    }
+    /* FOOTER */
+    .footer{background-color:var(--gray-900);color:var(--white);padding:64px 0 32px;margin-top:28px}
+    .footer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:40px;margin-bottom:40px}
+    .footer-col{opacity:0;animation:slideUp 0.8s ease forwards}
+    @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    .footer-logo{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+    .footer-logo-img{width:40px;height:40px;border-radius:999px;object-fit:contain}
+    .footer-col p{color:#d1d5db;line-height:1.6;margin-bottom:16px}
+    .footer-col h3{font-size:18px;font-weight:600;margin-bottom:16px}
     .footer-col ul{list-style:none}
-    .footer-col li{margin-bottom:12px}
-    .footer-link{
-      color:#d1d5db;
-      text-decoration:none;
-      transition:all 0.3s ease;
-    }
-    .footer-link:hover{
-      color:var(--primary-red);
-      transform:translateX(5px);
-    }
-    .contact-info{
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-    }
-    .contact-info p{
-      display:flex;
-      align-items:flex-start;
-      gap:8px;
-      color:#d1d5db;
-    }
-    .contact-info i{
-      color:var(--primary-red);
-      margin-top:2px;
-    }
-    .social-links{
-      display:flex;
-      gap:16px;
-      margin-top:16px;
-    }
-    .social-icon{
-      width:40px;
-      height:40px;
-      background-color:rgba(255,255,255,0.1);
-      border-radius:50%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      color:var(--primary-red);
-      text-decoration:none;
-      transition:all 0.3s ease;
-    }
-    .social-icon:hover{
-      background-color:var(--primary-red);
-      color:var(--white);
-      transform:scale(1.2) rotate(10deg);
-    }
-    .footer-divider{
-      height:1px;
-      background:linear-gradient(to right,transparent,rgba(209,0,7,0.3),transparent);
-      margin-bottom:24px;
-    }
-    .footer-bottom{
-      text-align:center;
-      color:#9ca3af;
-    }
+    .footer-link{color:#d1d5db;text-decoration:none;transition:all 0.3s}
+    .footer-link:hover{color:var(--primary-red);transform:translateX(5px)}
+    .contact-info{display:flex;flex-direction:column;gap:12px}
+    .contact-info p{display:flex;align-items:flex-start;gap:8px;color:#d1d5db}
+    .contact-info i{color:var(--primary-red);margin-top:2px}
+    .social-links{display:flex;gap:16px;margin-top:16px}
+    .social-icon{width:40px;height:40px;background-color:rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--primary-red);text-decoration:none;transition:all 0.3s}
+    .social-icon:hover{background-color:var(--primary-red);color:var(--white);transform:scale(1.2) rotate(10deg)}
+    .footer-divider{height:1px;background:linear-gradient(to right,transparent,rgba(209,0,7,0.3),transparent);margin-bottom:24px}
+    .footer-bottom{text-align:center;color:#9ca3af;padding-bottom: calc(var(--safe-bottom))}
 
-    /* Scroll to top button */
-    #scrollToTop{
-      position:fixed;
-      bottom:20px;
-      right:20px;
-      width:50px;
-      height:50px;
-      background-color:var(--primary-red);
-      color:var(--white);
-      border:none;
-      border-radius:50%;
-      cursor:pointer;
-      display:none;
-      z-index:999;
-      font-size:20px;
-      transition:all 0.3s ease;
-      align-items:center;
-      justify-content:center;
-    }
-    #scrollToTop:hover{
-      transform:scale(1.1);
-      background-color:var(--dark-red);
-    }
+    /* Scroll to top */
+    #scrollToTop{position:fixed;bottom:20px;right:20px;width:50px;height:50px;background-color:var(--primary-red);color:var(--white);border:none;border-radius:50%;cursor:pointer;display:none;z-index:999;font-size:20px;align-items:center;justify-content:center}
+    #scrollToTop:hover{transform:scale(1.1);background-color:var(--dark-red)}
 
-    /* ==================== RESPONSIVE ==================== */
+    /* Responsive */
     @media (max-width:1024px){
       .hero-grid{flex-direction:column;align-items:flex-start}
       .hero-figure{width:100%;max-width:360px}
       .main-image{height:320px}
     }
     @media (max-width:768px){
-      .nav-links{
-        display:none;
-      }
-      .nav-links.active{
-        display:flex;
-        position:fixed;
-        top:var(--nav-height);
-        left:0;
-        width:100%;
-        flex-direction:column;
-        background-color:var(--white);
-        gap:0;
-        padding:16px 0;
-        max-height:calc(100vh - var(--nav-height));
-        overflow-y:auto;
-        box-shadow:0 10px 30px rgba(0,0,0,0.12);
-      }
-      .nav-links.active li{
-        padding:12px 20px;
-        border-bottom:1px solid var(--gray-100);
-      }
+      .nav-links{display:none}
+      .nav-links.active{display:flex;position:fixed;top:var(--nav-height);left:0;width:100%;flex-direction:column;background-color:var(--white);gap:0;padding:16px 0;max-height:calc(100vh - var(--nav-height));overflow-y:auto;box-shadow:0 10px 30px rgba(0,0,0,0.12)}
+      .nav-links.active li{padding:12px 20px;border-bottom:1px solid var(--gray-100)}
       .hamburger{display:flex}
       .logo-text{font-size:18px}
-
-      .hero{
-        min-height:200px;
-        padding:18px 0;
-      }
+      .hero{min-height:200px;padding:18px 0}
       .product-card img{height:140px}
-      .products-grid{
-        grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-      }
+      .products-grid{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
       .main-image{height:260px}
 
-      /* === FULL-PAGE MODAL STYLE ON MOBILE === */
-      .modal-bg{
-        align-items:stretch;
-        padding:0;
-      }
-      .modal{
-        max-width:none;
-        width:100%;
-        height:100vh;
-        max-height:100vh;
-        border-radius:0;
-        padding:14px 14px 10px;
-        display:flex;
-        flex-direction:column;
-      }
-      .modal-main{
-        flex:1;
-        overflow:auto;
-        margin-top:10px;
-      }
-      .modal-scroll{
-        max-height:none;
-        flex:1;
-        overflow:auto;
-        padding-right:4px;
-      }
-      .order-actions{
-        position:sticky;
-        bottom:0;
-        background:#fff;
-        box-shadow:0 -8px 20px rgba(15,23,42,0.12);
-        border-radius:0;
-      }
-
-      .footer-grid{
-        grid-template-columns:1fr;
-        gap:24px;
-      }
+      /* Full page modal on mobile */
+      .modal-bg{align-items:stretch;padding:0}
+      .modal{max-width:none;width:100%;height:100vh;max-height:100vh;border-radius:0;padding:14px 14px 10px;display:flex;flex-direction:column}
+      .modal-main{flex:1;overflow:auto;margin-top:10px}
+      .modal-scroll{max-height:none;flex:1;overflow:auto;padding-right:4px;padding-bottom:calc(16px + var(--safe-bottom))}
+      .order-actions{position:sticky;bottom:0;background:#fff;box-shadow:0 -8px 20px rgba(15,23,42,0.12);border-radius:0;padding:12px calc(16px + var(--safe-bottom))}
     }
     @media (max-width:480px){
       .container{padding:0 16px}
@@ -799,11 +223,7 @@
       .hero h1{font-size:22px}
       .hero p{font-size:13px}
       .section h2{font-size:16px}
-      #scrollToTop{
-        width:40px;
-        height:40px;
-        font-size:16px;
-      }
+      #scrollToTop{width:40px;height:40px;font-size:16px}
     }
 
     :focus{outline:3px solid rgba(209,0,7,0.18);outline-offset:2px}
@@ -825,7 +245,6 @@
         <li><a href="about.html" class="nav-link">About Us</a></li>
         <li><a href="products.html#corporate" class="nav-link">Corporate Gifts</a></li>
         <li><a href="products.html#personalized" class="nav-link">Personalized Gifts</a></li>
-        <!-- Business Essentials removed -->
         <li><a href="contact-us.html" class="nav-link">Contact Us</a></li>
       </ul>
 
@@ -863,7 +282,6 @@
           <img loading="lazy" decoding="async" src="personalized-img.png" alt="Personalized"/>
           <div class="category-overlay"><div><h3>Personalized Gifts</h3><p>Mugs, Cushions, Photo Gifts</p></div></div>
         </div>
-        <!-- Business / Apparel category removed — products from those categories will now appear under "Other Products" -->
         <div class="category-card" role="listitem" onclick="scrollToSection('other')" tabindex="0" onkeypress="if(event.key==='Enter')scrollToSection('other')">
           <img loading="lazy" decoding="async" src="others-img.png" alt="Other"/>
           <div class="category-overlay"><div><h3>Other Products</h3><p>Stationery, Accessories, Misc</p></div></div>
@@ -883,8 +301,6 @@
         <div id="personalizedEmpty" class="empty" style="display:none">No products found in this category.</div>
       </section>
 
-      <!-- Business section removed -->
-
       <section id="other" class="section" aria-label="Other Products Section">
         <h2>Other Products</h2>
         <div id="otherGrid" class="products-grid" aria-live="polite" aria-busy="false"></div>
@@ -894,7 +310,7 @@
 
     <!-- Product detail modal -->
     <div id="detailModal" class="modal-bg" role="dialog" aria-hidden="true" aria-labelledby="dTitle" aria-modal="true">
-      <div class="modal" role="document">
+      <div class="modal" role="document" aria-describedby="dShortDesc">
         <div class="top">
           <div>
             <h2 id="dTitle" class="modal-title"></h2>
@@ -962,14 +378,14 @@
 
     <!-- Order modal -->
     <div id="orderModal" class="modal-bg" aria-hidden="true" aria-modal="true">
-      <div class="modal" role="document">
+      <div class="modal" role="document" aria-describedby="orderTotal">
         <div style="display:flex;justify-content:space-between;align-items:center">
           <h3 id="orderTitle">Place Order</h3>
           <button class="btn ghost" id="orderCloseBtn" aria-label="Close order form">Close</button>
         </div>
 
         <!-- modal-scroll wraps form content so footer can be sticky -->
-        <div class="modal-scroll">
+        <div class="modal-scroll" id="orderModalScroll">
           <form id="orderForm" style="margin-top:12px" novalidate>
             <div class="form-section-title">Contact details</div>
             <div class="form-row">
@@ -979,7 +395,7 @@
               </div>
               <div>
                 <label class="form-label" for="oPhone">Phone / WhatsApp *</label>
-                <input id="oPhone" type="tel" placeholder="Phone number (WhatsApp preferred)" required aria-required="true" />
+                <input id="oPhone" inputmode="numeric" maxlength="10" pattern="\d{10}" placeholder="10-digit phone number" required aria-required="true" />
               </div>
             </div>
             <div class="form-row">
@@ -1041,8 +457,13 @@
               </div>
             </div>
 
-            <!-- Total amount display -->
-            <div class="order-total" id="orderTotal">Total Amount: ₹0</div>
+            <!-- Price info -->
+            <div class="price-breakdown" id="orderPriceBreakdown" aria-live="polite" role="status">
+              <div><strong>Unit price:</strong> <span id="orderUnitPrice">₹0</span></div>
+              <div><strong>Applicable bulk price:</strong> <span id="orderBulkPrice">—</span></div>
+              <div class="order-total" id="orderTotal">Total Amount: ₹0</div>
+              <small id="orderBulkNote"></small>
+            </div>
 
             <div class="form-section-title">Notes / customization</div>
             <textarea id="oNote" placeholder="Share text, logo instructions or special request (optional)" rows="3" style="margin-top:8px"></textarea>
@@ -1060,6 +481,7 @@
         <!-- sticky footer actions (keeps order button visible on mobile) -->
         <div class="order-actions" role="toolbar" aria-hidden="false">
           <button class="btn" id="orderSubmitBtn" type="button">Submit Order</button>
+          <button type="button" class="btn" id="orderWhatsBtn" title="Open WhatsApp with order summary"><i class="fa fa-whatsapp"></i> Send on WhatsApp</button>
           <button type="button" class="btn ghost" id="orderCancelBtn">Cancel</button>
         </div>
 
@@ -1070,7 +492,7 @@
     <footer class="footer" id="contact">
       <div class="container">
         <div class="footer-grid">
-          <div class="footer-col">
+          <div class="footer-col" style="animation-delay:0s">
             <div class="footer-logo">
               <img src="logo.png" alt="Prabha Graphics" class="footer-logo-img">
               <span>Prabha Graphics</span>
@@ -1078,7 +500,7 @@
             <p>Your trusted partner in Lucknow for all corporate and personalized printing and gifting needs.</p>
           </div>
 
-          <div class="footer-col">
+          <div class="footer-col" style="animation-delay:0.1s">
             <h3>Quick Links</h3>
             <ul>
               <li><a href="products.html#corporate" class="footer-link">Corporate Gifts</a></li>
@@ -1087,7 +509,7 @@
             </ul>
           </div>
 
-          <div class="footer-col">
+          <div class="footer-col" style="animation-delay:0.2s">
             <h3>Company</h3>
             <ul>
               <li><a href="about.html" class="footer-link">About Us</a></li>
@@ -1096,7 +518,7 @@
             </ul>
           </div>
 
-          <div class="footer-col">
+          <div class="footer-col" style="animation-delay:0.3s">
             <h3>Contact Us</h3>
             <div class="contact-info">
               <p><i class="fas fa-phone"></i> 074579 94888</p>
@@ -1122,25 +544,26 @@
     </footer>
   </main>
 
-  <button id="scrollToTop"><i class="fas fa-arrow-up"></i></button>
+  <button id="scrollToTop" aria-label="Scroll to top"><i class="fas fa-arrow-up"></i></button>
+
   <!-- Firebase + App Logic -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
     import { getFirestore, collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
 
-   const firebaseConfig = {
-   apiKey: "AIzaSyCADm7aarTkJ4Hohsb2xz1EkqrkLWjSQxg",
-   authDomain: "my-project-b3537.firebaseapp.com",
-   projectId: "my-project-b3537",
-   storageBucket: "my-project-b3537.firebasestorage.app",
-   messagingSenderId: "652581310060",
-   appId: "1:652581310060:web:c00691e1c625e1a78ad249",
-   measurementId: "G-CG17J3F6YW"
- };
+    const firebaseConfig = {
+      apiKey: "AIzaSyCADm7aarTkJ4Hohsb2xz1EkqrkLWjSQxg",
+      authDomain: "my-project-b3537.firebaseapp.com",
+      projectId: "my-project-b3537",
+      storageBucket: "my-project-b3537.firebasestorage.app",
+      messagingSenderId: "652581310060",
+      appId: "1:652581310060:web:c00691e1c625e1a78ad249",
+      measurementId: "G-CG17J3F6YW"
+    };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const shopPhone = "917457994888"; // wa.me format
+    const shopPhone = "917457994888"; // wa.me format (no +)
 
     // Grid refs
     const corporateGrid = document.getElementById('corporateGrid');
@@ -1189,22 +612,28 @@
     const orderCloseBtn = document.getElementById('orderCloseBtn');
     const orderCancelBtn = document.getElementById('orderCancelBtn');
     const orderSubmitBtn = document.getElementById('orderSubmitBtn');
+    const orderWhatsBtn = document.getElementById('orderWhatsBtn');
+    const orderModalScroll = document.getElementById('orderModalScroll');
 
     // Name + phone inputs (for validation rules)
     const oName = document.getElementById('oName');
     const oPhone = document.getElementById('oPhone');
     const oQty = document.getElementById('oQty');
     const orderTotal = document.getElementById('orderTotal');
+    const orderUnitPrice = document.getElementById('orderUnitPrice');
+    const orderBulkPrice = document.getElementById('orderBulkPrice');
+    const orderBulkNote = document.getElementById('orderBulkNote');
 
     let activeProduct = null;
     let allProducts = [];
 
+    // Safety: minimal helpers
+    function escapeHtml(s=''){ return String(s).replace(/[&<>\"']/g, m=> ({'&':'&amp;','<':'&lt;','>':'&gt;', '"':'&quot;',"'":'&#39;'})[m]); }
+
     // ---------- INPUT VALIDATION (NAME + PHONE) ----------
-    // Name: only letters and spaces (sanitize while typing)
     oName.addEventListener('input', () => {
       oName.value = oName.value.replace(/[^a-zA-Z\s]/g, '');
     });
-    // Prevent paste with invalid characters into name
     oName.addEventListener('paste', (e) => {
       const txt = (e.clipboardData || window.clipboardData).getData('text');
       if (!/^[A-Za-z\s]+$/.test(txt)) {
@@ -1214,46 +643,41 @@
       }
     });
 
-    // Phone: only digits (sanitize while typing)
+    // Phone: only digits (sanitize while typing), maxlength enforced in markup
     oPhone.addEventListener('input', () => {
-      oPhone.value = oPhone.value.replace(/[^0-9]/g, '');
+      oPhone.value = oPhone.value.replace(/[^0-9]/g, '').slice(0,10);
     });
-    // Prevent paste with non-digits
     oPhone.addEventListener('paste', (e) => {
       const txt = (e.clipboardData || window.clipboardData).getData('text');
       if (!/^\d+$/.test(txt)) {
         e.preventDefault();
-        const cleaned = txt.replace(/\D/g, '');
+        const cleaned = txt.replace(/\D/g, '').slice(0,10);
         document.execCommand('insertText', false, cleaned);
       }
     });
 
-    // ---------- BULK PRICING FORMATTER (USES ADMIN bulkPricing) ----------
+    // ---------- BULK PRICING FORMATTER ----------
     function formatBulkPricing(p){
-      const bp = p.bulkPricing || {};
+      const bp = (p && p.bulkPricing) ? p.bulkPricing : {};
       const parts = [];
-      // administrators usually set keys like '10','50','100' etc.
-      const keys = Object.keys(bp).sort((a,b)=> Number(a)-Number(b));
+      const keys = Object.keys(bp).map(k=>Number(k)).filter(n=>!isNaN(n)).sort((a,b)=>a-b);
       keys.forEach(k => {
-        if (bp[k]) parts.push(`${k}+ units: ₹${bp[k]}/pc`);
+        if (bp[String(k)]) parts.push(`${k}+ units: ₹${bp[String(k)]}/pc`);
       });
-
       if (!parts.length){
-        return 'Available for higher quantities – share your required quantity on WhatsApp.';
+        return 'Available for higher quantities – contact us on WhatsApp.';
       }
       return parts.join(' | ');
     }
 
-    // Real-time products
+    // ---------- FIRESTORE PRODUCTS (real-time) ----------
     const qProducts = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
     onSnapshot(qProducts, snapshot => {
-      // Clear grids
       corporateGrid.innerHTML = '';
       personalizedGrid.innerHTML = '';
       otherGrid.innerHTML = '';
 
       const counts = {corporate:0,personalized:0,other:0};
-
       allProducts = [];
       window._prabhaProducts = {};
 
@@ -1263,23 +687,17 @@
         const card = createProductCard(p);
         const cat = (p.category || '').toLowerCase();
 
-        // New mapping: Business/Apparel removed -> send such products to "other".
         if (cat.includes('corporate') || cat.includes('promot')) {
           corporateGrid.appendChild(card); counts.corporate++;
         }
         else if (cat.includes('personal')) {
           personalizedGrid.appendChild(card); counts.personalized++;
         }
-        else if (cat.includes('business') || cat.includes('essent') || cat.includes('apparel') || cat.includes('shirt') || cat.includes('t-shirt') || cat.includes('polo')) {
-          // Business/apparel categories have been removed from the UI — show them under "Other Products"
-          otherGrid.appendChild(card); counts.other++;
-        }
         else {
           otherGrid.appendChild(card); counts.other++;
         }
       });
 
-      // toggle empties
       Object.keys(empties).forEach(k => empties[k].style.display = (counts[k] === 0 ? 'block' : 'none'));
 
       // preserve hash scroll
@@ -1317,7 +735,6 @@
       return card;
     }
 
-    // Scroll helper for category cards
     function scrollToSection(id){
       const el = document.getElementById(id);
       if (!el) return;
@@ -1327,25 +744,17 @@
     }
     window.scrollToSection = scrollToSection;
 
-    // base unit price (product or variant)
+    // ---------- PRICE HELPERS ----------
     function computeUnitPrice(product, variantObj){
-      if (variantObj && typeof variantObj.price === 'number') return variantObj.price;
+      if (variantObj && typeof variantObj.price === 'number') return Number(variantObj.price);
       if (variantObj && variantObj.price && !isNaN(Number(variantObj.price))) return Number(variantObj.price);
-      if (product && typeof product.price === 'number') return product.price;
+      if (product && typeof product.price === 'number') return Number(product.price);
       if (product && product.price && !isNaN(Number(product.price))) return Number(product.price);
       return 0;
     }
 
-    // get bulk price per unit from product/variant bulkPricing based on quantity
-    function getBulkUnitPrice(product, variantObj, qty){
-      let source = null;
-      if (variantObj && variantObj.bulkPricing) {
-        source = variantObj.bulkPricing;
-      } else if (product && product.bulkPricing) {
-        source = product.bulkPricing;
-      }
+    function getBulkUnitPriceFromSource(source, qty){
       if (!source) return 0;
-
       const keys = Object.keys(source).map(k=>Number(k)).filter(n=>!isNaN(n)).sort((a,b)=>a-b);
       let chosen = 0;
       keys.forEach(threshold => {
@@ -1356,17 +765,23 @@
       return chosen || 0;
     }
 
-    // update displayed total amount in order modal
+    function getBulkUnitPrice(product, variantObj, qty){
+      // prefer variant's bulkPricing then product's
+      if (variantObj && variantObj.bulkPricing) return getBulkUnitPriceFromSource(variantObj.bulkPricing, qty);
+      if (product && product.bulkPricing) return getBulkUnitPriceFromSource(product.bulkPricing, qty);
+      return 0;
+    }
+
+    // ---------- ORDER TOTAL / UI ----------
+
     function updateOrderTotal(){
       if(!activeProduct) return;
-      let qty = Math.max(1, parseInt(oQty.value) || 0);
+      const qty = Math.max(1, parseInt(oQty.value) || 0);
 
       let variant = null;
       const vsel = document.getElementById('orderVariant');
       if (vsel && vsel.value){
-        try {
-          variant = JSON.parse(decodeURIComponent(vsel.value));
-        } catch(e){}
+        try { variant = JSON.parse(decodeURIComponent(vsel.value)); } catch(e){ variant = null; }
       }
 
       const baseUnit = computeUnitPrice(activeProduct, variant);
@@ -1374,19 +789,33 @@
       const unitPrice = bulkUnit || baseUnit;
       const total = unitPrice * qty;
 
-      if (bulkUnit) {
-        orderTotal.textContent = `Estimated Total (bulk price): ₹${total.toLocaleString('en-IN')}`;
-      } else {
-        orderTotal.textContent = `Total Amount: ₹${total.toLocaleString('en-IN')}`;
-      }
+      orderUnitPrice.textContent = `₹${baseUnit.toLocaleString('en-IN')}`;
+      orderBulkPrice.textContent = bulkUnit ? `₹${bulkUnit.toLocaleString('en-IN')}/pc (applies at ${getBestBulkThreshold(activeProduct, variant, qty)}+)` : '—';
+      orderTotal.textContent = bulkUnit ? `Estimated Total (bulk): ₹${total.toLocaleString('en-IN')}` : `Total Amount: ₹${total.toLocaleString('en-IN')}`;
+      orderBulkNote.textContent = bulkUnit ? `Bulk price applied automatically for selected quantity.` : `No bulk price available for selected quantity. ${formatBulkPricing(activeProduct)}`;
+
+      // ensure sticky footer not overlapping content: set padding-bottom on scroll container
+      setTimeout(()=> {
+        const footerHeight = document.querySelector('.order-actions')?.getBoundingClientRect().height || 80;
+        orderModalScroll.style.paddingBottom = (footerHeight + 20) + 'px';
+      }, 40);
     }
 
-    // Open detail modal
+    function getBestBulkThreshold(product, variantObj, qty){
+      const source = (variantObj && variantObj.bulkPricing) ? variantObj.bulkPricing : (product && product.bulkPricing) ? product.bulkPricing : {};
+      const keys = Object.keys(source).map(k=>Number(k)).filter(n=>!isNaN(n)).sort((a,b)=>a-b);
+      let chosen = 0;
+      keys.forEach(th => {
+        if (qty >= th && source[String(th)]) chosen = th;
+      });
+      return chosen || '';
+    }
+
+    // ---------- OPEN / CLOSE DETAIL ----------
     window.openDetail = function(id){
       const p = window._prabhaProducts && window._prabhaProducts[id];
       if (!p) return alert('Product not found');
       activeProduct = p;
-
       const detailFallbackImg = 'https://placehold.co/800x600/D10007/FFFFFF?text=Product+Preview';
 
       dTitle.textContent = p.name || '';
@@ -1405,9 +834,7 @@
         dSaving.style.display='inline-block'; dSaving.textContent = 'Save ₹' + (p.oldPrice - p.price);
       } else { dSaving.style.display='none'; }
 
-      // Hide the raw stock text in popup as requested
       dStockInfo.style.display = 'none';
-
       dDeliveryBadge.textContent = p.deliveryEstimate || 'Delivery in 3-6 days';
       dSkuBadge.textContent = 'SKU: ' + (p.sku || '—');
       dAvailability.textContent = (p.stock > 0 || (p.variants && p.variants.some(v=>v.stock>0))) ? 'In stock' : 'Out of stock';
@@ -1416,12 +843,10 @@
       dMOQ.textContent = 'Minimum order quantity: ' + minQty;
       dBulk.textContent = 'Bulk order pricing: ' + formatBulkPricing(p);
 
-      // Meta fields
       dDimensions.textContent = 'Dimensions: ' + (p.dimensions || '-');
       dMaterial.textContent = 'Material: ' + (p.material || '-');
       dWeight.textContent = 'Weight: ' + (p.weight || '-');
 
-      // Specs table (Warranty row REMOVED)
       dSpecsTable.innerHTML = '';
       const specRows = [
         ['SKU', p.sku || '-'],
@@ -1439,13 +864,12 @@
         dSpecsTable.appendChild(tr);
       });
 
-      // Tags
       dTagList.innerHTML = '';
       (p.tags || []).forEach(t => {
         const s = document.createElement('span'); s.className='tag'; s.textContent = t; dTagList.appendChild(s);
       });
 
-      // Variants
+      // Variants in detail modal - update other fields on change
       dVariant.innerHTML = '';
       if (p.variants && p.variants.length){
         const s = document.createElement('select'); s.id='modalVariantSelect';
@@ -1457,18 +881,34 @@
           s.appendChild(opt);
         });
         s.onchange = () => {
-          if (!s.value) { dPrice.textContent = '₹' + (p.price||0); return; }
+          if (!s.value) {
+            dPrice.textContent = '₹' + (p.price||0);
+            dOldPrice.textContent = p.oldPrice ? '₹' + p.oldPrice : '';
+            dSaving.style.display = (p.oldPrice && p.price && p.oldPrice > p.price) ? 'inline-block' : 'none';
+            dMOQ.textContent = 'Minimum order quantity: ' + (p.minQty || 1);
+            dBulk.textContent = 'Bulk order pricing: ' + formatBulkPricing(p);
+            return;
+          }
           const v = JSON.parse(decodeURIComponent(s.value));
+          // update price, oldPrice, saving, MOQ, bulk from variant where present
           dPrice.textContent = '₹' + (v.price || p.price || 0);
+          dOldPrice.textContent = v.oldPrice ? '₹' + v.oldPrice : (p.oldPrice ? '₹' + p.oldPrice : '');
+          if((v.oldPrice && v.price && v.oldPrice > v.price) || (p.oldPrice && p.price && p.oldPrice > p.price)){
+            const oldP = v.oldPrice || p.oldPrice || 0;
+            const newP = v.price || p.price || 0;
+            dSaving.style.display = 'inline-block'; dSaving.textContent = 'Save ₹' + Math.max(0, oldP - newP);
+          } else { dSaving.style.display='none'; }
+          dMOQ.textContent = 'Minimum order quantity: ' + (v.minQty || p.minQty || 1);
+          // bulk for variant overrides product
+          dBulk.textContent = 'Bulk order pricing: ' + (v.bulkPricing ? formatBulkPricing({bulkPricing: v.bulkPricing}) : formatBulkPricing(p));
         };
         dVariant.appendChild(s);
       }
 
-      // Seller line hidden
       dVendor.style.display = 'none';
 
-      // WhatsApp message including MOQ and bulk info (uses bulkPricing from admin)
       dWhats.onclick = ()=> {
+        const minQty = p.minQty || 1;
         const bulkText = formatBulkPricing(p);
         const msgLines = [
           "Hi, I am interested in this product.",
@@ -1501,21 +941,15 @@
         }
       };
 
-      // Show modal with focus management
-      detailModal.style.display = 'flex';
-      detailModal.setAttribute('aria-hidden','false');
-      document.body.style.overflow = 'hidden';
-      trapFocus(detailModal);
+      openModal(detailModal);
     };
 
     function closeDetail(){
-      detailModal.style.display='none';
-      detailModal.setAttribute('aria-hidden','true');
+      closeModal(detailModal);
       activeProduct=null;
-      document.body.style.overflow = '';
     }
 
-    // Order modal
+    // ---------- ORDER MODAL ----------
     function openOrderModal(p){
       activeProduct = p;
       orderVariantBlock.innerHTML = '';
@@ -1525,62 +959,81 @@
       qtyInput.value = minQty;
       qtyInput.min = minQty;
 
+      // Remove previous listeners gracefully by cloning node
+      const newQty = qtyInput.cloneNode(true);
+      qtyInput.parentNode.replaceChild(newQty, qtyInput);
+
+      // replace reference
+      window.oQty = document.getElementById('oQty');
+
+      // enforce min and update total
       const enforceMin = () => {
-        const val = parseInt(qtyInput.value) || 0;
-        if (val < minQty) qtyInput.value = minQty;
+        const val = parseInt(oQty.value) || 0;
+        if (val < minQty) oQty.value = minQty;
         updateOrderTotal();
       };
-      qtyInput.removeEventListener('input', enforceMin);
-      qtyInput.addEventListener('input', enforceMin);
+      oQty.addEventListener('input', enforceMin);
 
       // Variants / sizes / colors in order form
+      const attachVariantChangeHandlers = (sel) => {
+        sel.addEventListener('change', () => {
+          updateOrderTotal();
+        });
+      };
+
       if (p.variants && p.variants.length){
         const sel = document.createElement('select'); sel.id = 'orderVariant';
         sel.innerHTML = '<option value="">Select variant</option>';
-        p.variants.forEach(v=> sel.innerHTML += `<option value='${encodeURIComponent(JSON.stringify(v))}'>${v.label}${v.price?' - ₹'+v.price:''}${v.stock?' ('+v.stock+' in stock)':''}</option>`);
+        p.variants.forEach(v=> sel.innerHTML += `<option value='${encodeURIComponent(JSON.stringify(v))}'>${escapeHtml(v.label)}${v.price?' - ₹'+v.price:''}${v.stock?' ('+v.stock+' in stock)':''}</option>`);
         const wrap = document.createElement('div');
         wrap.innerHTML = `<label class="form-label" for="orderVariant">Variant</label>`;
         wrap.appendChild(sel);
         orderVariantBlock.appendChild(wrap);
-
-        sel.addEventListener('change', updateOrderTotal);
+        attachVariantChangeHandlers(sel);
       }
       if (p.sizes && p.sizes.length){
         const sel2 = document.createElement('select'); sel2.id='orderSize';
         sel2.innerHTML = '<option value="">Select size</option>';
-        p.sizes.forEach(s=> sel2.innerHTML += `<option>${s}</option>`);
+        p.sizes.forEach(s=> sel2.innerHTML += `<option>${escapeHtml(s)}</option>`);
         const wrap2 = document.createElement('div');
         wrap2.innerHTML = `<label class="form-label" for="orderSize">Size</label>`;
         wrap2.appendChild(sel2);
         orderVariantBlock.appendChild(wrap2);
+        attachVariantChangeHandlers(sel2);
       }
       if (p.colors && p.colors.length){
         const sel3 = document.createElement('select'); sel3.id='orderColor';
         sel3.innerHTML = '<option value="">Select color</option>';
-        p.colors.forEach(c=> sel3.innerHTML += `<option>${c}</option>`);
+        p.colors.forEach(c=> sel3.innerHTML += `<option>${escapeHtml(c)}</option>`);
         const wrap3 = document.createElement('div');
         wrap3.innerHTML = `<label class="form-label" for="orderColor">Color</label>`;
         wrap3.appendChild(sel3);
         orderVariantBlock.appendChild(wrap3);
+        attachVariantChangeHandlers(sel3);
       }
 
-      // Show initial total
-      setTimeout(updateOrderTotal, 40);
+      // Ensure phone & name from previous if any remains (UX)
+      if (!oName.value) oName.value = '';
+      if (!oPhone.value) oPhone.value = '';
 
-      orderModal.style.display='flex'; orderModal.setAttribute('aria-hidden','false');
-      document.body.style.overflow='hidden';
-      trapFocus(orderModal);
+      // initial total
+      setTimeout(updateOrderTotal, 60);
+
+      openModal(orderModal);
     }
+
     function closeOrder(){
-      orderModal.style.display='none'; orderModal.setAttribute('aria-hidden','true');
-      orderForm.reset(); oMsg.innerHTML=''; document.body.style.overflow='';
-      activeProduct = null;
+      closeModal(orderModal);
+      orderForm.reset(); oMsg.innerHTML=''; activeProduct = null;
       orderTotal.textContent = 'Total Amount: ₹0';
+      orderUnitPrice.textContent = '₹0';
+      orderBulkPrice.textContent = '—';
+      orderBulkNote.textContent = '';
     }
 
-    // Submit order -> Firestore (using sticky orderSubmitBtn)
+    // ---------- SUBMIT ORDER -> FIRESTORE ----------
     orderSubmitBtn.addEventListener('click', (e) => {
-      orderForm.requestSubmit(); // delegates to form submit
+      orderForm.requestSubmit();
     });
 
     orderForm.addEventListener('submit', async (e) => {
@@ -1590,11 +1043,10 @@
       const name = document.getElementById('oName').value.trim();
       const phone = document.getElementById('oPhone').value.trim();
 
-      // client-side validations (extra)
       if (!name) return showOrderError('Please enter your name.');
       if (!/^[A-Za-z\s]+$/.test(name)) return showOrderError('Name can only contain letters and spaces.');
       if (!phone) return showOrderError('Please enter your phone number.');
-      if (!/^\d+$/.test(phone)) return showOrderError('Phone must contain digits only.');
+      if (!/^\d{10}$/.test(phone)) return showOrderError('Phone must be 10 digits.');
 
       const email = document.getElementById('oEmail').value.trim();
       const line1 = document.getElementById('oLine1').value.trim();
@@ -1605,16 +1057,19 @@
       const country = document.getElementById('oCountry').value.trim();
       const qty = parseInt(document.getElementById('oQty').value) || 0;
 
-      const minQtyAllowed = activeProduct.minQty || 1;
-      if (qty < minQtyAllowed) return showOrderError(`Minimum order quantity for this product is ${minQtyAllowed}. Please increase quantity.`);
+      const minQtyAllowed = (activeProduct.minQty || 1);
+      // Also consider variant.minQty if provided
+      let variant = null;
+      const vsel = document.getElementById('orderVariant');
+      if (vsel && vsel.value) variant = JSON.parse(decodeURIComponent(vsel.value));
+      const variantMin = variant && variant.minQty ? variant.minQty : null;
+      const effectiveMin = variantMin || minQtyAllowed;
+
+      if (qty < effectiveMin) return showOrderError(`Minimum order quantity for this product is ${effectiveMin}. Please increase quantity.`);
 
       const note = document.getElementById('oNote').value.trim();
       const alsoWhats = document.getElementById('oWhatsapp').checked;
       const paymentMethod = document.getElementById('oPayment').value;
-
-      let variant = null;
-      const vsel = document.getElementById('orderVariant');
-      if (vsel && vsel.value) variant = JSON.parse(decodeURIComponent(vsel.value));
 
       const size = document.getElementById('orderSize') ? document.getElementById('orderSize').value : '';
       const color = document.getElementById('orderColor') ? document.getElementById('orderColor').value : '';
@@ -1624,6 +1079,7 @@
       const unitPrice = bulkUnit || baseUnit;
       const totalAmount = unitPrice * qty;
 
+      // Compose order object - full snapshot
       const order = {
         productId: activeProduct.id,
         productName: activeProduct.name,
@@ -1631,9 +1087,15 @@
           name: activeProduct.name,
           sku: activeProduct.sku || '',
           images: activeProduct.images || [],
-          vendor: activeProduct.vendor || ''
+          vendor: activeProduct.vendor || '',
+          price: activeProduct.price || 0,
+          oldPrice: activeProduct.oldPrice || null,
+          minQty: activeProduct.minQty || null,
+          bulkPricing: activeProduct.bulkPricing || null,
+          variants: activeProduct.variants || null
         },
         productType: activeProduct.type || 'ready-made',
+        variantSnapshot: variant ? variant : null,
         variantId: variant ? variant.id : '',
         variantLabel: variant ? variant.label : '',
         variantPrice: variant ? (variant.price || activeProduct.price) : activeProduct.price,
@@ -1689,7 +1151,7 @@
 
       } catch (err) {
         console.error('order save failed', err);
-        showOrderError('Could not submit order: '+ err.message);
+        showOrderError('Could not submit order: '+ (err.message || err));
       }
     });
 
@@ -1700,10 +1162,107 @@
       oMsg.innerHTML = `<div style="background:#dcfce7;padding:10px;border-radius:8px;color:#065f46;font-size:13px">${escapeHtml(msg)}</div>`;
     }
 
-    // Helpers
-    function escapeHtml(s=''){ return String(s).replace(/[&<>\"']/g, m=> ({'&':'&amp;','<':'&lt;','>':'&gt;', '"':'&quot;',"'":'&#39;'})[m]); }
+    // Immediate WhatsApp from order sticky footer
+    orderWhatsBtn.addEventListener('click', ()=>{
+      if (!activeProduct) return showOrderError('Open a product first.');
+      const name = document.getElementById('oName').value.trim() || '';
+      const phone = document.getElementById('oPhone').value.trim() || '';
+      const qty = parseInt(document.getElementById('oQty').value) || 0;
+      const size = document.getElementById('orderSize') ? document.getElementById('orderSize').value : '';
+      const color = document.getElementById('orderColor') ? document.getElementById('orderColor').value : '';
+      const note = document.getElementById('oNote').value.trim() || '';
+      const variant = document.getElementById('orderVariant') && document.getElementById('orderVariant').value ? JSON.parse(decodeURIComponent(document.getElementById('orderVariant').value)) : null;
+      const unit = computeUnitPrice(activeProduct, variant);
+      const total = unit * qty;
+      const lines = [
+        `Hi, I want to place an order.`,
+        `Product: ${activeProduct.name}`,
+        `Variant: ${variant ? variant.label : '-'}`,
+        `Qty: ${qty}`,
+        `Size: ${size || '-'}`,
+        `Color: ${color || '-'}`,
+        `Name: ${name || '-'}`,
+        `Phone: ${phone || '-'}`,
+        `Total: ₹${total}`,
+        `Note: ${note || '-'}`
+      ];
+      window.open(`https://wa.me/${shopPhone}?text=${encodeURIComponent(lines.join('\n'))}`, '_blank');
+    });
 
-    // Close buttons and Escape support for modals
+    // ---------- MODAL OPEN/CLOSE + FOCUS TRAP + BODY LOCK ----------
+    let _savedScroll = 0;
+    const activeTrapHandlers = new Map(); // modalEl -> handler info
+
+    function openModal(modalEl){
+      if(!modalEl) return;
+      // Show
+      modalEl.style.display = 'flex';
+      modalEl.setAttribute('aria-hidden','false');
+
+      // Save scroll position & lock body
+      _savedScroll = window.scrollY || window.pageYOffset || 0;
+      document.body.classList.add('modal-open');
+      document.body.style.top = `-${_savedScroll}px`;
+
+      // Add listeners: click on bg closes if clicked outside modal content
+      const onBgClick = (ev) => {
+        if (ev.target === modalEl) {
+          // only close for order modal & detail modal to allow intentional closers
+          if (modalEl === orderModal || modalEl === detailModal) closeModal(modalEl);
+        }
+      };
+      modalEl.addEventListener('click', onBgClick);
+
+      // Prevent background touchmove (allow inside .modal to scroll)
+      const preventBodyTouch = (e) => {
+        if (!e.target.closest('.modal')) {
+          e.preventDefault();
+        }
+      };
+      document.addEventListener('touchmove', preventBodyTouch, {passive:false});
+
+      // Focus trap: trap tab within modal
+      const focusable = modalEl.querySelectorAll('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])');
+      const first = focusable[0];
+      const last = focusable[focusable.length-1];
+      const onKeyDown = (e)=>{
+        if (e.key === 'Tab'){
+          if (focusable.length === 0){ e.preventDefault(); return; }
+          if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+          else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        }
+        if (e.key === 'Escape') {
+          // handled globally elsewhere too
+          closeModal(modalEl);
+        }
+      };
+      document.addEventListener('keydown', onKeyDown);
+      // store to remove later
+      activeTrapHandlers.set(modalEl, { onBgClick, preventBodyTouch, onKeyDown });
+      // focus first focusable element
+      setTimeout(()=> first && first.focus(), 60);
+    }
+
+    function closeModal(modalEl){
+      if(!modalEl) return;
+      modalEl.style.display = 'none';
+      modalEl.setAttribute('aria-hidden','true');
+
+      // Remove body lock & restore scroll
+      document.body.classList.remove('modal-open');
+      document.body.style.top = '';
+      window.scrollTo(0, _savedScroll || 0);
+
+      const handlers = activeTrapHandlers.get(modalEl);
+      if (handlers){
+        modalEl.removeEventListener('click', handlers.onBgClick);
+        document.removeEventListener('touchmove', handlers.preventBodyTouch, {passive:false});
+        document.removeEventListener('keydown', handlers.onKeyDown);
+        activeTrapHandlers.delete(modalEl);
+      }
+    }
+
+    // Close buttons and Escape support (redundant safe handlers)
     detailCloseBtn.addEventListener('click', closeDetail);
     orderCloseBtn.addEventListener('click', closeOrder);
     orderCancelBtn.addEventListener('click', closeOrder);
@@ -1715,12 +1274,11 @@
     });
 
     // Update total when quantity changes
-    oQty.addEventListener('input', () => {
-      if (!activeProduct) return;
-      const minQty = activeProduct.minQty || 1;
-      const val = parseInt(oQty.value) || 0;
-      if (val < minQty) oQty.value = minQty;
-      updateOrderTotal();
+    document.addEventListener('input', (e)=>{
+      if (e.target && (e.target.id === 'oQty' || e.target.id === 'orderVariant' || e.target.id === 'orderSize' || e.target.id === 'orderColor')) {
+        if (!activeProduct) return;
+        updateOrderTotal();
+      }
     });
 
     // Hash open product
@@ -1732,48 +1290,18 @@
       }
     });
 
-    // Simple focus trap
-    let _trap = null;
-    function trapFocus(container){
-      releaseTrap();
-      const focusable = container.querySelectorAll('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])');
-      if (!focusable.length) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length-1];
-      _trap = function(e){
-        if (e.key === 'Tab'){
-          if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-          else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
-        }
-      };
-      container.addEventListener('keydown', _trap);
-      setTimeout(()=> first && first.focus(), 50);
-    }
-    function releaseTrap(){
-      if(!_trap) return;
-      document.removeEventListener('keydown', _trap);
-      _trap = null;
-    }
-
-    console.log('🎉 Prabha Graphics Products Page - Fullscreen mobile modals + bulk-based total amount ready.');
-  </script>
-
-  <!-- Header / navbar JS (non-module, from homepage) -->
-  <script>
+    // ---------- NAVBAR / UI ----------
     const navbarEl = document.getElementById('navbar');
     const hamburger = document.getElementById('hamburger');
     const navLinks = document.getElementById('navLinks');
     const scrollToTopBtn = document.getElementById('scrollToTop');
 
-    // Navbar scroll effect
     window.addEventListener('scroll', () => {
       if (window.scrollY > 50) {
         navbarEl.classList.add('scrolled');
       } else {
         navbarEl.classList.remove('scrolled');
       }
-
-      // Scroll to top visibility
       if (window.scrollY > 300) {
         scrollToTopBtn.style.display = 'flex';
       } else {
@@ -1781,7 +1309,6 @@
       }
     });
 
-    // Hamburger menu
     hamburger.addEventListener('click', () => {
       const isActive = hamburger.classList.toggle('active');
       navLinks.classList.toggle('active');
@@ -1796,7 +1323,7 @@
       });
     });
 
-    // Smooth scroll only for same-page hashes (e.g. #corporate)
+    // Smooth scroll for same-page hashes
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function (e) {
         const target = document.querySelector(this.getAttribute('href'));
@@ -1807,12 +1334,11 @@
       });
     });
 
-    // Scroll to top
     scrollToTopBtn.addEventListener('click', () => {
       window.scrollTo({top:0, behavior:'smooth'});
     });
 
-    // Keyboard support
+    // Support closing mobile nav with Escape
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         hamburger.classList.remove('active');
@@ -1820,6 +1346,15 @@
         hamburger.setAttribute('aria-expanded','false');
       }
     });
+
+    console.log('🎉 Prabha Graphics Products Page — updated with order modal fixes, bulk pricing, Firestore saving & better UX.');
+  </script>
+
+  <!-- Header / navbar JS (non-module) -->
+  <script>
+    // No additional header code needed here; main module handles interactions.
+    // Kept for backward compatibility if other scripts rely on these vars.
+    // Intentionally left minimal to avoid duplication.
   </script>
 </body>
 </html>
