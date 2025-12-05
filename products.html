@@ -50,9 +50,7 @@
 
     /* Body lock when modal open: set by JS (class modal-open) */
     body.modal-open{
-      overflow:hidden;
-      position:fixed;
-      width:100%;
+      overflow:hidden; /* do NOT use position:fixed on mobile — keeps page from getting stuck */
     }
 
     /* Scrollbar */
@@ -155,7 +153,7 @@
 
     /* Order modal specifics */
     .modal-scroll{overflow:auto;max-height: calc(92vh - 160px);padding-right:6px}
-    .order-actions{position: sticky; bottom: 0; background: #fff; padding:12px calc(16px + var(--safe-bottom)); display:flex;gap:8px;flex-wrap:wrap;z-index:12;border-top:1px solid #eef2f7;border-radius:0 0 12px 12px}
+    .order-actions{position: sticky; bottom: 0; background: #fff; padding:12px calc(16px + var(--safe-bottom)); display:flex;gap:8px;flex-wrap:wrap;z-index:999;border-top:1px solid #eef2f7;border-radius:0 0 12px 12px;box-shadow:0 -8px 20px rgba(15,23,42,0.08)}
     .form-row{display:flex;gap:10px;margin-top:8px;flex-wrap:wrap}
     .form-row > *{flex:1}
     input,select,textarea{width:100%;padding:14px;border-radius:10px;border:1px solid #e6e7eb;font-size:15px;font-family:'Poppins',sans-serif}
@@ -214,7 +212,8 @@
       .modal-bg{align-items:stretch;padding:0}
       .modal{max-width:none;width:100%;height:100vh;max-height:100vh;border-radius:0;padding:14px 14px 10px;display:flex;flex-direction:column}
       .modal-main{flex:1;overflow:auto;margin-top:10px}
-      .modal-scroll{max-height:none;flex:1;overflow:auto;padding-right:4px;padding-bottom:calc(16px + var(--safe-bottom))}
+      /* make modal-scroll flex and ensure there is enough padding so sticky footer never covers content */
+      .modal-scroll{max-height:none;flex:1;overflow:auto;padding-right:4px;padding-bottom:calc(18px + var(--safe-bottom) + 84px)}
       .order-actions{position:sticky;bottom:0;background:#fff;box-shadow:0 -8px 20px rgba(15,23,42,0.12);border-radius:0;padding:12px calc(16px + var(--safe-bottom))}
     }
     @media (max-width:480px){
@@ -615,7 +614,7 @@
     // Name + phone inputs (for validation rules)
     const oName = document.getElementById('oName');
     const oPhone = document.getElementById('oPhone');
-    const oQty = document.getElementById('oQty');
+    let oQty = document.getElementById('oQty');
     const orderTotal = document.getElementById('orderTotal');
     const orderUnitPrice = document.getElementById('orderUnitPrice');
     const orderBulkPrice = document.getElementById('orderBulkPrice');
@@ -794,7 +793,7 @@
       // ensure sticky footer not overlapping content: set padding-bottom on scroll container
       setTimeout(()=> {
         const footerHeight = document.querySelector('.order-actions')?.getBoundingClientRect().height || 80;
-        orderModalScroll.style.paddingBottom = (footerHeight + 20) + 'px';
+        orderModalScroll.style.paddingBottom = (footerHeight + 40) + 'px';
       }, 40);
     }
 
@@ -940,9 +939,14 @@
       openModal(detailModal);
     };
 
-    function closeDetail(){
+    function closeDetail(noRedirect){
       closeModal(detailModal);
       activeProduct=null;
+      if (!noRedirect) {
+        // Redirect to products listing explicitly (user requested close button -> products page)
+        // If already on products page, this will reload the page — that's acceptable and ensures the UI resets.
+        window.location.href = 'products.html';
+      }
     }
 
     // ---------- ORDER MODAL ----------
@@ -950,7 +954,8 @@
       activeProduct = p;
       orderVariantBlock.innerHTML = '';
 
-      const qtyInput = document.getElementById('oQty');
+      oQty = document.getElementById('oQty');
+      const qtyInput = oQty;
       const minQty = p.minQty || 1;
       qtyInput.value = minQty;
       qtyInput.min = minQty;
@@ -960,7 +965,7 @@
       qtyInput.parentNode.replaceChild(newQty, qtyInput);
 
       // replace reference
-      window.oQty = document.getElementById('oQty');
+      oQty = document.getElementById('oQty');
 
       // enforce min and update total
       const enforceMin = () => {
@@ -1018,13 +1023,17 @@
       openModal(orderModal);
     }
 
-    function closeOrder(){
+    function closeOrder(noRedirect){
       closeModal(orderModal);
       orderForm.reset(); oMsg.innerHTML=''; activeProduct = null;
       orderTotal.textContent = 'Total Amount: ₹0';
       orderUnitPrice.textContent = '₹0';
       orderBulkPrice.textContent = '—';
       orderBulkNote.textContent = '';
+      if (!noRedirect) {
+        // redirect to products page on explicit close
+        window.location.href = 'products.html';
+      }
     }
 
     // ---------- SUBMIT ORDER -> FIRESTORE ----------
@@ -1139,9 +1148,9 @@
           setTimeout(()=> window.open(`https://wa.me/${shopPhone}?text=${encodeURIComponent(waText)}`, '_blank'), 700);
         }
 
-        // After placing order, redirect to thankyou.html
+        // After placing order, redirect to thankyou.html (small delay for UX)
         setTimeout(()=> {
-          closeOrder();
+          closeOrder(true); // close without redirect (we will redirect explicitly)
           window.location.href = 'thankyou.html';
         }, 900);
 
@@ -1181,6 +1190,7 @@
         `Phone: ${phone || '-'}`,
         `Total: ₹${total}`,
         `Note: ${note || '-'}`
+
       ];
       window.open(`https://wa.me/${shopPhone}?text=${encodeURIComponent(lines.join('\n'))}`, '_blank');
     });
@@ -1195,16 +1205,15 @@
       modalEl.style.display = 'flex';
       modalEl.setAttribute('aria-hidden','false');
 
-      // Save scroll position & lock body
+      // Save scroll position & lock body (without using position:fixed to avoid mobile layout issues)
       _savedScroll = window.scrollY || window.pageYOffset || 0;
       document.body.classList.add('modal-open');
-      document.body.style.top = `-${_savedScroll}px`;
 
       // Add listeners: click on bg closes if clicked outside modal content
       const onBgClick = (ev) => {
         if (ev.target === modalEl) {
           // only close for order modal & detail modal to allow intentional closers
-          if (modalEl === orderModal || modalEl === detailModal) closeModal(modalEl);
+          closeModal(modalEl); // background click just closes modal (no redirect)
         }
       };
       modalEl.addEventListener('click', onBgClick);
@@ -1246,8 +1255,8 @@
 
       // Remove body lock & restore scroll
       document.body.classList.remove('modal-open');
-      document.body.style.top = '';
-      window.scrollTo(0, _savedScroll || 0);
+      // restore scroll to saved position
+      setTimeout(()=> window.scrollTo(0, _savedScroll || 0), 0);
 
       const handlers = activeTrapHandlers.get(modalEl);
       if (handlers){
@@ -1259,13 +1268,15 @@
     }
 
     // Close buttons and Escape support (redundant safe handlers)
-    detailCloseBtn.addEventListener('click', closeDetail);
-    orderCloseBtn.addEventListener('click', closeOrder);
-    orderCancelBtn.addEventListener('click', closeOrder);
+    // IMPORTANT: Close buttons now redirect to products.html (per request)
+    detailCloseBtn.addEventListener('click', () => closeDetail(false)); // will close and redirect
+    orderCloseBtn.addEventListener('click', () => closeOrder(false)); // will close and redirect
+    orderCancelBtn.addEventListener('click', () => closeOrder(false)); // will close and redirect
+
     document.addEventListener('keydown', (e)=>{
       if (e.key === 'Escape') {
-        if (detailModal.style.display==='flex') closeDetail();
-        if (orderModal.style.display==='flex') closeOrder();
+        if (detailModal.style.display==='flex') closeModal(detailModal); // background close, no redirect
+        if (orderModal.style.display==='flex') closeModal(orderModal);   // background close, no redirect
       }
     });
 
@@ -1343,14 +1354,13 @@
       }
     });
 
-    console.log('🎉 Prabha Graphics Products Page — updated with order modal fixes, bulk pricing, Firestore saving & better UX.');
+    console.log('🎉 Prabha Graphics Products Page — modal & mobile scroll fixes applied.');
   </script>
 
   <!-- Header / navbar JS (non-module) -->
   <script>
-    // No additional header code needed here; main module handles interactions.
-    // Kept for backward compatibility if other scripts rely on these vars.
-    // Intentionally left minimal to avoid duplication.
+    // Kept minimal to avoid duplication.
   </script>
 </body>
 </html>
+d
