@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Prabha Graphics — Admin Dashboard</title>
+
+  <!-- Fonts & Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --primary:#D10007;
+      --primary-dark:#A00006;
+      --muted:#6b7280;
+      --bg-gradient: radial-gradient(circle at top left,#fee2e2,#f9fafb 42%,#e5e7eb 100%);
+      --card-bg:#ffffff;
+      --border:#e5e7eb;
+      --radius:12px;
+      --max-width:1280px;
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg-gradient);
+      color: #111827;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* Header */
+    .navbar{
+      position:fixed;top:0;left:0;right:0;
+      background:#ffffffcc;
+      backdrop-filter: blur(8px);
+      border-bottom:1px solid rgba(0,0,0,0.04);
+      z-index:120;
+    }
+    .nav-inner{
+      max-width:var(--max-width);
+      margin:0 auto;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:12px 20px;
+    }
+    .brand{
+      display:flex;gap:12px;align-items:center;cursor:pointer;
+    }
+    .logo-circle{
+      width:44px;height:44px;border-radius:999px;
+      background:var(--primary);color:#fff;display:flex;
+      align-items:center;justify-content:center;font-weight:800;font-size:18px;
+      box-shadow:0 10px 22px rgba(209,0,7,0.12);
+    }
+    .brand .title{font-weight:700;font-size:16px}
+    .brand .subtitle{font-size:12px;color:var(--muted);margin-top:2px}
+
+    .nav-actions{display:flex;gap:8px;align-items:center}
+    .btn{
+      border-radius:10px;padding:8px 12px;border:1px solid var(--border);
+      background:#fff;font-weight:600;cursor:pointer;display:inline-flex;gap:8px;align-items:center;
+    }
+    .btn.primary{background:var(--primary);color:#fff;border:none}
+    .btn.ghost{background:#fff}
+    .btn:hover{transform:translateY(-2px);transition:all .12s ease}
+
+    /* Main layout */
+    .wrapper{
+      max-width:var(--max-width);
+      margin:92px auto 40px;
+      padding:0 20px;
+      display:grid;
+      grid-template-columns: 1fr 360px;
+      gap:18px;
+      align-items:start;
+    }
+    @media (max-width:1024px){
+      .wrapper{grid-template-columns: 1fr; margin-top:110px}
+    }
+
+    /* Left area */
+    .left-col{display:flex;flex-direction:column;gap:18px}
+
+    /* Stats row */
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    @media (max-width:900px){ .stats{grid-template-columns:repeat(2,1fr)} }
+
+    .stat-card{
+      background:var(--card-bg);padding:16px;border-radius:var(--radius);
+      border:1px solid var(--border);box-shadow:0 8px 24px rgba(15,23,42,0.04);
+      display:flex;flex-direction:column;gap:8px;
+    }
+    .stat-card .k{font-size:20px;font-weight:800;color:var(--primary)}
+    .stat-card .label{font-size:12px;color:var(--muted)}
+
+    /* Recent orders / search */
+    .panel{
+      background:var(--card-bg);padding:14px;border-radius:var(--radius);border:1px solid var(--border);
+      box-shadow:0 10px 30px rgba(15,23,42,0.04);
+    }
+    .panel h3{font-size:16px;margin-bottom:8px}
+    .search-row{display:flex;gap:8px;margin-bottom:10px;align-items:center}
+    .search-row input{flex:1;padding:10px;border-radius:10px;border:1px solid var(--border);background:#f9fafb}
+    .recent-list{max-height:420px;overflow:auto;border-top:1px dashed #eee;padding-top:10px}
+    .order-item{display:flex;justify-content:space-between;gap:12px;padding:10px;border-radius:10px;margin-bottom:8px;background:#fff;border:1px solid #f1f5f9}
+    .order-title{font-weight:700;font-size:13px}
+    .order-sub{font-size:12px;color:var(--muted)}
+    .order-meta{font-size:12px;text-align:right;color:var(--muted)}
+
+    /* Right column */
+    .right-col{display:flex;flex-direction:column;gap:14px}
+    .quick-links{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .small-card{padding:12px;border-radius:10px;background:var(--card-bg);border:1px solid var(--border)}
+    .count-bubble{display:inline-block;padding:6px 10px;border-radius:999px;background:#f3f4f4;font-weight:700}
+
+    /* footer note */
+    .footnote{max-width:var(--max-width);margin:18px auto 36px;padding:0 20px;font-size:12px;color:var(--muted)}
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <header class="navbar" role="banner">
+    <div class="nav-inner">
+      <div class="brand" onclick="location.href='dashboard.html'">
+        <div class="logo-circle">PG</div>
+        <div>
+          <div class="title">Prabha Graphics</div>
+          <div class="subtitle">Admin · Dashboard</div>
+        </div>
+      </div>
+
+      <div class="nav-actions" role="navigation" aria-label="Admin actions">
+        <button class="btn ghost" onclick="location.href='products.html'"><i class="fas fa-box"></i> Products</button>
+        <button class="btn ghost" onclick="location.href='categories.html'"><i class="fas fa-list"></i> Categories</button>
+        <button class="btn ghost" onclick="location.href='orders.html'"><i class="fas fa-receipt"></i> Orders</button>
+        <button id="signoutBtn" class="btn primary" title="Sign out"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="wrapper" id="app">
+    <!-- LEFT -->
+    <div class="left-col">
+      <!-- Stats -->
+      <div class="stats" aria-hidden="false">
+        <div class="stat-card">
+          <div class="k" id="totalOrders">—</div>
+          <div class="label">Total orders</div>
+        </div>
+        <div class="stat-card">
+          <div class="k" id="pendingOrders">—</div>
+          <div class="label">Pending</div>
+        </div>
+        <div class="stat-card">
+          <div class="k" id="shippedOrders">—</div>
+          <div class="label">Shipped</div>
+        </div>
+        <div class="stat-card">
+          <div class="k" id="productsCount">—</div>
+          <div class="label">Total products</div>
+        </div>
+      </div>
+
+      <!-- Recent orders panel -->
+      <section class="panel" aria-labelledby="recentHeading">
+        <h3 id="recentHeading">Recent orders</h3>
+
+        <div class="search-row" role="search">
+          <input id="orderSearch" placeholder="Search by customer, phone, product, sku..." aria-label="Search orders"/>
+          <button id="refreshBtn" class="btn" title="Refresh"><i class="fas fa-sync"></i></button>
+        </div>
+
+        <div class="recent-list" id="recentList" aria-live="polite">Loading...</div>
+      </section>
+    </div>
+
+    <!-- RIGHT -->
+    <aside class="right-col" aria-label="Right column">
+      <div class="small-card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-weight:700">Quick actions</div>
+            <div class="small">Fast links to common pages</div>
+          </div>
+          <div class="count-bubble" id="lastUpdated">—</div>
+        </div>
+
+        <div style="margin-top:10px" class="quick-links">
+          <button class="btn" onclick="location.href='products.html'"><i class="fas fa-box"></i> Add product</button>
+          <button class="btn" onclick="location.href='categories.html'"><i class="fas fa-list"></i> Add category</button>
+          <button class="btn" onclick="location.href='orders.html'"><i class="fas fa-truck"></i> View orders</button>
+          <button id="openStore" class="btn" onclick="window.open('products.html','_blank')"><i class="fas fa-external-link-alt"></i> Open storefront</button>
+        </div>
+      </div>
+
+      <div class="small-card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-weight:700">Live feeds</div>
+          <div class="small">Realtime counts</div>
+        </div>
+
+        <div style="margin-top:10px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+            <div class="small">Orders (24h)</div>
+            <div id="orders24h" class="small">—</div>
+          </div>
+          <div style="display:flex;justify-content:space-between">
+            <div class="small">New categories</div>
+            <div id="catsCount" class="small">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="small-card">
+        <div style="font-weight:700">Help & notes</div>
+        <div class="small" style="margin-top:8px">
+          - This dashboard uses your existing Firestore project.<br>
+          - You must be signed in; otherwise you'll be redirected to login. <br>
+          - Use the Quick Actions to jump to other admin pages.
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <div class="footnote">
+    Collections used: <code>orders</code>, <code>products</code>, <code>categories</code>. Ensure Firestore rules allow reads for authenticated admin.
+  </div>
+
+  <!-- Firebase + logic -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      query,
+      where,
+      orderBy,
+      onSnapshot,
+      getDocs,
+      limit,
+      startAt,
+      endAt,
+      Timestamp
+    } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
+
+    // Firebase config (same project used across your pages)
+    const firebaseConfig = {
+      apiKey: "AIzaSyCADm7aarTkJ4Hohsb2xz1EkqrkLWjSQxg",
+      authDomain: "my-project-b3537.firebaseapp.com",
+      projectId: "my-project-b3537",
+      storageBucket: "my-project-b3537.firebasestorage.app",
+      messagingSenderId: "652581310060",
+      appId: "1:652581310060:web:c00691e1c625e1a78ad249",
+      measurementId: "G-CG17J3F6YW"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // UI refs
+    const signoutBtn = document.getElementById('signoutBtn');
+    const totalOrdersEl = document.getElementById('totalOrders');
+    const pendingOrdersEl = document.getElementById('pendingOrders');
+    const shippedOrdersEl = document.getElementById('shippedOrders');
+    const productsCountEl = document.getElementById('productsCount');
+    const recentList = document.getElementById('recentList');
+    const orderSearch = document.getElementById('orderSearch');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const lastUpdated = document.getElementById('lastUpdated');
+    const orders24hEl = document.getElementById('orders24h');
+    const catsCountEl = document.getElementById('catsCount');
+
+    // Auth guard: redirect to login if not signed in
+    let unsubOrders = null, unsubProducts = null, unsubCats = null;
+    onAuthStateChanged(auth, user => {
+      if (!user) {
+        // Not signed in -> go to login
+        location.href = "login.html";
+        return;
+      }
+      // signed in: start listeners
+      startRealtime();
+    });
+
+    // Sign out
+    signoutBtn.onclick = async () => {
+      try {
+        await signOut(auth);
+        location.href = "login.html";
+      } catch (err) {
+        alert('Sign out failed: ' + err.message);
+      }
+    };
+
+    // Start realtime listeners (orders/products/categories)
+    function startRealtime(){
+      // Orders — count + recent
+      const ordersCol = collection(db, 'orders');
+      const ordersQuery = query(ordersCol, orderBy('createdAt', 'desc'));
+      unsubOrders = onSnapshot(ordersQuery, snap => {
+        totalOrdersEl.textContent = snap.size.toLocaleString('en-IN');
+        // compute pending/shipped
+        let pending = 0, shipped = 0, recentArr = [];
+        snap.forEach(docSnap => {
+          const d = docSnap.data();
+          const status = (d.status || '').toLowerCase();
+          if (status === 'pending') pending++;
+          if (status === 'shipped' || status === 'delivered') shipped++;
+          // collect first 40 recent
+          if (recentArr.length < 40) recentArr.push({ id: docSnap.id, ...d });
+        });
+        pendingOrdersEl.textContent = String(pending);
+        shippedOrdersEl.textContent = String(shipped);
+        renderRecentList(recentArr);
+        updateLastUpdated();
+      });
+
+      // Products count
+      const productsCol = collection(db, 'products');
+      unsubProducts = onSnapshot(productsCol, snap => {
+        productsCountEl.textContent = String(snap.size || 0);
+        updateLastUpdated();
+      });
+
+      // Categories count
+      const catsCol = collection(db, 'categories');
+      unsubCats = onSnapshot(catsCol, snap => {
+        catsCountEl.textContent = String(snap.size || 0);
+      });
+
+      // 24h orders (one-time compute + keep updated via orders subscription above)
+      compute24hOrders();
+    }
+
+    // Render recent list
+    function renderRecentList(arr){
+      if (!arr || !arr.length) {
+        recentList.innerHTML = '<div class="small">No orders yet.</div>';
+        return;
+      }
+      const q = (orderSearch.value || '').trim().toLowerCase();
+      const filtered = arr.filter(o => {
+        if (!q) return true;
+        const hay = `${o.customerName||''} ${o.customerPhone||''} ${o.productName||''} ${o.productSnapshot?.sku||''} ${o.note||''}`.toLowerCase();
+        return hay.includes(q);
+      });
+
+      recentList.innerHTML = '';
+      filtered.slice(0, 100).forEach(o => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'order-item';
+        const left = document.createElement('div');
+        left.style.flex = '1';
+        left.innerHTML = `<div class="order-title">${escapeHtml(o.productName||'Unnamed')}</div>
+                          <div class="order-sub">${escapeHtml(o.customerName||'')} • ${escapeHtml(o.customerPhone||'')}</div>`;
+
+        const right = document.createElement('div');
+        right.className = 'order-meta';
+        const created = o.createdAt && o.createdAt.seconds ? new Date(o.createdAt.seconds * 1000) : (o.createdAt instanceof Date ? o.createdAt : null);
+        const timeStr = created ? created.toLocaleString('en-IN') : '';
+        right.innerHTML = `<div style="font-weight:700">${escapeHtml(o.totalAmount ? '₹' + Number(o.totalAmount).toLocaleString('en-IN') : (o.unitPrice ? '₹' + o.unitPrice : '-'))}</div>
+                           <div class="small">${escapeHtml(o.status||'pending')} • ${timeStr}</div>`;
+
+        wrapper.appendChild(left);
+        wrapper.appendChild(right);
+
+        // click to open order page (orders.html) with hash
+        wrapper.style.cursor = 'pointer';
+        wrapper.onclick = () => {
+          window.location.href = `orders.html#order-${encodeURIComponent(o.id)}`;
+        };
+
+        recentList.appendChild(wrapper);
+      });
+
+      if (filtered.length === 0) recentList.innerHTML = '<div class="small">No matching orders.</div>';
+    }
+
+    // Search handler (debounced)
+    let searchTimer = null;
+    orderSearch.addEventListener('input', ()=> {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(()=> {
+        // re-run rendering using current cached list; easiest is to force refresh (snap already updates cached list)
+        // We'll simulate by refetching recent snapshot by triggering compute24hOrders or re-render via last onSnapshot's cached data.
+        // Simpler: just re-run computeRecent by reading the current visible items in DOM (we kept a fallback)
+        // For correctness: trigger a manual snapshot read
+        refreshRecentOnce();
+      }, 240);
+    });
+
+    // Refresh button: refetch snapshots quickly by toggling listeners
+    refreshBtn.addEventListener('click', ()=> {
+      refreshRecentOnce();
+      compute24hOrders();
+    });
+
+    // Refresh recent by performing a one-time get of newest 100 orders then render
+    async function refreshRecentOnce(){
+      try {
+        const q = query(collection(db,'orders'), orderBy('createdAt','desc'));
+        const snap = await getDocs(q);
+        const arr = [];
+        snap.forEach(docSnap => arr.push({ id: docSnap.id, ...docSnap.data() }));
+        renderRecentList(arr);
+      } catch (err) {
+        console.error('refresh failed', err);
+      }
+    }
+
+    // Compute orders in last 24h
+    async function compute24hOrders(){
+      try {
+        const now = Timestamp.now();
+        const yesterday = Timestamp.fromMillis(Date.now() - (24*60*60*1000));
+        const q24 = query(collection(db,'orders'), where('createdAt', '>=', yesterday));
+        const snap = await getDocs(q24);
+        orders24hEl.textContent = String(snap.size || 0);
+      } catch (err){
+        console.error('24h calc failed', err);
+      }
+    }
+
+    function updateLastUpdated(){
+      lastUpdated.textContent = new Date().toLocaleTimeString('en-IN');
+    }
+
+    // Simple escape
+    function escapeHtml(s=''){ return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]); }
+
+    // Cleanup when navigating away (optional)
+    window.addEventListener('beforeunload', ()=> {
+      if (typeof unsubOrders === 'function') unsubOrders();
+      if (typeof unsubProducts === 'function') unsubProducts();
+      if (typeof unsubCats === 'function') unsubCats();
+    });
+  </script>
+</body>
+</html>
