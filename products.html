@@ -592,7 +592,6 @@
     const dMaterial = document.getElementById('dMaterial');
     const dWeight = document.getElementById('dWeight');
     const dSpecsTable = document.getElementById('dSpecsTable');
-    const dDeliveryBadge = document.getElementById('dDeliveryBadge');
     const dSkuBadge = document.getElementById('dSkuBadge');
     const dAvailability = document.getElementById('dAvailability');
     const dWhats = document.getElementById('dWhats');
@@ -833,7 +832,6 @@
       } else { dSaving.style.display='none'; }
 
       dStockInfo.style.display = 'none';
-      dDeliveryBadge.textContent = p.deliveryEstimate || 'Delivery in 3-6 days';
       dSkuBadge.textContent = 'SKU: ' + (p.sku || '—');
       dAvailability.textContent = (p.stock > 0 || (p.variants && p.variants.some(v=>v.stock>0))) ? 'In stock' : 'Out of stock';
 
