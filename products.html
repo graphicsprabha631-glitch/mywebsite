@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="description" content="Prabha Graphics - Catalog" />
-  <title>Prabha Graphics — Products</title>
+  <title>Prabha Graphics — Products (fixed mobile)</title>
 
   <!-- Favicon -->
   <link rel="icon" href="logo.png" type="image/png">
@@ -32,12 +32,11 @@
       --max:1200px;
       --gap:16px;
       --radius:12px;
-      --nav-height:80px;
+      --nav-height:80px; /* updated dynamically by JS */
       --safe-bottom: env(safe-area-inset-bottom, 0px);
-      /* dynamic footer height (updated by JS) */
-      --order-footer-height: 84px;
+      --vh: 1vh; /* updated by JS to avoid 100vh mobile bugs */
     }
-    html{scroll-behavior:smooth;height:100%}
+    html{scroll-behavior:smooth;height:auto}
     body{
       font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
       background-color:var(--white);
@@ -52,8 +51,9 @@
 
     /* Body lock when modal open: set by JS (class modal-open) */
     body.modal-open{
-      overflow:hidden; /* keep page from scrolling while allowing modal inner scrolling */
-      touch-action: none;
+      /* keep this conservative — we avoid position:fixed to reduce mobile layout bugs */
+      overflow:hidden;
+      touch-action:none; /* prevent background gestures while modal open */
     }
 
     /* Scrollbar */
@@ -125,7 +125,7 @@
 
     /* MODALS */
     .modal-bg{position:fixed;inset:0;display:none;align-items:flex-start;justify-content:center;background:rgba(15,23,42,0.7);z-index:2200;padding:32px 12px}
-    .modal{width:100%;max-width:1100px;background:#ffffff;border-radius:18px;padding:20px 22px 22px;max-height:92vh;overflow:auto;box-shadow:0 30px 80px rgba(15,23,42,0.6);display:flex;flex-direction:column;z-index:2300}
+    .modal{width:100%;max-width:1100px;background:#ffffff;border-radius:18px;padding:20px 22px 22px;max-height:92vh;overflow:auto;box-shadow:0 30px 80px rgba(15,23,42,0.6);display:flex;flex-direction:column;}
     .modal .top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;padding-bottom:10px;border-bottom:1px solid #e5e7eb}
     .modal-title{font-size:20px;font-weight:700;margin:0}
     .modal-main{display:flex;gap:22px;margin-top:10px;flex-wrap:wrap}
@@ -155,7 +155,7 @@
     .btn.secondary{background:#334155}
 
     /* Order modal specifics */
-    .modal-scroll{overflow:auto;max-height: calc(92vh - 160px);padding-right:6px; -webkit-overflow-scrolling: touch; padding-bottom: calc(var(--order-footer-height) + 24px); }
+    .modal-scroll{overflow:auto;max-height: calc(92vh - 160px);padding-right:6px}
     .order-actions{position: sticky; bottom: 0; background: #fff; padding:12px calc(16px + var(--safe-bottom)); display:flex;gap:8px;flex-wrap:wrap;z-index:999;border-top:1px solid #eef2f7;border-radius:0 0 12px 12px;box-shadow:0 -8px 20px rgba(15,23,42,0.08)}
     .form-row{display:flex;gap:10px;margin-top:8px;flex-wrap:wrap}
     .form-row > *{flex:1}
@@ -202,7 +202,7 @@
     }
     @media (max-width:768px){
       .nav-links{display:none}
-      .nav-links.active{display:flex;position:fixed;top:var(--nav-height);left:0;width:100%;flex-direction:column;background-color:var(--white);gap:0;padding:16px 0;max-height:calc(100vh - var(--nav-height));overflow-y:auto;box-shadow:0 10px 30px rgba(0,0,0,0.12)}
+      .nav-links.active{display:flex;position:fixed;top:var(--nav-height);left:0;width:100%;flex-direction:column;background-color:var(--white);gap:0;padding:16px 0;max-height:calc((var(--vh) * 100) - var(--nav-height));overflow-y:auto;box-shadow:0 10px 30px rgba(0,0,0,0.12)}
       .nav-links.active li{padding:12px 20px;border-bottom:1px solid var(--gray-100)}
       .hamburger{display:flex}
       .logo-text{font-size:18px}
@@ -213,10 +213,11 @@
 
       /* Full page modal on mobile */
       .modal-bg{align-items:stretch;padding:0}
-      .modal{max-width:none;width:100%;height:100vh;max-height:100vh;border-radius:0;padding:14px 14px 10px;display:flex;flex-direction:column}
+      /* use calculated vh variable to avoid address-bar jumps */
+      .modal{max-width:none;width:100%;height:calc(var(--vh) * 100);max-height:calc(var(--vh) * 100);border-radius:0;padding:14px 14px 10px;display:flex;flex-direction:column}
       .modal-main{flex:1;overflow:auto;margin-top:10px}
       /* make modal-scroll flex and ensure there is enough padding so sticky footer never covers content */
-      .modal-scroll{max-height:none;flex:1;overflow:auto;padding-right:4px;padding-bottom:calc(var(--order-footer-height) + 24px)}
+      .modal-scroll{max-height:none;flex:1;overflow:auto;padding-right:4px;padding-bottom:calc(18px + var(--safe-bottom) + 84px)}
       .order-actions{position:sticky;bottom:0;background:#fff;box-shadow:0 -8px 20px rgba(15,23,42,0.12);border-radius:0;padding:12px calc(16px + var(--safe-bottom))}
     }
     @media (max-width:480px){
@@ -277,7 +278,7 @@
       <!-- Category cards -->
       <div class="categories-grid" role="list" aria-label="Product categories">
         <div class="category-card" role="listitem" onclick="scrollToSection('corporate')" tabindex="0" onkeypress="if(event.key==='Enter')scrollToSection('corporate')">
-          <img loading="lazy" decoding="async" src="corporate-img.png" alt="Corporate"/>
+          <img loading="lazy" decoding="async" src="corporate-img.png"/>
           <div class="category-overlay"><div><h3>Corporate & Promotional</h3><p>Keychains, Pens, Gift Sets</p></div></div>
         </div>
         <div class="category-card" role="listitem" onclick="scrollToSection('personalized')" tabindex="0" onkeypress="if(event.key==='Enter')scrollToSection('personalized')">
@@ -565,6 +566,10 @@
     const db = getFirestore(app);
     const shopPhone = "917457994888"; // wa.me format (no +)
 
+    // small helpers to keep code readable
+    const $ = (s) => document.querySelector(s);
+    const $$ = (s) => Array.from(document.querySelectorAll(s));
+
     // Grid refs
     const corporateGrid = document.getElementById('corporateGrid');
     const personalizedGrid = document.getElementById('personalizedGrid');
@@ -624,10 +629,26 @@
     const orderBulkNote = document.getElementById('orderBulkNote');
 
     let activeProduct = null;
-    let allProducts = [];
 
     // Safety: minimal helpers
     function escapeHtml(s=''){ return String(s).replace(/[&<>\"']/g, m=> ({'&':'&amp;','<':'&lt;','>':'&gt;', '"':'&quot;',"'":'&#39;'})[m]); }
+
+    // ---------- SMALL UX FIXES (mobile viewport & nav height) ----------
+    function setVh() {
+      // fix 100vh issues on mobile (address bar changes)
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+    function setNavHeightVar(){
+      const nav = document.getElementById('navbar');
+      if (!nav) return;
+      const h = Math.ceil(nav.getBoundingClientRect().height) + 'px';
+      document.documentElement.style.setProperty('--nav-height', h);
+    }
+    // run on load & resize
+    window.addEventListener('resize', () => { setVh(); setNavHeightVar(); });
+    window.addEventListener('orientationchange', () => { setVh(); setNavHeightVar(); });
+    window.addEventListener('load', () => { setVh(); setNavHeightVar(); });
 
     // ---------- INPUT VALIDATION (NAME + PHONE) ----------
     oName.addEventListener('input', () => {
@@ -677,12 +698,10 @@
       otherGrid.innerHTML = '';
 
       const counts = {corporate:0,personalized:0,other:0};
-      allProducts = [];
       window._prabhaProducts = {};
 
       snapshot.forEach(docSnap => {
         const p = docSnap.data(); p.id = docSnap.id;
-        allProducts.push(p);
         const card = createProductCard(p);
         const cat = (p.category || '').toLowerCase();
 
@@ -713,48 +732,25 @@
       const img = (p.images && p.images[0]) || p.image || p.imageUrl || '';
       const fallbackImg = 'https://placehold.co/400x300/D10007/FFFFFF?text=Product+Image';
 
-      // build card content safely using DOM APIs to avoid attribute quoting issues
-      const imgEl = document.createElement('img');
-      imgEl.setAttribute('loading','lazy');
-      imgEl.src = img || fallbackImg;
-      imgEl.alt = p.name ? p.name : 'Product image';
-
-      const body = document.createElement('div');
-      body.className = 'product-body';
-
-      const titleWrap = document.createElement('div');
-      const title = document.createElement('div'); title.className='product-title'; title.textContent = p.name || '';
-      const vendor = document.createElement('div'); vendor.className='product-vendor'; vendor.textContent = p.vendor || '';
-      titleWrap.appendChild(title); titleWrap.appendChild(vendor);
-
-      const desc = document.createElement('div'); desc.className='product-desc'; desc.textContent = ((p.description||'').slice(0,90)) + '...';
-
-      const footer = document.createElement('div'); footer.className='product-footer';
-      const badge = document.createElement('span'); badge.className='badge';
-      badge.textContent = discount ? `-${discount}%` : (p.type || 'ready-made');
-
-      footer.appendChild(badge);
-      if (p.oldPrice) {
-        const old = document.createElement('span'); old.className='old'; old.textContent = '₹' + (p.oldPrice || '');
-        footer.appendChild(old);
-      }
-      const price = document.createElement('div'); price.className='price'; price.textContent = '₹' + (p.price || 0);
-      footer.appendChild(price);
-
-      const viewBtn = document.createElement('button'); viewBtn.className='btn'; viewBtn.type='button';
-      viewBtn.setAttribute('aria-label','View product details');
-      viewBtn.textContent = 'View';
-      viewBtn.addEventListener('click', ()=> openDetail(p.id));
-      footer.appendChild(viewBtn);
-
-      body.appendChild(titleWrap);
-      body.appendChild(desc);
-      body.appendChild(footer);
-
-      card.appendChild(imgEl);
-      card.appendChild(body);
-
+      card.innerHTML = `
+        <img loading="lazy" decoding="async" src="${escapeHtml(img || fallbackImg)}" alt="${escapeHtml(p.name)}"/>
+        <div class="product-body">
+          <div>
+            <div class="product-title">${escapeHtml(p.name)}</div>
+            <div class="product-vendor">${escapeHtml(p.vendor||'')}</div>
+          </div>
+          <div class="product-desc">${escapeHtml((p.description||'').slice(0,90))}...</div>
+          <div class="product-footer">
+            ${discount ? `<span class="badge">-${discount}%</span>` : `<span class="badge">${escapeHtml(p.type||'ready-made')}</span>`}
+            ${p.oldPrice ? `<span class="old">₹${escapeHtml(String(p.oldPrice))}</span>` : ''}
+            <div class="price">₹${escapeHtml(String(p.price||0))}</div>
+            <button class="btn" type="button">View</button>
+          </div>
+        </div>
+      `;
       card.dataset.productId = p.id;
+      // attach click handler (safer than inline onclick)
+      card.querySelector('.btn').addEventListener('click', ()=> openDetail(p.id));
       window._prabhaProducts[p.id] = p;
       return card;
     }
@@ -762,10 +758,7 @@
     function scrollToSection(id){
       const el = document.getElementById(id);
       if (!el) return;
-      // offset for fixed navbar so section isn't hidden below it
-      const navH = document.getElementById('navbar')?.getBoundingClientRect().height || 0;
-      const top = el.getBoundingClientRect().top + window.scrollY - navH - 12;
-      window.scrollTo({behavior:'smooth', top: Math.max(0, top)});
+      el.scrollIntoView({behavior:'smooth', block:'start'});
       el.style.boxShadow = '0 10px 30px rgba(209,0,7,0.12)';
       setTimeout(()=> el.style.boxShadow = '', 1300);
     }
@@ -793,14 +786,12 @@
     }
 
     function getBulkUnitPrice(product, variantObj, qty){
-      // prefer variant's bulkPricing then product's
       if (variantObj && variantObj.bulkPricing) return getBulkUnitPriceFromSource(variantObj.bulkPricing, qty);
       if (product && product.bulkPricing) return getBulkUnitPriceFromSource(product.bulkPricing, qty);
       return 0;
     }
 
     // ---------- ORDER TOTAL / UI ----------
-
     function updateOrderTotal(){
       if(!activeProduct) return;
       const qty = Math.max(1, parseInt(oQty.value) || 0);
@@ -821,8 +812,11 @@
       orderTotal.textContent = bulkUnit ? `Estimated Total (bulk): ₹${total.toLocaleString('en-IN')}` : `Total Amount: ₹${total.toLocaleString('en-IN')}`;
       orderBulkNote.textContent = bulkUnit ? `Bulk price applied automatically for selected quantity.` : `No bulk price available for selected quantity. ${formatBulkPricing(activeProduct)}`;
 
-      // ensure sticky footer not overlapping content: set padding-bottom on scroll container via CSS var
-      updateOrderFooterHeight();
+      // ensure sticky footer not overlapping content: set padding-bottom on scroll container
+      setTimeout(()=> {
+        const footerHeight = document.querySelector('.order-actions')?.getBoundingClientRect().height || 80;
+        if (orderModalScroll) orderModalScroll.style.paddingBottom = (footerHeight + 40) + 'px';
+      }, 40);
     }
 
     function getBestBulkThreshold(product, variantObj, qty){
@@ -1046,9 +1040,6 @@
       setTimeout(updateOrderTotal, 60);
 
       openModal(orderModal);
-
-      // ensure footer height var is computed after modal rendered
-      setTimeout(updateOrderFooterHeight, 120);
     }
 
     function closeOrder(noRedirect){
@@ -1059,7 +1050,6 @@
       orderBulkPrice.textContent = '—';
       orderBulkNote.textContent = '';
       if (!noRedirect) {
-        // redirect to products page on explicit close
         window.location.href = 'products.html';
       }
     }
@@ -1091,7 +1081,6 @@
       const qty = parseInt(document.getElementById('oQty').value) || 0;
 
       const minQtyAllowed = (activeProduct.minQty || 1);
-      // Also consider variant.minQty if provided
       let variant = null;
       const vsel = document.getElementById('orderVariant');
       if (vsel && vsel.value) variant = JSON.parse(decodeURIComponent(vsel.value));
@@ -1172,7 +1161,7 @@
             "",
             "Customization text / picture: (I will send here)"
           ];
-          const waText = lines.join('\\n');
+          const waText = lines.join('\n');
           setTimeout(()=> window.open(`https://wa.me/${shopPhone}?text=${encodeURIComponent(waText)}`, '_blank'), 700);
         }
 
@@ -1218,8 +1207,9 @@
         `Phone: ${phone || '-'}`,
         `Total: ₹${total}`,
         `Note: ${note || '-'}`
+
       ];
-      window.open(`https://wa.me/${shopPhone}?text=${encodeURIComponent(lines.join('\\n'))}`, '_blank');
+      window.open(`https://wa.me/${shopPhone}?text=${encodeURIComponent(lines.join('\n'))}`, '_blank');
     });
 
     // ---------- MODAL OPEN/CLOSE + FOCUS TRAP + BODY LOCK ----------
@@ -1228,7 +1218,6 @@
 
     function openModal(modalEl){
       if(!modalEl) return;
-      // Show
       modalEl.style.display = 'flex';
       modalEl.setAttribute('aria-hidden','false');
 
@@ -1239,7 +1228,7 @@
       // Add listeners: click on bg closes if clicked outside modal content
       const onBgClick = (ev) => {
         if (ev.target === modalEl) {
-          // background click just closes modal (no redirect)
+          // background click: close without redirect
           closeModal(modalEl);
         }
       };
@@ -1268,10 +1257,14 @@
         }
       };
       document.addEventListener('keydown', onKeyDown);
-      // store to remove later
       activeTrapHandlers.set(modalEl, { onBgClick, preventBodyTouch, onKeyDown });
-      // focus first focusable element
       setTimeout(()=> first && first.focus(), 60);
+
+      // make sure modal internal scroll has enough bottom padding (for sticky footer)
+      setTimeout(()=>{
+        const footerHeight = document.querySelector('.order-actions')?.getBoundingClientRect().height || 0;
+        if (modalEl.querySelector('.modal-scroll')) modalEl.querySelector('.modal-scroll').style.paddingBottom = (footerHeight + 48) + 'px';
+      }, 80);
     }
 
     function closeModal(modalEl){
@@ -1281,7 +1274,6 @@
 
       // Remove body lock & restore scroll
       document.body.classList.remove('modal-open');
-      // restore scroll to saved position
       setTimeout(()=> window.scrollTo(0, _savedScroll || 0), 0);
 
       const handlers = activeTrapHandlers.get(modalEl);
@@ -1293,16 +1285,15 @@
       }
     }
 
-    // Close buttons and Escape support (redundant safe handlers)
-    // IMPORTANT: Close buttons now redirect to products.html (per request)
-    detailCloseBtn.addEventListener('click', () => closeDetail(false)); // will close and redirect
-    orderCloseBtn.addEventListener('click', () => closeOrder(false)); // will close and redirect
-    orderCancelBtn.addEventListener('click', () => closeOrder(false)); // will close and redirect
+    // Close buttons and Escape support (close buttons redirect to products.html)
+    detailCloseBtn.addEventListener('click', () => closeDetail(false));
+    orderCloseBtn.addEventListener('click', () => closeOrder(false));
+    orderCancelBtn.addEventListener('click', () => closeOrder(false));
 
     document.addEventListener('keydown', (e)=>{
       if (e.key === 'Escape') {
-        if (detailModal.style.display==='flex') closeModal(detailModal); // background close, no redirect
-        if (orderModal.style.display==='flex') closeModal(orderModal);   // background close, no redirect
+        if (detailModal.style.display==='flex') closeModal(detailModal);
+        if (orderModal.style.display==='flex') closeModal(orderModal);
       }
     });
 
@@ -1348,6 +1339,7 @@
       hamburger.setAttribute('aria-expanded', isActive ? 'true' : 'false');
     });
 
+    // close mobile nav when link clicked
     document.querySelectorAll('.nav-link').forEach(link => {
       link.addEventListener('click', () => {
         hamburger.classList.remove('active');
@@ -1356,15 +1348,13 @@
       });
     });
 
-    // Smooth scroll for same-page hashes - improved to offset navbar
+    // Smooth scroll for same-page hashes
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function (e) {
-        const href = this.getAttribute('href');
-        if (!href) return;
-        const target = document.querySelector(href);
+        const target = document.querySelector(this.getAttribute('href'));
         if (target) {
           e.preventDefault();
-          scrollToSection(href.replace('#',''));
+          target.scrollIntoView({ behavior:'smooth', block:'start' });
         }
       });
     });
@@ -1382,50 +1372,12 @@
       }
     });
 
-    // ---------- ORDER FOOTER height handling (mobile fix) ----------
-    function updateOrderFooterHeight(){
-      const footer = document.querySelector('.order-actions');
-      if (!footer) return;
-      // read --safe-bottom from root
-      const safeRaw = getComputedStyle(document.documentElement).getPropertyValue('--safe-bottom') || '0px';
-      // parse px only (env fallback is handled by CSS)
-      const safeVal = parseInt(safeRaw) || 0;
-      const h = Math.ceil(footer.getBoundingClientRect().height) + safeVal;
-      document.documentElement.style.setProperty('--order-footer-height', h + 'px');
-      // also make sure modal scroll container has enough bottom padding in case measured late
-      const sc = orderModalScroll;
-      if (sc) sc.style.paddingBottom = (h + 24) + 'px';
-    }
-
-    // recalc on resize and on focusin (keyboard)
-    window.addEventListener('resize', ()=> {
-      setTimeout(updateOrderFooterHeight, 120);
-    });
-    document.addEventListener('focusin', (e)=>{
-      // when an input inside modal gets focus, recompute so keyboard doesn't hide submit
-      if (e.target && e.target.closest && (e.target.closest('.modal'))) {
-        setTimeout(updateOrderFooterHeight, 120);
-      }
-    });
-
-    // compute on page load
-    setTimeout(updateOrderFooterHeight, 400);
-
-    // ---------- helper: recompute footer height used by updateOrderTotal too ----------
-    function recomputeFooterAndPadding(){
-      setTimeout(()=> {
-        updateOrderFooterHeight();
-      }, 100);
-    }
-
-    // ---------- NAV / UI console ----------
-    console.log('🎉 Prabha Graphics Products Page — modal & mobile scroll fixes applied.');
-
+    console.log('🎉 Prabha Graphics Products Page — mobile fixes applied (nav-height + vh + modal padding).');
   </script>
 
   <!-- Header / navbar JS (non-module) -->
   <script>
-    // Kept minimal to avoid duplication.
+    // kept minimal intentionally
   </script>
 </body>
 </html>
