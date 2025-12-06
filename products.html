@@ -34,6 +34,8 @@
       --radius:12px;
       --nav-height:80px;
       --safe-bottom: env(safe-area-inset-bottom, 0px);
+      /* dynamic footer height (updated by JS) */
+      --order-footer-height: 84px;
     }
     html{scroll-behavior:smooth;height:100%}
     body{
@@ -50,7 +52,8 @@
 
     /* Body lock when modal open: set by JS (class modal-open) */
     body.modal-open{
-      overflow:hidden; /* do NOT use position:fixed on mobile — keeps page from getting stuck */
+      overflow:hidden; /* keep page from scrolling while allowing modal inner scrolling */
+      touch-action: none;
     }
 
     /* Scrollbar */
@@ -122,7 +125,7 @@
 
     /* MODALS */
     .modal-bg{position:fixed;inset:0;display:none;align-items:flex-start;justify-content:center;background:rgba(15,23,42,0.7);z-index:2200;padding:32px 12px}
-    .modal{width:100%;max-width:1100px;background:#ffffff;border-radius:18px;padding:20px 22px 22px;max-height:92vh;overflow:auto;box-shadow:0 30px 80px rgba(15,23,42,0.6);display:flex;flex-direction:column;gap:16px}
+    .modal{width:100%;max-width:1100px;background:#ffffff;border-radius:18px;padding:20px 22px 22px;max-height:92vh;overflow:auto;box-shadow:0 30px 80px rgba(15,23,42,0.6);display:flex;flex-direction:column;z-index:2300}
     .modal .top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;padding-bottom:10px;border-bottom:1px solid #e5e7eb}
     .modal-title{font-size:20px;font-weight:700;margin:0}
     .modal-main{display:flex;gap:22px;margin-top:10px;flex-wrap:wrap}
@@ -152,7 +155,7 @@
     .btn.secondary{background:#334155}
 
     /* Order modal specifics */
-    .modal-scroll{overflow:auto;max-height: calc(92vh - 160px);padding-right:6px}
+    .modal-scroll{overflow:auto;max-height: calc(92vh - 160px);padding-right:6px; -webkit-overflow-scrolling: touch; padding-bottom: calc(var(--order-footer-height) + 24px); }
     .order-actions{position: sticky; bottom: 0; background: #fff; padding:12px calc(16px + var(--safe-bottom)); display:flex;gap:8px;flex-wrap:wrap;z-index:999;border-top:1px solid #eef2f7;border-radius:0 0 12px 12px;box-shadow:0 -8px 20px rgba(15,23,42,0.08)}
     .form-row{display:flex;gap:10px;margin-top:8px;flex-wrap:wrap}
     .form-row > *{flex:1}
@@ -213,7 +216,7 @@
       .modal{max-width:none;width:100%;height:100vh;max-height:100vh;border-radius:0;padding:14px 14px 10px;display:flex;flex-direction:column}
       .modal-main{flex:1;overflow:auto;margin-top:10px}
       /* make modal-scroll flex and ensure there is enough padding so sticky footer never covers content */
-      .modal-scroll{max-height:none;flex:1;overflow:auto;padding-right:4px;padding-bottom:calc(18px + var(--safe-bottom) + 84px)}
+      .modal-scroll{max-height:none;flex:1;overflow:auto;padding-right:4px;padding-bottom:calc(var(--order-footer-height) + 24px)}
       .order-actions{position:sticky;bottom:0;background:#fff;box-shadow:0 -8px 20px rgba(15,23,42,0.12);border-radius:0;padding:12px calc(16px + var(--safe-bottom))}
     }
     @media (max-width:480px){
@@ -274,7 +277,7 @@
       <!-- Category cards -->
       <div class="categories-grid" role="list" aria-label="Product categories">
         <div class="category-card" role="listitem" onclick="scrollToSection('corporate')" tabindex="0" onkeypress="if(event.key==='Enter')scrollToSection('corporate')">
-          <img loading="lazy" decoding="async" src="corporate-img.png"/>
+          <img loading="lazy" decoding="async" src="corporate-img.png" alt="Corporate"/>
           <div class="category-overlay"><div><h3>Corporate & Promotional</h3><p>Keychains, Pens, Gift Sets</p></div></div>
         </div>
         <div class="category-card" role="listitem" onclick="scrollToSection('personalized')" tabindex="0" onkeypress="if(event.key==='Enter')scrollToSection('personalized')">
@@ -710,22 +713,47 @@
       const img = (p.images && p.images[0]) || p.image || p.imageUrl || '';
       const fallbackImg = 'https://placehold.co/400x300/D10007/FFFFFF?text=Product+Image';
 
-      card.innerHTML = `
-        <img loading="lazy" decoding="async" src="${escapeHtml(img || fallbackImg)}" alt="${escapeHtml(p.name)}"/>
-        <div class="product-body">
-          <div>
-            <div class="product-title">${escapeHtml(p.name)}</div>
-            <div class="product-vendor">${escapeHtml(p.vendor||'')}</div>
-          </div>
-          <div class="product-desc">${escapeHtml((p.description||'').slice(0,90))}...</div>
-          <div class="product-footer">
-            ${discount ? `<span class="badge">-${discount}%</span>` : `<span class="badge">${escapeHtml(p.type||'ready-made')}</span>`}
-            ${p.oldPrice ? `<span class="old">₹${escapeHtml(String(p.oldPrice))}</span>` : ''}
-            <div class="price">₹${escapeHtml(String(p.price||0))}</div>
-            <button class="btn" type="button" onclick='openDetail("${p.id}")' aria-label="View product details">View</button>
-          </div>
-        </div>
-      `;
+      // build card content safely using DOM APIs to avoid attribute quoting issues
+      const imgEl = document.createElement('img');
+      imgEl.setAttribute('loading','lazy');
+      imgEl.src = img || fallbackImg;
+      imgEl.alt = p.name ? p.name : 'Product image';
+
+      const body = document.createElement('div');
+      body.className = 'product-body';
+
+      const titleWrap = document.createElement('div');
+      const title = document.createElement('div'); title.className='product-title'; title.textContent = p.name || '';
+      const vendor = document.createElement('div'); vendor.className='product-vendor'; vendor.textContent = p.vendor || '';
+      titleWrap.appendChild(title); titleWrap.appendChild(vendor);
+
+      const desc = document.createElement('div'); desc.className='product-desc'; desc.textContent = ((p.description||'').slice(0,90)) + '...';
+
+      const footer = document.createElement('div'); footer.className='product-footer';
+      const badge = document.createElement('span'); badge.className='badge';
+      badge.textContent = discount ? `-${discount}%` : (p.type || 'ready-made');
+
+      footer.appendChild(badge);
+      if (p.oldPrice) {
+        const old = document.createElement('span'); old.className='old'; old.textContent = '₹' + (p.oldPrice || '');
+        footer.appendChild(old);
+      }
+      const price = document.createElement('div'); price.className='price'; price.textContent = '₹' + (p.price || 0);
+      footer.appendChild(price);
+
+      const viewBtn = document.createElement('button'); viewBtn.className='btn'; viewBtn.type='button';
+      viewBtn.setAttribute('aria-label','View product details');
+      viewBtn.textContent = 'View';
+      viewBtn.addEventListener('click', ()=> openDetail(p.id));
+      footer.appendChild(viewBtn);
+
+      body.appendChild(titleWrap);
+      body.appendChild(desc);
+      body.appendChild(footer);
+
+      card.appendChild(imgEl);
+      card.appendChild(body);
+
       card.dataset.productId = p.id;
       window._prabhaProducts[p.id] = p;
       return card;
@@ -734,7 +762,10 @@
     function scrollToSection(id){
       const el = document.getElementById(id);
       if (!el) return;
-      el.scrollIntoView({behavior:'smooth', block:'start'});
+      // offset for fixed navbar so section isn't hidden below it
+      const navH = document.getElementById('navbar')?.getBoundingClientRect().height || 0;
+      const top = el.getBoundingClientRect().top + window.scrollY - navH - 12;
+      window.scrollTo({behavior:'smooth', top: Math.max(0, top)});
       el.style.boxShadow = '0 10px 30px rgba(209,0,7,0.12)';
       setTimeout(()=> el.style.boxShadow = '', 1300);
     }
@@ -790,11 +821,8 @@
       orderTotal.textContent = bulkUnit ? `Estimated Total (bulk): ₹${total.toLocaleString('en-IN')}` : `Total Amount: ₹${total.toLocaleString('en-IN')}`;
       orderBulkNote.textContent = bulkUnit ? `Bulk price applied automatically for selected quantity.` : `No bulk price available for selected quantity. ${formatBulkPricing(activeProduct)}`;
 
-      // ensure sticky footer not overlapping content: set padding-bottom on scroll container
-      setTimeout(()=> {
-        const footerHeight = document.querySelector('.order-actions')?.getBoundingClientRect().height || 80;
-        orderModalScroll.style.paddingBottom = (footerHeight + 40) + 'px';
-      }, 40);
+      // ensure sticky footer not overlapping content: set padding-bottom on scroll container via CSS var
+      updateOrderFooterHeight();
     }
 
     function getBestBulkThreshold(product, variantObj, qty){
@@ -885,7 +913,6 @@
             return;
           }
           const v = JSON.parse(decodeURIComponent(s.value));
-          // update price, oldPrice, saving, MOQ, bulk from variant where present
           dPrice.textContent = '₹' + (v.price || p.price || 0);
           dOldPrice.textContent = v.oldPrice ? '₹' + v.oldPrice : (p.oldPrice ? '₹' + p.oldPrice : '');
           if((v.oldPrice && v.price && v.oldPrice > v.price) || (p.oldPrice && p.price && p.oldPrice > p.price)){
@@ -894,7 +921,6 @@
             dSaving.style.display = 'inline-block'; dSaving.textContent = 'Save ₹' + Math.max(0, oldP - newP);
           } else { dSaving.style.display='none'; }
           dMOQ.textContent = 'Minimum order quantity: ' + (v.minQty || p.minQty || 1);
-          // bulk for variant overrides product
           dBulk.textContent = 'Bulk order pricing: ' + (v.bulkPricing ? formatBulkPricing({bulkPricing: v.bulkPricing}) : formatBulkPricing(p));
         };
         dVariant.appendChild(s);
@@ -944,7 +970,6 @@
       activeProduct=null;
       if (!noRedirect) {
         // Redirect to products listing explicitly (user requested close button -> products page)
-        // If already on products page, this will reload the page — that's acceptable and ensures the UI resets.
         window.location.href = 'products.html';
       }
     }
@@ -1021,6 +1046,9 @@
       setTimeout(updateOrderTotal, 60);
 
       openModal(orderModal);
+
+      // ensure footer height var is computed after modal rendered
+      setTimeout(updateOrderFooterHeight, 120);
     }
 
     function closeOrder(noRedirect){
@@ -1144,7 +1172,7 @@
             "",
             "Customization text / picture: (I will send here)"
           ];
-          const waText = lines.join('\n');
+          const waText = lines.join('\\n');
           setTimeout(()=> window.open(`https://wa.me/${shopPhone}?text=${encodeURIComponent(waText)}`, '_blank'), 700);
         }
 
@@ -1190,9 +1218,8 @@
         `Phone: ${phone || '-'}`,
         `Total: ₹${total}`,
         `Note: ${note || '-'}`
-
       ];
-      window.open(`https://wa.me/${shopPhone}?text=${encodeURIComponent(lines.join('\n'))}`, '_blank');
+      window.open(`https://wa.me/${shopPhone}?text=${encodeURIComponent(lines.join('\\n'))}`, '_blank');
     });
 
     // ---------- MODAL OPEN/CLOSE + FOCUS TRAP + BODY LOCK ----------
@@ -1212,8 +1239,8 @@
       // Add listeners: click on bg closes if clicked outside modal content
       const onBgClick = (ev) => {
         if (ev.target === modalEl) {
-          // only close for order modal & detail modal to allow intentional closers
-          closeModal(modalEl); // background click just closes modal (no redirect)
+          // background click just closes modal (no redirect)
+          closeModal(modalEl);
         }
       };
       modalEl.addEventListener('click', onBgClick);
@@ -1237,7 +1264,6 @@
           else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
         }
         if (e.key === 'Escape') {
-          // handled globally elsewhere too
           closeModal(modalEl);
         }
       };
@@ -1330,13 +1356,15 @@
       });
     });
 
-    // Smooth scroll for same-page hashes
+    // Smooth scroll for same-page hashes - improved to offset navbar
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function (e) {
-        const target = document.querySelector(this.getAttribute('href'));
+        const href = this.getAttribute('href');
+        if (!href) return;
+        const target = document.querySelector(href);
         if (target) {
           e.preventDefault();
-          target.scrollIntoView({ behavior:'smooth', block:'start' });
+          scrollToSection(href.replace('#',''));
         }
       });
     });
@@ -1354,7 +1382,45 @@
       }
     });
 
+    // ---------- ORDER FOOTER height handling (mobile fix) ----------
+    function updateOrderFooterHeight(){
+      const footer = document.querySelector('.order-actions');
+      if (!footer) return;
+      // read --safe-bottom from root
+      const safeRaw = getComputedStyle(document.documentElement).getPropertyValue('--safe-bottom') || '0px';
+      // parse px only (env fallback is handled by CSS)
+      const safeVal = parseInt(safeRaw) || 0;
+      const h = Math.ceil(footer.getBoundingClientRect().height) + safeVal;
+      document.documentElement.style.setProperty('--order-footer-height', h + 'px');
+      // also make sure modal scroll container has enough bottom padding in case measured late
+      const sc = orderModalScroll;
+      if (sc) sc.style.paddingBottom = (h + 24) + 'px';
+    }
+
+    // recalc on resize and on focusin (keyboard)
+    window.addEventListener('resize', ()=> {
+      setTimeout(updateOrderFooterHeight, 120);
+    });
+    document.addEventListener('focusin', (e)=>{
+      // when an input inside modal gets focus, recompute so keyboard doesn't hide submit
+      if (e.target && e.target.closest && (e.target.closest('.modal'))) {
+        setTimeout(updateOrderFooterHeight, 120);
+      }
+    });
+
+    // compute on page load
+    setTimeout(updateOrderFooterHeight, 400);
+
+    // ---------- helper: recompute footer height used by updateOrderTotal too ----------
+    function recomputeFooterAndPadding(){
+      setTimeout(()=> {
+        updateOrderFooterHeight();
+      }, 100);
+    }
+
+    // ---------- NAV / UI console ----------
     console.log('🎉 Prabha Graphics Products Page — modal & mobile scroll fixes applied.');
+
   </script>
 
   <!-- Header / navbar JS (non-module) -->
@@ -1363,4 +1429,3 @@
   </script>
 </body>
 </html>
-d
