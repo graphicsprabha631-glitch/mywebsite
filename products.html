@@ -49,11 +49,10 @@
       padding-bottom: calc(var(--safe-bottom));
     }
 
-    /* Body lock when modal open: set by JS (class modal-open) */
+    /* Body lock when modal open */
     body.modal-open{
-      /* keep this conservative — we avoid position:fixed to reduce mobile layout bugs */
       overflow:hidden;
-      touch-action:none; /* prevent background gestures while modal open */
+      touch-action:none;
     }
 
     /* Scrollbar */
@@ -67,22 +66,41 @@
 
     .container{max-width:1280px;margin:0 auto;padding:0 20px}
 
-    /* NAV */
+    /* NAV - clean, minimal, shadow on scroll (same as homepage option) */
     .navbar{
-      position:fixed;top:0;left:0;right:0;z-index:1000;background-color:var(--white);transition:all 0.3s ease;
-      backdrop-filter: blur(4px);
+      position:fixed;
+      top:0;left:0;right:0;
+      z-index:1000;
+      background-color:var(--white);
+      transition:all 0.3s ease;
     }
-    .navbar.scrolled{box-shadow:0 10px 25px rgba(0,0,0,0.08)}
-    .nav-container{max-width:1280px;margin:0 auto;padding:16px 20px;display:flex;justify-content:space-between;align-items:center}
-    .nav-logo{display:flex;align-items:center;gap:8px;cursor:pointer}
+    .navbar.scrolled{
+      box-shadow:0 10px 25px rgba(0,0,0,0.08);
+    }
+    .nav-container{
+      max-width:1280px;
+      margin:0 auto;
+      padding:16px 20px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+    .nav-logo{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      cursor:pointer;
+      transition:transform 0.3s ease;
+    }
+    .nav-logo:hover{transform:scale(1.05)}
     .logo-img{width:44px;height:44px;border-radius:999px;object-fit:contain}
     .logo-text{font-weight:700;font-size:20px;color:var(--gray-800)}
     .nav-links{display:flex;gap:24px;list-style:none;align-items:center}
     .nav-link{color:var(--gray-800);text-decoration:none;font-weight:500;position:relative;padding-bottom:3px}
     .nav-link::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background-color:var(--primary-red);transition:width 0.3s}
     .nav-link:hover::after{width:100%}
-    .cta-btn{background-color:var(--primary-red);color:var(--white);border:none;padding:10px 20px;border-radius:8px;font-weight:600;cursor:pointer;white-space:nowrap}
-    .cta-btn:hover{background-color:var(--dark-red)}
+    .cta-btn{background-color:var(--primary-red);color:var(--white);border:none;padding:10px 24px;border-radius:8px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .3s}
+    .cta-btn:hover{background-color:var(--dark-red);transform:scale(1.05)}
     .hamburger{display:none;flex-direction:column;cursor:pointer;margin-left:8px}
     .hamburger span{width:24px;height:3px;background-color:var(--gray-800);margin:4px 0;transition:all .3s;border-radius:2px}
     .hamburger.active span:nth-child(1){transform:rotate(-45deg) translate(-6px,6px)}
@@ -169,7 +187,56 @@
     .price-breakdown{margin-top:8px;font-size:14px;color:var(--muted);background:#f8fafc;padding:10px;border-radius:8px;border:1px solid #eef2f7}
     .price-breakdown small{display:block;color:var(--muted);font-size:12px;margin-top:6px}
 
-    /* FOOTER */
+    /* THANK YOU POPUP — Style A (minimal white + red) */
+    #thankyouModal .modal{
+      max-width:420px;
+      text-align:center;
+      padding:24px 22px 20px;
+      border-radius:18px;
+    }
+    .thank-icon{
+      width:64px;height:64px;
+      border-radius:999px;
+      border:3px solid var(--primary-red);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      margin:0 auto 12px;
+    }
+    .thank-icon i{
+      font-size:28px;
+      color:var(--primary-red);
+    }
+    .thank-title{
+      font-size:20px;
+      font-weight:700;
+      margin-bottom:6px;
+      color:var(--gray-900);
+    }
+    .thank-text{
+      font-size:14px;
+      color:var(--muted);
+      margin-bottom:10px;
+    }
+    .thank-order-label{
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:0.12em;
+      color:var(--muted);
+      margin-top:6px;
+    }
+    .thank-order-number{
+      margin-top:4px;
+      font-weight:700;
+      font-size:16px;
+      color:var(--primary-red);
+      background:#fef2f2;
+      padding:8px 12px;
+      border-radius:999px;
+      display:inline-block;
+    }
+
+    /* FOOTER (same style as homepage option) */
     .footer{background-color:var(--gray-900);color:var(--white);padding:64px 0 32px;margin-top:28px}
     .footer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:40px;margin-bottom:40px}
     .footer-col{opacity:0;animation:slideUp 0.8s ease forwards}
@@ -213,12 +280,11 @@
 
       /* Full page modal on mobile */
       .modal-bg{align-items:stretch;padding:0}
-      /* use calculated vh variable to avoid address-bar jumps */
       .modal{max-width:none;width:100%;height:calc(var(--vh) * 100);max-height:calc(var(--vh) * 100);border-radius:0;padding:14px 14px 10px;display:flex;flex-direction:column}
       .modal-main{flex:1;overflow:auto;margin-top:10px}
-      /* make modal-scroll flex and ensure there is enough padding so sticky footer never covers content */
       .modal-scroll{max-height:none;flex:1;overflow:auto;padding-right:4px;padding-bottom:calc(18px + var(--safe-bottom) + 84px)}
       .order-actions{position:sticky;bottom:0;background:#fff;box-shadow:0 -8px 20px rgba(15,23,42,0.12);border-radius:0;padding:12px calc(16px + var(--safe-bottom))}
+      #thankyouModal .modal{height:auto;max-height:none;border-radius:18px;margin:auto}
     }
     @media (max-width:480px){
       .container{padding:0 16px}
@@ -451,9 +517,9 @@
               </div>
               <div>
                 <label class="form-label" for="oPayment">Payment method</label>
+                <!-- COD removed as requested -->
                 <select id="oPayment" aria-label="Payment method">
-                  <option>COD</option>
-                  <option>Online</option>
+                  <option>Online Payment</option>
                 </select>
               </div>
             </div>
@@ -479,13 +545,36 @@
           </form>
         </div>
 
-        <!-- sticky footer actions (keeps order button visible on mobile) -->
+        <!-- sticky footer actions -->
         <div class="order-actions" role="toolbar" aria-hidden="false">
           <button class="btn" id="orderSubmitBtn" type="button">Submit Order</button>
           <button type="button" class="btn" id="orderWhatsBtn" title="Open WhatsApp with order summary"><i class="fa fa-whatsapp"></i> Send on WhatsApp</button>
           <button type="button" class="btn ghost" id="orderCancelBtn">Cancel</button>
         </div>
 
+      </div>
+    </div>
+
+    <!-- THANK YOU POPUP (Option A — popup instead of redirect) -->
+    <div id="thankyouModal" class="modal-bg" aria-hidden="true" aria-modal="true">
+      <div class="modal" role="alertdialog" aria-labelledby="thankTitle">
+        <div class="thank-icon">
+          <i class="fa fa-check"></i>
+        </div>
+        <h2 id="thankTitle" class="thank-title">Thank you for your order!</h2>
+        <p class="thank-text">
+          We’ve received your request. Our team will review the details and contact you shortly with confirmation and payment instructions.
+        </p>
+        <div class="thank-order-label">Your order number</div>
+        <div id="thankOrderNumber" class="thank-order-number">PG-2025-000123</div>
+
+        <p class="thank-text" style="margin-top:10px;">
+          Please keep this order number handy if you contact us on call or WhatsApp.
+        </p>
+
+        <div style="margin-top:14px;display:flex;justify-content:center;gap:8px;flex-wrap:wrap">
+          <button id="thankCloseBtn" class="btn" type="button">Done</button>
+        </div>
       </div>
     </div>
 
@@ -566,7 +655,6 @@
     const db = getFirestore(app);
     const shopPhone = "917457994888"; // wa.me format (no +)
 
-    // small helpers to keep code readable
     const $ = (s) => document.querySelector(s);
     const $$ = (s) => Array.from(document.querySelectorAll(s));
 
@@ -619,7 +707,12 @@
     const orderWhatsBtn = document.getElementById('orderWhatsBtn');
     const orderModalScroll = document.getElementById('orderModalScroll');
 
-    // Name + phone inputs (for validation rules)
+    // Thank you popup refs
+    const thankyouModal = document.getElementById('thankyouModal');
+    const thankOrderNumber = document.getElementById('thankOrderNumber');
+    const thankCloseBtn = document.getElementById('thankCloseBtn');
+
+    // Name + phone inputs
     const oName = document.getElementById('oName');
     const oPhone = document.getElementById('oPhone');
     let oQty = document.getElementById('oQty');
@@ -630,12 +723,10 @@
 
     let activeProduct = null;
 
-    // Safety: minimal helpers
     function escapeHtml(s=''){ return String(s).replace(/[&<>\"']/g, m=> ({'&':'&amp;','<':'&lt;','>':'&gt;', '"':'&quot;',"'":'&#39;'})[m]); }
 
-    // ---------- SMALL UX FIXES (mobile viewport & nav height) ----------
+    // ---------- SMALL UX FIXES ----------
     function setVh() {
-      // fix 100vh issues on mobile (address bar changes)
       const vh = window.innerHeight * 0.01;
       document.documentElement.style.setProperty('--vh', `${vh}px`);
     }
@@ -645,12 +736,11 @@
       const h = Math.ceil(nav.getBoundingClientRect().height) + 'px';
       document.documentElement.style.setProperty('--nav-height', h);
     }
-    // run on load & resize
     window.addEventListener('resize', () => { setVh(); setNavHeightVar(); });
     window.addEventListener('orientationchange', () => { setVh(); setNavHeightVar(); });
     window.addEventListener('load', () => { setVh(); setNavHeightVar(); });
 
-    // ---------- INPUT VALIDATION (NAME + PHONE) ----------
+    // ---------- INPUT VALIDATION ----------
     oName.addEventListener('input', () => {
       oName.value = oName.value.replace(/[^a-zA-Z\s]/g, '');
     });
@@ -663,7 +753,6 @@
       }
     });
 
-    // Phone: only digits (sanitize while typing), maxlength enforced in markup
     oPhone.addEventListener('input', () => {
       oPhone.value = oPhone.value.replace(/[^0-9]/g, '').slice(0,10);
     });
@@ -690,7 +779,7 @@
       return parts.join(' | ');
     }
 
-    // ---------- FIRESTORE PRODUCTS (real-time) ----------
+    // ---------- FIRESTORE PRODUCTS ----------
     const qProducts = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
     onSnapshot(qProducts, snapshot => {
       corporateGrid.innerHTML = '';
@@ -718,7 +807,6 @@
 
       Object.keys(empties).forEach(k => empties[k].style.display = (counts[k] === 0 ? 'block' : 'none'));
 
-      // preserve hash scroll
       setTimeout(()=> {
         const h = location.hash.replace('#','');
         if (h) scrollToSection(h);
@@ -749,7 +837,6 @@
         </div>
       `;
       card.dataset.productId = p.id;
-      // attach click handler (safer than inline onclick)
       card.querySelector('.btn').addEventListener('click', ()=> openDetail(p.id));
       window._prabhaProducts[p.id] = p;
       return card;
@@ -791,7 +878,17 @@
       return 0;
     }
 
-    // ---------- ORDER TOTAL / UI ----------
+    function getBestBulkThreshold(product, variantObj, qty){
+      const source = (variantObj && variantObj.bulkPricing) ? variantObj.bulkPricing : (product && product.bulkPricing) ? product.bulkPricing : {};
+      const keys = Object.keys(source).map(k=>Number(k)).filter(n=>!isNaN(n)).sort((a,b)=>a-b);
+      let chosen = 0;
+      keys.forEach(th => {
+        if (qty >= th && source[String(th)]) chosen = th;
+      });
+      return chosen || '';
+    }
+
+    // ---------- ORDER TOTAL ----------
     function updateOrderTotal(){
       if(!activeProduct) return;
       const qty = Math.max(1, parseInt(oQty.value) || 0);
@@ -812,24 +909,13 @@
       orderTotal.textContent = bulkUnit ? `Estimated Total (bulk): ₹${total.toLocaleString('en-IN')}` : `Total Amount: ₹${total.toLocaleString('en-IN')}`;
       orderBulkNote.textContent = bulkUnit ? `Bulk price applied automatically for selected quantity.` : `No bulk price available for selected quantity. ${formatBulkPricing(activeProduct)}`;
 
-      // ensure sticky footer not overlapping content: set padding-bottom on scroll container
       setTimeout(()=> {
         const footerHeight = document.querySelector('.order-actions')?.getBoundingClientRect().height || 80;
         if (orderModalScroll) orderModalScroll.style.paddingBottom = (footerHeight + 40) + 'px';
       }, 40);
     }
 
-    function getBestBulkThreshold(product, variantObj, qty){
-      const source = (variantObj && variantObj.bulkPricing) ? variantObj.bulkPricing : (product && product.bulkPricing) ? product.bulkPricing : {};
-      const keys = Object.keys(source).map(k=>Number(k)).filter(n=>!isNaN(n)).sort((a,b)=>a-b);
-      let chosen = 0;
-      keys.forEach(th => {
-        if (qty >= th && source[String(th)]) chosen = th;
-      });
-      return chosen || '';
-    }
-
-    // ---------- OPEN / CLOSE DETAIL ----------
+    // ---------- DETAIL MODAL ----------
     window.openDetail = function(id){
       const p = window._prabhaProducts && window._prabhaProducts[id];
       if (!p) return alert('Product not found');
@@ -886,7 +972,6 @@
         const s = document.createElement('span'); s.className='tag'; s.textContent = t; dTagList.appendChild(s);
       });
 
-      // Variants in detail modal - update other fields on change
       dVariant.innerHTML = '';
       if (p.variants && p.variants.length){
         const s = document.createElement('select'); s.id='modalVariantSelect';
@@ -963,7 +1048,6 @@
       closeModal(detailModal);
       activeProduct=null;
       if (!noRedirect) {
-        // Redirect to products listing explicitly (user requested close button -> products page)
         window.location.href = 'products.html';
       }
     }
@@ -979,14 +1063,10 @@
       qtyInput.value = minQty;
       qtyInput.min = minQty;
 
-      // Remove previous listeners gracefully by cloning node
       const newQty = qtyInput.cloneNode(true);
       qtyInput.parentNode.replaceChild(newQty, qtyInput);
-
-      // replace reference
       oQty = document.getElementById('oQty');
 
-      // enforce min and update total
       const enforceMin = () => {
         const val = parseInt(oQty.value) || 0;
         if (val < minQty) oQty.value = minQty;
@@ -994,7 +1074,6 @@
       };
       oQty.addEventListener('input', enforceMin);
 
-      // Variants / sizes / colors in order form
       const attachVariantChangeHandlers = (sel) => {
         sel.addEventListener('change', () => {
           updateOrderTotal();
@@ -1032,13 +1111,10 @@
         attachVariantChangeHandlers(sel3);
       }
 
-      // Ensure phone & name from previous if any remains (UX)
       if (!oName.value) oName.value = '';
       if (!oPhone.value) oPhone.value = '';
 
-      // initial total
       setTimeout(updateOrderTotal, 60);
-
       openModal(orderModal);
     }
 
@@ -1053,6 +1129,18 @@
         window.location.href = 'products.html';
       }
     }
+
+    // ---------- THANK YOU POPUP ----------
+    function showThankYou(orderNumber){
+      if (thankOrderNumber) {
+        thankOrderNumber.textContent = orderNumber || 'PG-2025-000000';
+      }
+      openModal(thankyouModal);
+    }
+
+    thankCloseBtn.addEventListener('click', () => {
+      closeModal(thankyouModal);
+    });
 
     // ---------- SUBMIT ORDER -> FIRESTORE ----------
     orderSubmitBtn.addEventListener('click', (e) => {
@@ -1091,7 +1179,7 @@
 
       const note = document.getElementById('oNote').value.trim();
       const alsoWhats = document.getElementById('oWhatsapp').checked;
-      const paymentMethod = document.getElementById('oPayment').value;
+      const paymentMethod = document.getElementById('oPayment').value; // now only "Online Payment"
 
       const size = document.getElementById('orderSize') ? document.getElementById('orderSize').value : '';
       const color = document.getElementById('orderColor') ? document.getElementById('orderColor').value : '';
@@ -1101,8 +1189,14 @@
       const unitPrice = bulkUnit || baseUnit;
       const totalAmount = unitPrice * qty;
 
-      // Compose order object - full snapshot
+      // Generate order number: Option A — PG-YYYY-000123 style
+      const nowTs = Date.now();
+      const year = new Date().getFullYear();
+      const seq = String(nowTs).slice(-6); // last 6 digits of timestamp
+      const orderNumber = `PG-${year}-${seq}`;
+
       const order = {
+        orderNumber, // stored in Firebase
         productId: activeProduct.id,
         productName: activeProduct.name,
         productSnapshot: {
@@ -1146,6 +1240,7 @@
           const bulkText = formatBulkPricing(activeProduct);
           const lines = [
             "I have submitted an order from your website.",
+            `Order No: ${orderNumber}`,
             `Product: ${activeProduct.name}`,
             `SKU: ${activeProduct.sku || '-'}`,
             `Qty: ${qty}`,
@@ -1165,11 +1260,11 @@
           setTimeout(()=> window.open(`https://wa.me/${shopPhone}?text=${encodeURIComponent(waText)}`, '_blank'), 700);
         }
 
-        // After placing order, redirect to thankyou.html (small delay for UX)
+        // Popup instead of redirect
         setTimeout(()=> {
-          closeOrder(true); // close without redirect (we will redirect explicitly)
-          window.location.href = 'thankyou.html';
-        }, 900);
+          closeOrder(true);          // close order modal (no redirect)
+          showThankYou(orderNumber); // show thank you popup with stored order number
+        }, 800);
 
       } catch (err) {
         console.error('order save failed', err);
@@ -1207,34 +1302,29 @@
         `Phone: ${phone || '-'}`,
         `Total: ₹${total}`,
         `Note: ${note || '-'}`
-
       ];
       window.open(`https://wa.me/${shopPhone}?text=${encodeURIComponent(lines.join('\n'))}`, '_blank');
     });
 
-    // ---------- MODAL OPEN/CLOSE + FOCUS TRAP + BODY LOCK ----------
+    // ---------- MODAL OPEN/CLOSE ----------
     let _savedScroll = 0;
-    const activeTrapHandlers = new Map(); // modalEl -> handler info
+    const activeTrapHandlers = new Map();
 
     function openModal(modalEl){
       if(!modalEl) return;
       modalEl.style.display = 'flex';
       modalEl.setAttribute('aria-hidden','false');
 
-      // Save scroll position & lock body (without using position:fixed to avoid mobile layout issues)
       _savedScroll = window.scrollY || window.pageYOffset || 0;
       document.body.classList.add('modal-open');
 
-      // Add listeners: click on bg closes if clicked outside modal content
       const onBgClick = (ev) => {
         if (ev.target === modalEl) {
-          // background click: close without redirect
           closeModal(modalEl);
         }
       };
       modalEl.addEventListener('click', onBgClick);
 
-      // Prevent background touchmove (allow inside .modal to scroll)
       const preventBodyTouch = (e) => {
         if (!e.target.closest('.modal')) {
           e.preventDefault();
@@ -1242,7 +1332,6 @@
       };
       document.addEventListener('touchmove', preventBodyTouch, {passive:false});
 
-      // Focus trap: trap tab within modal
       const focusable = modalEl.querySelectorAll('a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])');
       const first = focusable[0];
       const last = focusable[focusable.length-1];
@@ -1260,7 +1349,6 @@
       activeTrapHandlers.set(modalEl, { onBgClick, preventBodyTouch, onKeyDown });
       setTimeout(()=> first && first.focus(), 60);
 
-      // make sure modal internal scroll has enough bottom padding (for sticky footer)
       setTimeout(()=>{
         const footerHeight = document.querySelector('.order-actions')?.getBoundingClientRect().height || 0;
         if (modalEl.querySelector('.modal-scroll')) modalEl.querySelector('.modal-scroll').style.paddingBottom = (footerHeight + 48) + 'px';
@@ -1272,7 +1360,6 @@
       modalEl.style.display = 'none';
       modalEl.setAttribute('aria-hidden','true');
 
-      // Remove body lock & restore scroll
       document.body.classList.remove('modal-open');
       setTimeout(()=> window.scrollTo(0, _savedScroll || 0), 0);
 
@@ -1285,7 +1372,6 @@
       }
     }
 
-    // Close buttons and Escape support (close buttons redirect to products.html)
     detailCloseBtn.addEventListener('click', () => closeDetail(false));
     orderCloseBtn.addEventListener('click', () => closeOrder(false));
     orderCancelBtn.addEventListener('click', () => closeOrder(false));
@@ -1294,10 +1380,10 @@
       if (e.key === 'Escape') {
         if (detailModal.style.display==='flex') closeModal(detailModal);
         if (orderModal.style.display==='flex') closeModal(orderModal);
+        if (thankyouModal.style.display==='flex') closeModal(thankyouModal);
       }
     });
 
-    // Update total when quantity changes
     document.addEventListener('input', (e)=>{
       if (e.target && (e.target.id === 'oQty' || e.target.id === 'orderVariant' || e.target.id === 'orderSize' || e.target.id === 'orderColor')) {
         if (!activeProduct) return;
@@ -1305,7 +1391,6 @@
       }
     });
 
-    // Hash open product
     window.addEventListener('load', ()=> {
       const h = location.hash.replace('#','');
       if (h.startsWith('product-')) {
@@ -1339,7 +1424,6 @@
       hamburger.setAttribute('aria-expanded', isActive ? 'true' : 'false');
     });
 
-    // close mobile nav when link clicked
     document.querySelectorAll('.nav-link').forEach(link => {
       link.addEventListener('click', () => {
         hamburger.classList.remove('active');
@@ -1348,7 +1432,6 @@
       });
     });
 
-    // Smooth scroll for same-page hashes
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function (e) {
         const target = document.querySelector(this.getAttribute('href'));
@@ -1363,7 +1446,6 @@
       window.scrollTo({top:0, behavior:'smooth'});
     });
 
-    // Support closing mobile nav with Escape
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         hamburger.classList.remove('active');
@@ -1372,12 +1454,12 @@
       }
     });
 
-    console.log('🎉 Prabha Graphics Products Page — mobile fixes applied (nav-height + vh + modal padding).');
+    console.log('🎉 Prabha Graphics Products Page — header/footer updated, COD removed, thank-you popup with order number enabled.');
   </script>
 
   <!-- Header / navbar JS (non-module) -->
   <script>
-    // kept minimal intentionally
+    // intentionally empty – main logic is in module
   </script>
 </body>
 </html>
