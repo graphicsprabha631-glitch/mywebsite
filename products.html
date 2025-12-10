@@ -236,6 +236,35 @@
       display:inline-block;
     }
 
+    /* FULL IMAGE VIEWER */
+    .image-viewer-modal{
+      max-width:none;
+      width:100%;
+      height:100%;
+      padding:0;
+      background:transparent;
+      box-shadow:none;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+    }
+    .image-viewer-img{
+      max-width:96vw;
+      max-height:90vh;
+      border-radius:16px;
+      background:#000;
+      object-fit:contain;
+      box-shadow:0 20px 60px rgba(0,0,0,0.6);
+    }
+    @media (max-width:768px){
+      .image-viewer-img{
+        max-width:100vw;
+        max-height:88vh;
+        border-radius:0;
+      }
+    }
+
     /* FOOTER (same style as homepage option) */
     .footer{background-color:var(--gray-900);color:var(--white);padding:64px 0 32px;margin-top:28px}
     .footer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:40px;margin-bottom:40px}
@@ -578,6 +607,22 @@
       </div>
     </div>
 
+    <!-- FULL IMAGE VIEWER MODAL -->
+    <div id="imageViewerModal" class="modal-bg" aria-hidden="true" aria-modal="true">
+      <div class="modal image-viewer-modal" role="dialog" aria-label="Full image view">
+        <button type="button" id="ivCloseBtn" class="btn ghost" style="
+          position:absolute;
+          top:16px;
+          right:16px;
+          z-index:10;
+          padding:8px 12px;
+        ">
+          Close
+        </button>
+        <img id="ivImg" class="image-viewer-img" src="" alt="Full product image" loading="lazy" decoding="async" />
+      </div>
+    </div>
+
     <!-- Footer -->
     <footer class="footer" id="contact">
       <div class="container">
@@ -712,6 +757,11 @@
     const thankOrderNumber = document.getElementById('thankOrderNumber');
     const thankCloseBtn = document.getElementById('thankCloseBtn');
 
+    // Full image viewer refs
+    const imageViewerModal = document.getElementById('imageViewerModal');
+    const ivImg = document.getElementById('ivImg');
+    const ivCloseBtn = document.getElementById('ivCloseBtn');
+
     // Name + phone inputs
     const oName = document.getElementById('oName');
     const oPhone = document.getElementById('oPhone');
@@ -837,7 +887,18 @@
         </div>
       `;
       card.dataset.productId = p.id;
+
+      // Click on "View" button opens detail modal
       card.querySelector('.btn').addEventListener('click', ()=> openDetail(p.id));
+
+      // Click on card image opens full-screen image viewer
+      const cardImgEl = card.querySelector('img');
+      cardImgEl.style.cursor = 'zoom-in';
+      cardImgEl.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openImageViewer(cardImgEl.src);
+      });
+
       window._prabhaProducts[p.id] = p;
       return card;
     }
@@ -915,6 +976,17 @@
       }, 40);
     }
 
+    // ---------- FULL IMAGE VIEWER ----------
+    function openImageViewer(imgUrl){
+      if (!imgUrl) return;
+      ivImg.src = imgUrl;
+      openModal(imageViewerModal);
+    }
+
+    ivCloseBtn.addEventListener('click', () => {
+      closeModal(imageViewerModal);
+    });
+
     // ---------- DETAIL MODAL ----------
     window.openDetail = function(id){
       const p = window._prabhaProducts && window._prabhaProducts[id];
@@ -924,6 +996,11 @@
 
       dTitle.textContent = p.name || '';
       dMainImage.src = (p.images && p.images[0]) || p.image || p.imageUrl || detailFallbackImg;
+
+      // Click on main image opens full-screen image viewer
+      dMainImage.style.cursor = 'zoom-in';
+      dMainImage.onclick = () => openImageViewer(dMainImage.src);
+
       dThumbs.innerHTML = '';
       (p.images || []).forEach((u, i) => {
         const t = document.createElement('img'); t.src = u; if(i===0) t.classList.add('active');
@@ -1381,6 +1458,7 @@
         if (detailModal.style.display==='flex') closeModal(detailModal);
         if (orderModal.style.display==='flex') closeModal(orderModal);
         if (thankyouModal.style.display==='flex') closeModal(thankyouModal);
+        if (imageViewerModal.style.display==='flex') closeModal(imageViewerModal);
       }
     });
 
@@ -1454,7 +1532,7 @@
       }
     });
 
-    console.log('🎉 Prabha Graphics Products Page — header/footer updated, COD removed, thank-you popup with order number enabled.');
+    console.log('🎉 Prabha Graphics Products Page — header/footer updated, COD removed, thank-you popup with order number enabled, full image viewer added.');
   </script>
 
   <!-- Header / navbar JS (non-module) -->
